@@ -10,7 +10,7 @@ How to install the library:
 $ pip install vevestaX
 
 How to import a library and create the object
-![image](https://user-images.githubusercontent.com/81908188/140040845-2ec6a556-576f-4323-8fb7-0cb86bd41086.png)
+![image](https://user-images.githubusercontent.com/81908188/140261967-6cf57c32-d58c-4f85-8eba-7a5387295fa1.png)
 
 How to extract features present in input data.
 ![image](https://user-images.githubusercontent.com/81908188/140040983-87969009-2996-4320-8e28-513736dc2fab.png)
