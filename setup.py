@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 setup(
     name='vevestaX',
     packages=find_packages(include=['vevestaX']),
-    version='0.1.0',
+    version='0.2.0',
     description='Track failed and successful experiments as well as features',
     author='Priyanka',
     license='Apache 2.0',

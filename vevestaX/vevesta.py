@@ -1,22 +1,19 @@
 import pandas
 import inspect
 import os.path
-import os
 import ipynbname
-#import ipyparams
-import ipykernel
 from datetime import datetime
 
 def test():
     return 'Test Executed Succesfully'
 
-class V(object):
+class Experiment(object):
     def __init__(self ):
         self._dataSourcing = None
         self._featureEngineering = None
     
         self.startlocals = None
-        self.vars = {}
+        self.variables = {}
                 
     def get_filename(self):
         return ipynbname.name()
@@ -70,13 +67,14 @@ class V(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
        
-        self.vars ={**self.vars ,**{i:temp.get(i) for i in temp if i not in self.startlocals and i[0]!='_' and type(temp[i]) in [int, float, bool, str]}}
+        self.variables ={**self.variables ,**{i:temp.get(i) for i in temp if i not in self.startlocals and i[0]!='_' and type(temp[i]) in [int, float, bool, str]}}
         
-        return self.vars
+        return self.variables
     
 	#create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
+    Exp = Experiment
     #-------------
 
         
@@ -92,7 +90,7 @@ class V(object):
 
         if(filename==None):
             filename = "vevesta.xlsv"
-        print("Dumped the experiment in the file" + filename)
+        print("Dumped the experiment in the file " + filename)
 
         #check if file already exists
         if(os.path.isfile(filename)):            
