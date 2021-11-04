@@ -74,7 +74,7 @@ class Experiment(object):
 	#create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
-    Exp = Experiment
+    #Exp = Experiment
     #-------------
 
         
@@ -112,7 +112,7 @@ class Experiment(object):
         df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering], ignore_index=True).fillna(0)
 
        
-        modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.vars.items()}})
+        modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}})
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
                 
         #message table       
