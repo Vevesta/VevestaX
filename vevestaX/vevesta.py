@@ -89,7 +89,7 @@ class Experiment(object):
         mode = 'w'
 
         if(filename==None):
-            filename = "vevesta.xlsv"
+            filename = "vevesta.xlsx"
         print("Dumped the experiment in the file " + filename)
 
         #check if file already exists
