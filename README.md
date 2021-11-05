@@ -25,3 +25,4 @@ How to dump the features and modelling variables in an xlsx file
 ![image](https://user-images.githubusercontent.com/81908188/140041545-1e23239b-059b-4fc2-b81d-908074982afe.png)
 
 For additional features, explore our tool at www.vevesta.com
+For comments and suggestions, reach out to vevestax@vevesta.com
