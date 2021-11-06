@@ -44,7 +44,7 @@ class Experiment(object):
     @featureEngineering.setter
     def featureEngineering(self, value):
         if self._dataSourcing is None:
-            print("Do Data Sourcing Step")
+            print("Data Sourcing step missed.")
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 self._featureEngineering = cols
@@ -154,4 +154,4 @@ class Experiment(object):
         
             df_messages.to_excel(writer, sheet_name = 'messages', index = False)     
         
-        print("Explore our tool at www.vevesta.com for free. Register now!!")
+        print("For additional features, explore our tool at www.vevesta.com for free.")
