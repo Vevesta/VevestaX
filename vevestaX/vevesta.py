@@ -43,10 +43,17 @@ class Experiment(object):
 
     @featureEngineering.setter
     def featureEngineering(self, value):
-        if type(value) == pandas.core.frame.DataFrame:
-            cols = value.columns
-            cols = cols.drop(self.dataSourcing)
-            self._featureEngineering = cols
+        if self._dataSourcing is None:
+            print("Do Data Sourcing Step")
+            if type(value) == pandas.core.frame.DataFrame:
+                cols = value.columns
+                self._featureEngineering = cols
+
+        else:
+            if type(value) == pandas.core.frame.DataFrame:
+                cols = value.columns
+                cols = cols.drop(self.dataSourcing)
+                self._featureEngineering = cols
 
 
     @property
@@ -56,7 +63,6 @@ class Experiment(object):
     @featureEngineering.setter
     def fe(self, value):
         self.featureEngineering = value
-        
         
     def startModelling(self):
         self.startlocals = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
@@ -71,7 +77,7 @@ class Experiment(object):
         
         return self.variables
     
-	#create alias of method modellingStart and modellingEnd
+    #create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
     #Exp = Experiment
@@ -99,20 +105,30 @@ class Experiment(object):
             existingData = pandas.read_excel(filename, sheet_name = 'dataSourcing', index_col=[])
             featureEngineeringData = pandas.read_excel(filename, sheet_name = 'featureEngineering', index_col=[])
             modelingData = pandas.read_excel(filename, sheet_name = 'modelling', index_col=[])
-            messageData = pandas.read_excel(filename	, sheet_name = 'messages', index_col=[])
+            messageData = pandas.read_excel(filename    , sheet_name = 'messages', index_col=[])
             experimentID = max(modelingData["experimentID"]) + 1
             
+        if self._dataSourcing is None:
+            df_dataSourcing = pandas.DataFrame(index=[1])
+        else:
+            df_dataSourcing = pandas.DataFrame(1, index=[1], columns = self._dataSourcing)
 
-        df_dataSourcing = pandas.DataFrame(1, index=[1], columns = self._dataSourcing)
         df_dataSourcing.insert(0, 'experimentID', experimentID)
         df_dataSourcing = pandas.concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
         
-        df_featureEngineering = pandas.DataFrame(1, index=[1], columns = self.featureEngineering)
+        if self.featureEngineering is None:
+            df_featureEngineering = pandas.DataFrame(index=[1])     
+        else:
+            df_featureEngineering = pandas.DataFrame(1, index=[1], columns = self.featureEngineering)
+            
         df_featureEngineering.insert(0, 'experimentID', experimentID)
         df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering], ignore_index=True).fillna(0)
 
-       
-        modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}})
+        
+        if self._dataSourcing is None:
+            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        else:
+            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
                 
         #message table       
@@ -125,7 +141,7 @@ class Experiment(object):
         'timestamp in UTC' : datetime.utcnow().isoformat()
         }
         
-		  
+          
         df_messages = pandas.DataFrame(index =[1], data = data)
         df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
  
@@ -138,12 +154,4 @@ class Experiment(object):
         
             df_messages.to_excel(writer, sheet_name = 'messages', index = False)     
         
-        print("Explore our tool at www.vevesta.com")
-        
-     
-             
-        
-        
-        
-            
-        
+        print("Explore our tool at www.vevesta.com for free. Register now!!")
