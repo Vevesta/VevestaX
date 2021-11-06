@@ -2,9 +2,9 @@ from setuptools import find_packages, setup
 setup(
     name='vevestaX',
     packages=find_packages(include=['vevestaX']),
-    version='0.2.3',
-    description='Track failed and successful experiments as well as features'
-    author='Priyanka',
+    version='0.3.0',
+    description='Track failed and successful experiments as well as features',
+    author='Vevesta Labs',
     license='Apache 2.0',
     install_requires=['pandas','ipynbname','datetime','openpyxl','xlrd'],
     setup_requires=['pytest-runner'],
