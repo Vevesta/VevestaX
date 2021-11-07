@@ -21,8 +21,12 @@ How to extract engineered features
 How to track variables used in modelling section of the code
 ![image](https://user-images.githubusercontent.com/81908188/140041422-97be7287-111d-40c3-bc8f-d921db90acf8.png)
 
-How to dump the features and modelling variables in an xlsx file
-![image](https://user-images.githubusercontent.com/81908188/140041545-1e23239b-059b-4fc2-b81d-908074982afe.png)
+How to dump the features and modelling variables in an given xlsx file
+![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
 
-For additional features, explore our tool at www.vevesta.com
+Alternatively, write the experiment into the default file, vevesta.xlsx
+![image](https://user-images.githubusercontent.com/81908188/140653897-6654e94b-a332-49a2-a7b7-416cb5bded5c.png)
+
+
+For additional features, explore our tool at www.vevesta.com .
 For comments and suggestions, reach out to vevestax@vevesta.com
