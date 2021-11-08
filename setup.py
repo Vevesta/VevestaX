@@ -2,8 +2,8 @@ from setuptools import find_packages, setup
 setup(
     name='vevestaX',
     packages=find_packages(include=['vevestaX']),
-    version='0.3.0',
-    description='Track failed and successful experiments as well as features',
+    version='0.3.1',
+    description='Track failed and successful machine learning experiments as well as features',
     author='Vevesta Labs',
     license='Apache 2.0',
     install_requires=['pandas','ipynbname','datetime','openpyxl','xlrd'],
