@@ -29,4 +29,4 @@ Alternatively, write the experiment into the default file, vevesta.xlsx
 
 
 For additional features, explore our tool at www.vevesta.com .
-For comments and suggestions, reach out to vevestax@vevesta.com
+For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
