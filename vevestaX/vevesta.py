@@ -131,6 +131,7 @@ class Experiment(object):
             modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
         else:
             modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing)+','+','.join(self.featureEngineering) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
                 
         #message table       
