@@ -91,7 +91,6 @@ class Experiment(object):
         featureEngineeringData = None
         messageData = None
         experimentID = 1
-        if_sheet_exists = None
         mode = 'w'
 
         if(filename==None):
@@ -101,7 +100,6 @@ class Experiment(object):
         #check if file already exists
         if(os.path.isfile(filename)):            
             #mode = 'a'
-            if_sheet_exists = 'replace'
             existingData = pandas.read_excel(filename, sheet_name = 'dataSourcing', index_col=[])
             featureEngineeringData = pandas.read_excel(filename, sheet_name = 'featureEngineering', index_col=[])
             modelingData = pandas.read_excel(filename, sheet_name = 'modelling', index_col=[])
@@ -125,10 +123,15 @@ class Experiment(object):
         df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering], ignore_index=True).fillna(0)
 
         
-        if self._dataSourcing is None:
+        if self._dataSourcing is None and self._featureEngineering is None:
             modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
-        else:
+        elif self._dataSourcing is None:
+            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.featureEngineering) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        elif self._featureEngineering is None:
             modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        else:
+            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing)+','+','.join(self.featureEngineering) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
                 
         #message table       
@@ -145,7 +148,7 @@ class Experiment(object):
         df_messages = pandas.DataFrame(index =[1], data = data)
         df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
  
-        with pandas.ExcelWriter(filename, engine='openpyxl', if_sheet_exists=if_sheet_exists) as writer: 
+        with pandas.ExcelWriter(filename, engine='openpyxl') as writer: 
             
             df_dataSourcing.to_excel(writer, sheet_name = 'dataSourcing', index =False) 
             
