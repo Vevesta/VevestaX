@@ -29,4 +29,5 @@ Alternatively, write the experiment into the default file, vevesta.xlsx
 
 
 For additional features, explore our tool at www.vevesta.com .
-For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
+For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com . 
+Find detailed blog on the vevestaX on https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c
