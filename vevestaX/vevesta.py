@@ -3,6 +3,7 @@ import inspect
 import os.path
 import ipynbname
 from datetime import datetime
+import random
 
 def test():
     return 'Test Executed Succesfully'
@@ -82,7 +83,9 @@ class Experiment(object):
     end = endModelling
     #Exp = Experiment
     #-------------
-
+    def getMessage(self):
+        messagesList=["For additional features, explore our tool at www.vevesta.com for free.","Track evolution of Data Science projects at www.vevesta.com for free.","Manage notes, codes and models in one single place by using our tool at www.vevesta.com.","For faster discovery of features, explore our tool at www.vevesta.com.","Find the right technique for your Machine Learning project at www.vevesta.com."]
+        return (messagesList[random.randint(0,len(messagesList)-1)])
         
     def dump(self, techniqueUsed, filename = None, message = None, version = None):
         
@@ -157,4 +160,5 @@ class Experiment(object):
         
             df_messages.to_excel(writer, sheet_name = 'messages', index = False)     
         
-        print("For additional features, explore our tool at www.vevesta.com for free.")
+        message=self.getMessage()
+        print(message)
