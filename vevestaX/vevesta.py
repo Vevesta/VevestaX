@@ -3,6 +3,7 @@ import inspect
 import os.path
 import ipynbname
 from datetime import datetime
+import random
 
 def test():
     return 'Test Executed Succesfully'
@@ -157,4 +158,5 @@ class Experiment(object):
         
             df_messages.to_excel(writer, sheet_name = 'messages', index = False)     
         
-        print("For additional features, explore our tool at www.vevesta.com for free.")
+        messagesList=["For additional features, explore our tool at www.vevesta.com for free.","Manage notes, codes and models in one single place by using our tool at www.vevesta.com.","For faster discovery of features, explore our tool at www.vevesta.com.","Find the right technique for your Machine Learning project at www.vevesta.com."]
+        print(messagesList[random.randint(0,3)])
