@@ -13,7 +13,7 @@ How to import a library and create the object
 ![image](https://user-images.githubusercontent.com/81908188/140261967-6cf57c32-d58c-4f85-8eba-7a5387295fa1.png)
 
 How to extract features present in input data.
-![image](https://user-images.githubusercontent.com/81908188/140040983-87969009-2996-4320-8e28-513736dc2fab.png)
+![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
 
 How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
