@@ -4,6 +4,7 @@ import os.path
 import ipynbname
 from datetime import datetime
 import random
+import sys
 
 def test():
     return 'Test Executed Succesfully'
@@ -17,7 +18,20 @@ class Experiment(object):
         self.variables = {}
                 
     def get_filename(self):
-        return ipynbname.name()
+        try:
+            try:
+                filename = ipynbname.name() + '.ipynb'
+            
+            except:
+                try:
+                    filePath = dict(inspect.getmembers(inspect.stack()[2][0]))['f_locals']['__file__']
+                except:
+                    filePath = sys.argv[0]
+                filename = os.path.basename(filePath)
+        except:
+            filename = None
+
+        return filename
 
     @property
     def dataSourcing(self):
@@ -84,7 +98,12 @@ class Experiment(object):
     #Exp = Experiment
     #-------------
     def getMessage(self):
-        messagesList=["For additional features, explore our tool at www.vevesta.com for free.","Track evolution of Data Science projects at www.vevesta.com for free.","Manage notes, codes and models in one single place by using our tool at www.vevesta.com.","For faster discovery of features, explore our tool at www.vevesta.com.","Find the right technique for your Machine Learning project at www.vevesta.com."]
+        messagesList=["For additional features, explore our tool at www.vevesta.com for free.",
+        "Track evolution of Data Science projects at www.vevesta.com for free.",
+        "Manage notes, codes and models in one single place by using our tool at www.vevesta.com.",
+        "For faster discovery of features, explore our tool at www.vevesta.com.",
+        "Find the right technique for your Machine Learning project at www.vevesta.com."
+        ]
         return (messagesList[random.randint(0,len(messagesList)-1)])
         
     def dump(self, techniqueUsed, filename = None, message = None, version = None):
@@ -143,7 +162,7 @@ class Experiment(object):
         'techniqueUsed': techniqueUsed,
         'message': message,
         'version': version,
-        'filename' : self.get_filename() + '.ipynb',
+        'filename' : self.get_filename(),
         'timestamp in UTC' : datetime.utcnow().isoformat()
         }
         
