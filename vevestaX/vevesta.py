@@ -27,10 +27,7 @@ class Experiment(object):
                     filePath = dict(inspect.getmembers(inspect.stack()[2][0]))['f_locals']['__file__']
                 except:
                     filePath = sys.argv[0]
-                for i in range(len(filePath)-1,0,-1):
-                    if filePath[i] == "\\":
-                        filename = filePath[i+1:]
-                        break
+                filename = os.path.basename(filePath)
         except:
             filename = None
 
