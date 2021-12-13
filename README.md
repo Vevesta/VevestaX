@@ -21,7 +21,7 @@ How to extract features present in input data.
 How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
 
-How to track variables used in modelling section of the code. V>start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block.
+How to track variables used in modelling section of the code. V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block.
 ![image](https://user-images.githubusercontent.com/81908188/140041422-97be7287-111d-40c3-bc8f-d921db90acf8.png)
 
 How to dump the features and modelling variables in an given xlsx file
