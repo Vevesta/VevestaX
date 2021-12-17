@@ -31,6 +31,10 @@ Alternatively, write the experiment into the default file, vevesta.xlsx
 ![image](https://user-images.githubusercontent.com/81908188/140653897-6654e94b-a332-49a2-a7b7-416cb5bded5c.png)
 
 
+A sample output excel file has been uploaded on google sheets. Its url is https://docs.google.com/spreadsheets/d/1NXHqzmGegyHm2TnvGFpoe3MSI8N5YAfx/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true
+
+
+
 For additional features, explore our tool at www.vevesta.com . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
 We at vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c
