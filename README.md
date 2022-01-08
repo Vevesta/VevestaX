@@ -4,7 +4,7 @@
 
 # Track failed and successful Machine Learning experiments as well as features.
 
-VevestaX is an open source Python package for ML Engineers and Data Scientists.  It includes modules for tracking features sourced from data, feature engineering and variables. The output is an excel file which has tabs namely, data sourcing, feature engineering and modelling. The library can be used with Jupyter notebook, IDEs like spyder and while running the python script through command line.
+VevestaX is an open source Python package for ML Engineers and Data Scientists.  It includes modules for tracking features sourced from data, feature engineering and variables. The output is an excel file which has tabs namely, data sourcing, feature engineering and modelling. The library can be used with Jupyter notebook, IDEs like spyder or while running the python script through command line.
 
 
 
