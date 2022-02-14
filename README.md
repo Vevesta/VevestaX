@@ -22,7 +22,7 @@ V=v.Experiment()
 
 How to extract features present in input data.
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
-SOURCE CODE:
+Source code:
 ```
 #read the dataset
 import pandas as pd
@@ -41,7 +41,7 @@ V.ds
 How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
 
-SOURCE CODE
+Source code
 ```
 #Extract features engineered
 V.fe=df  
@@ -74,6 +74,11 @@ V.endModelling()
 ```
 How to dump the features and modelling variables in an given xlsx file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
+Source code:
+```
+# Dump the datasourcing, features engineered and the variables tracked in a xlsx file
+V.dump(techniqueUsed='XGBoost',filename="result.xlsx",message="XGboost with data augmentation was used",version=1)
+```
 
 Alternatively, write the experiment into the default file, vevesta.xlsx
 ![image](https://user-images.githubusercontent.com/81908188/140653897-6654e94b-a332-49a2-a7b7-416cb5bded5c.png)
