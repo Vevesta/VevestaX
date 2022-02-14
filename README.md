@@ -90,6 +90,6 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 
 
 
-For additional features, explore our tool at www.vevesta.com . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
+For additional features, explore our tool at [Vevesta](www.vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
-We at vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c
+We at vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [medium](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
