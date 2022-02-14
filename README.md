@@ -22,6 +22,21 @@ V=v.Experiment()
 
 How to extract features present in input data.
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
+SOURCE CODE:
+```
+#read the dataset
+import pandas as pd
+df=pd.read_csv("salaries.csv")
+df.head(2)
+
+#Extract the columns names for features
+V.ds=df
+# you can also use:
+#   V.datasourcing = df
+
+#Print the feature being used
+V.ds
+```
 
 How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
