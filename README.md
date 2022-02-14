@@ -13,6 +13,11 @@ How to install the library:
 pip install vevestaX
 ```
 How to import a library and create the object
+```
+#import the vevesta Library
+from vevestaX import vevesta as v
+V=v.Experiment()
+```
 ![image](https://user-images.githubusercontent.com/81908188/140261967-6cf57c32-d58c-4f85-8eba-7a5387295fa1.png)
 
 How to extract features present in input data.
