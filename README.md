@@ -77,7 +77,7 @@ How to dump the features and modelling variables in an given xlsx file
 Source code:
 ```
 # Dump the datasourcing, features engineered and the variables tracked in a xlsx file
-V.dump(techniqueUsed='XGBoost',filename="result.xlsx",message="XGboost with data augmentation was used",version=1)
+V.dump(techniqueUsed='XGBoost',filename="vevestaDump1.xlsx",message="XGboost with data augmentation was used",version=1)
 ```
 
 Alternatively, write the experiment into the default file, vevesta.xlsx
