@@ -219,3 +219,10 @@ zict==2.0.0
 zipp==3.1.0
 zope.event==4.4
 zope.interface==4.7.1
+
+vevestax~=1.0.0
+setuptools~=58.0.4
+pandas~=1.3.5
+ipynbname~=2021.3.2
+requests~=2.27.1
+datetime~=4.3
