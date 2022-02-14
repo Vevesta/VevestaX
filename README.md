@@ -9,9 +9,9 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 
 
 How to install the library:
-
-$ pip install vevestaX
-
+```
+pip install vevestaX
+```
 How to import a library and create the object
 ![image](https://user-images.githubusercontent.com/81908188/140261967-6cf57c32-d58c-4f85-8eba-7a5387295fa1.png)
 
