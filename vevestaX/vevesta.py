@@ -198,15 +198,11 @@ class Experiment(object):
             message = self.getMessage()
             print(message)
 
-        return {"messages": data, "df_ds": df_dataSourcing, "df_fe": df_featureEngineering}
+
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
-        data = self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
+        self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
-        messages = data['messages']
-        data_sourced = list(json.loads(data['df_ds'].iloc[-1:].to_json(orient='index')).values())[0]
-        feature_engineered = list(json.loads(data['df_fe'].iloc[-1:].to_json(orient='index')).values())[0]
-        
         # api-endpoint
         token = open("access_token.txt", "r").read()
         backend_url = 'http://localhost:8082/VevestaX'
@@ -219,13 +215,13 @@ class Experiment(object):
         payload = {
             "projectId": project_id,
             "title": techniqueUsed,
-            "variables": self.variables,
-            "messages": messages,
-            "dataSourcing": data_sourced,
-            "featureEngineering": feature_engineered
+            "message": message,
+            "modeling": self.variables,
+            "dataSourced": self._dataSourcing.tolist(),
+            "featureEngineered": self._featureEngineering.tolist()
         }
         response = requests.post(url=backend_url, headers=headers, data=json.dumps(payload))
         if response.status_code == 200:
-            print("Dumped the experiment in the backend")
+            print("Wrote experiment to tool, vevesta")
         else:
-            print("Failed to dump the experiment in the backend")
+            print("Failed to write experiment to tool, vevesta")
