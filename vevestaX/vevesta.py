@@ -5,23 +5,27 @@ import ipynbname
 from datetime import datetime
 import random
 import sys
+import requests
+import json
+
 
 def test():
-    return 'Test Executed Succesfully'
+    return 'Test Executed Successfully'
+
 
 class Experiment(object):
-    def __init__(self ):
+    def __init__(self):
         self._dataSourcing = None
         self._featureEngineering = None
     
         self.startlocals = None
         self.variables = {}
-                
+
     def get_filename(self):
         try:
             try:
                 filename = ipynbname.name() + '.ipynb'
-            
+
             except:
                 try:
                     filePath = dict(inspect.getmembers(inspect.stack()[2][0]))['f_locals']['__file__']
@@ -42,7 +46,6 @@ class Experiment(object):
         if type(value) == pandas.core.frame.DataFrame:
             self._dataSourcing = value.columns
 
-
     @property
     def ds(self):
         return self._dataSourcing
@@ -51,7 +54,6 @@ class Experiment(object):
     def ds(self, value):
         self.dataSourcing = value
 
-        
     @property
     def featureEngineering(self):
         return self._featureEngineering
@@ -70,7 +72,6 @@ class Experiment(object):
                 cols = cols.drop(self.dataSourcing)
                 self._featureEngineering = cols
 
-
     @property
     def fe(self):
         return self._featureEngineering
@@ -78,36 +79,40 @@ class Experiment(object):
     @featureEngineering.setter
     def fe(self, value):
         self.featureEngineering = value
-        
+
     def startModelling(self):
         self.startlocals = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
 
-    
     def endModelling(self):
 
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
-       
-        self.variables ={**self.variables ,**{i:temp.get(i) for i in temp if i not in self.startlocals and i[0]!='_' and type(temp[i]) in [int, float, bool, str]}}
-        
+
+        self.variables = {**self.variables, **{i: temp.get(i) for i in temp if
+                                               i not in self.startlocals and i[0] != '_' and type(temp[i]) in [int,
+                                                                                                               float,
+                                                                                                               bool,
+                                                                                                               str]}}
+
         return self.variables
-    
-    #create alias of method modellingStart and modellingEnd
+
+    # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
-    #Exp = Experiment
-    #-------------
+
+    # Exp = Experiment
+    # -------------
     def getMessage(self):
-        messagesList=["For additional features, explore our tool at www.vevesta.com for free.",
-        "Track evolution of Data Science projects at www.vevesta.com for free.",
-        "Manage notes, codes and models in one single place by using our tool at www.vevesta.com.",
-        "For faster discovery of features, explore our tool at www.vevesta.com.",
-        "Find the right technique for your Machine Learning project at www.vevesta.com."
-        ]
-        return (messagesList[random.randint(0,len(messagesList)-1)])
-        
-    def dump(self, techniqueUsed, filename = None, message = None, version = None):
-        
+        messagesList = ["For additional features, explore our tool at www.vevesta.com for free.",
+                        "Track evolution of Data Science projects at www.vevesta.com for free.",
+                        "Manage notes, codes and models in one single place by using our tool at www.vevesta.com.",
+                        "For faster discovery of features, explore our tool at www.vevesta.com.",
+                        "Find the right technique for your Machine Learning project at www.vevesta.com."
+                        ]
+        return (messagesList[random.randint(0, len(messagesList) - 1)])
+
+    def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
+
         existingData = None
         modelingData = None
         featureEngineeringData = None
@@ -115,69 +120,108 @@ class Experiment(object):
         experimentID = 1
         mode = 'w'
 
-        if(filename==None):
+        if (filename == None):
             filename = "vevesta.xlsx"
         print("Dumped the experiment in the file " + filename)
 
-        #check if file already exists
-        if(os.path.isfile(filename)):            
-            #mode = 'a'
-            existingData = pandas.read_excel(filename, sheet_name = 'dataSourcing', index_col=[])
-            featureEngineeringData = pandas.read_excel(filename, sheet_name = 'featureEngineering', index_col=[])
-            modelingData = pandas.read_excel(filename, sheet_name = 'modelling', index_col=[])
-            messageData = pandas.read_excel(filename    , sheet_name = 'messages', index_col=[])
+        # check if file already exists
+        if (os.path.isfile(filename)):
+            # mode = 'a'
+            existingData = pandas.read_excel(filename, sheet_name='dataSourcing', index_col=[])
+            featureEngineeringData = pandas.read_excel(filename, sheet_name='featureEngineering', index_col=[])
+            modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+            messageData = pandas.read_excel(filename, sheet_name='messages', index_col=[])
             experimentID = max(modelingData["experimentID"]) + 1
-            
+
         if self._dataSourcing is None:
             df_dataSourcing = pandas.DataFrame(index=[1])
         else:
-            df_dataSourcing = pandas.DataFrame(1, index=[1], columns = self._dataSourcing)
+            df_dataSourcing = pandas.DataFrame(1, index=[1], columns=self._dataSourcing)
 
         df_dataSourcing.insert(0, 'experimentID', experimentID)
         df_dataSourcing = pandas.concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
-        
-        if self.featureEngineering is None:
-            df_featureEngineering = pandas.DataFrame(index=[1])     
-        else:
-            df_featureEngineering = pandas.DataFrame(1, index=[1], columns = self.featureEngineering)
-            
-        df_featureEngineering.insert(0, 'experimentID', experimentID)
-        df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering], ignore_index=True).fillna(0)
 
-        
-        if self._dataSourcing is None and self._featureEngineering is None:
-            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
-        elif self._dataSourcing is None:
-            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.featureEngineering) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
-        elif self._featureEngineering is None:
-            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
+        if self.featureEngineering is None:
+            df_featureEngineering = pandas.DataFrame(index=[1])
         else:
-            modeling = pandas.DataFrame(data = {**{'experimentID':experimentID, 'features':','.join(self.dataSourcing)+','+','.join(self.featureEngineering) , 'timestamp in UTC':datetime.utcnow().isoformat()} , **{ k:[v] for k,v in self.variables.items()}},index=[0])
-        
+            df_featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
+
+        df_featureEngineering.insert(0, 'experimentID', experimentID)
+        df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering],
+                                              ignore_index=True).fillna(0)
+
+        if self._dataSourcing is None and self._featureEngineering is None:
+            modeling = pandas.DataFrame(
+                data={**{'experimentID': experimentID, 'timestamp in UTC': datetime.utcnow().isoformat()},
+                      **{k: [v] for k, v in self.variables.items()}}, index=[0])
+        elif self._dataSourcing is None:
+            modeling = pandas.DataFrame(data={
+                **{'experimentID': experimentID, 'features': ','.join(self.featureEngineering),
+                   'timestamp in UTC': datetime.utcnow().isoformat()}, **{k: [v] for k, v in self.variables.items()}},
+                index=[0])
+        elif self._featureEngineering is None:
+            modeling = pandas.DataFrame(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
+                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                              **{k: [v] for k, v in self.variables.items()}}, index=[0])
+        else:
+            modeling = pandas.DataFrame(data={**{'experimentID': experimentID,
+                                                 'features': ','.join(self.dataSourcing) + ',' + ','.join(
+                                                     self.featureEngineering),
+                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                              **{k: [v] for k, v in self.variables.items()}}, index=[0])
+
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
-                
-        #message table       
+
+        # message table
         data = {
-        'experimentID': experimentID,
-        'techniqueUsed': techniqueUsed,
-        'message': message,
-        'version': version,
-        'filename' : self.get_filename(),
-        'timestamp in UTC' : datetime.utcnow().isoformat()
+            'experimentID': experimentID,
+            'techniqueUsed': techniqueUsed,
+            'message': message,
+            'version': version,
+            'filename': self.get_filename(),
+            'timestamp in UTC': datetime.utcnow().isoformat()
         }
-        
-          
-        df_messages = pandas.DataFrame(index =[1], data = data)
+
+        df_messages = pandas.DataFrame(index=[1], data=data)
         df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
- 
-        with pandas.ExcelWriter(filename, engine='openpyxl') as writer: 
-            
-            df_dataSourcing.to_excel(writer, sheet_name = 'dataSourcing', index =False) 
-            
-            df_featureEngineering.to_excel(writer, sheet_name = 'featureEngineering', index = False)
-            modeling.to_excel(writer, sheet_name = 'modelling', index = False)
-        
-            df_messages.to_excel(writer, sheet_name = 'messages', index = False)     
-        
-        message=self.getMessage()
-        print(message)
+
+        with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
+
+            df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
+
+            df_featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
+            modeling.to_excel(writer, sheet_name='modelling', index=False)
+
+            df_messages.to_excel(writer, sheet_name='messages', index=False)
+
+        if showMessage:
+            message = self.getMessage()
+            print(message)
+
+
+
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
+        self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
+
+        # api-endpoint
+        token = open("access_token.txt", "r").read()
+        backend_url = 'http://localhost:8082/VevestaX'
+        headers = {
+            'Authorization': 'Bearer ' + token,
+            'Access-Control-Allow-Origin': '*',
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        }
+        payload = {
+            "projectId": project_id,
+            "title": techniqueUsed,
+            "message": message,
+            "modeling": self.variables,
+            "dataSourced": self._dataSourcing.tolist(),
+            "featureEngineered": self._featureEngineering.tolist()
+        }
+        response = requests.post(url=backend_url, headers=headers, data=json.dumps(payload))
+        if response.status_code == 200:
+            print("Wrote experiment to tool, vevesta")
+        else:
+            print("Failed to write experiment to tool, vevesta")
