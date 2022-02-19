@@ -17,6 +17,7 @@ class Experiment(object):
     def __init__(self):
         self._dataSourcing = None
         self._featureEngineering = None
+        self._data=None
     
         self.startlocals = None
         self.variables = {}
@@ -45,6 +46,10 @@ class Experiment(object):
     def dataSourcing(self, value):
         if type(value) == pandas.core.frame.DataFrame:
             self._dataSourcing = value.columns
+            self._data=value
+            self._sampleSize=len(value)
+            self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
+            self._data=self._data.sample(self._sampleSize)
 
     @property
     def ds(self):
@@ -193,6 +198,7 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
+            pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
         if showMessage:
             message = self.getMessage()
