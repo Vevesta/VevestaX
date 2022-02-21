@@ -88,7 +88,7 @@ V.dump(techniqueUsed='XGBoost')
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/1NXHqzmGegyHm2TnvGFpoe3MSI8N5YAfx/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true)
 
-
+If you liked the library, please give us a github star.
 
 For additional features, explore our tool at [Vevesta](https://www.vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
