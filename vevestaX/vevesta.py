@@ -210,8 +210,8 @@ class Experiment(object):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
-        token = open("access_token.txt", "r").read()
-        backend_url = 'http://localhost:8082/VevestaX'
+        token = open("access_token", "r").read()
+        backend_url = 'http://15.207.43.253:8080/services-1.0-SNAPSHOT/VevestaX'
         headers = {
             'Authorization': 'Bearer ' + token,
             'Access-Control-Allow-Origin': '*',
