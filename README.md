@@ -32,7 +32,7 @@ df.head(2)
 #Extract the columns names for features
 V.ds=df
 # you can also use:
-#   V.datasourcing = df
+#   V.dataSourcing = df
 
 #Print the feature being used
 V.ds
