@@ -205,7 +205,7 @@ class Experiment(object):
 
         # api-endpoint
         token = open("access_token.txt", "r").read()
-        backend_url = 'http://15.207.43.253:8080/services-1.0-SNAPSHOT/VevestaX'
+        backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT/VevestaX'
         headers = {
             'Authorization': 'Bearer ' + token,
             'Access-Control-Allow-Origin': '*',
