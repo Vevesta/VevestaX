@@ -201,7 +201,7 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-        self._plot(filename)
+        # self._plot(filename)
 
         if showMessage:
             message = self.getMessage()
