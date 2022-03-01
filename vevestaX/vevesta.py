@@ -7,7 +7,8 @@ import random
 import sys
 import requests
 import json
-
+import matplotlib.pyplot as plt
+import openpyxl
 
 def test():
     return 'Test Executed Successfully'
@@ -50,7 +51,7 @@ class Experiment(object):
             self._sampleSize=len(value)
             self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
             self._data=self._data.sample(self._sampleSize)
-
+ 
     @property
     def ds(self):
         return self._dataSourcing
@@ -200,18 +201,98 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
+        self._plot(filename)
+
         if showMessage:
             message = self.getMessage()
             print(message)
 
+        
 
+
+
+    def _plot(self, filename):
+
+        modelingData = None
+
+        if (filename == None):
+            return print("Error: Provide the Excel File to plot the models")
+
+        # skipcols = ['experimentID', 'features']
+        # cols = for column in modelingData
+
+        if (os.path.isfile(filename)):
+            modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+
+        modelingData['timestamp in UTC'] = pandas.to_datetime(['timestamp in UTC'],)
+        print(modelingData['timestamp in UTC'].dtypes)
+
+        
+        # excluding numeric, datetime type
+        nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
+        modelingData.drop(nonNumericColumns, axis=1, inplace=True)
+        modelingData.drop('experimentID', axis=1, inplace=True)
+        print(modelingData)
+        # print(nonNumericColumns)
+
+        workbbok = openpyxl.load_workbook(filename)
+        workbbok.create_sheet('performancePlots')
+        # workbook = xlsxwriter.Workbook(filename)
+        plotSheet=workbbok['performancePlots']
+        xAxis = list(nonNumericColumns['timestamp in UTC'])
+        
+        columnValue = 4
+        for column in modelingData.columns:
+            yAxis = list(modelingData[column])
+
+            fig,ax=plt.subplots()
+            ax.plot(xAxis,yAxis)
+            
+
+            # Widen the first column to make the text clearer.
+            # plotSheet.set_column('A:A', 40)
+
+            plt.xticks(rotation = 45)
+            
+            columntext = 'A'
+
+            columntext += str(columnValue)      
+            
+        
+            plt.title('timestamp vs '+str(column))
+            plt.xlabel('Timestamp')
+            plt.ylabel(str(column))
+
+            plt.savefig(str(column)+'.png')
+            imagename = str(column)+'.png'
+
+            img = openpyxl.drawing.image.Image(imagename)
+
+            img.anchor = columntext
+            plotSheet.add_image(img)
+
+            columnValue+=20
+
+        workbbok.save(filename)
+        # workbook.close()
+    
+    # to save the plot in a directory
+    def directorysave(fig, column):
+        script_dir = os.path.dirname('vevestaXdump')
+        results_dir = os.path.join(script_dir, '/')
+        sample_file_name = column
+
+        if not os.path.isdir(results_dir):
+            os.makedirs(results_dir)
+
+        fig.savefig(results_dir + sample_file_name)
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
         token = open("access_token.txt", "r").read()
-        backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT/VevestaX'
+        backend_url = 'http://localhost:8082/VevestaX'
         headers = {
             'Authorization': 'Bearer ' + token,
             'Access-Control-Allow-Origin': '*',
@@ -231,3 +312,5 @@ class Experiment(object):
             print("Wrote experiment to tool, vevesta")
         else:
             print("Failed to write experiment to tool, vevesta")
+
+
