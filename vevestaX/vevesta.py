@@ -109,11 +109,11 @@ class Experiment(object):
     # Exp = Experiment
     # -------------
     def getMessage(self):
-        messagesList = ["For additional features, explore our tool at www.vevesta.com for free.",
-                        "Track evolution of Data Science projects at www.vevesta.com for free.",
-                        "Manage notes, codes and models in one single place by using our tool at www.vevesta.com.",
-                        "For faster discovery of features, explore our tool at www.vevesta.com.",
-                        "Find the right technique for your Machine Learning project at www.vevesta.com."
+        messagesList = ["For additional features, explore our tool at https://www.vevesta.com?utm_source=vevestaX for free.",
+                        "Track evolution of Data Science projects at https://www.vevesta.com?utm_source=vevestaX for free.",
+                        "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX.",
+                        "For faster discovery of features, explore our tool at https://www.vevesta.com?utm_source=vevestaX.",
+                        "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX."
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
 
@@ -263,10 +263,10 @@ class Experiment(object):
             plt.xlabel('Timestamp')
             plt.ylabel(str(column))
 
-            plt.savefig(str(column)+'.png')   # ------
-            imagename = str(column)+'.png'  # -------
+            plt.savefig(str(column)+'.png')  
+            imagename = str(column)+'.png'  
 
-            img = openpyxl.drawing.image.Image(imagename)   # -----
+            img = openpyxl.drawing.image.Image(imagename)   
 
             img.anchor = columntext
             plotSheet.add_image(img)
