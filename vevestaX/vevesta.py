@@ -263,10 +263,10 @@ class Experiment(object):
             plt.xlabel('Timestamp')
             plt.ylabel(str(column))
 
-            plt.savefig(str(column)+'.png')
-            imagename = str(column)+'.png'
+            plt.savefig(str(column)+'.png')   # ------
+            imagename = str(column)+'.png'  # -------
 
-            img = openpyxl.drawing.image.Image(imagename)
+            img = openpyxl.drawing.image.Image(imagename)   # -----
 
             img.anchor = columntext
             plotSheet.add_image(img)
