@@ -111,9 +111,9 @@ class Experiment(object):
     def getMessage(self):
         messagesList = ["For additional features, explore our tool at https://www.vevesta.com?utm_source=vevestaX for free.",
                         "Track evolution of Data Science projects at https://www.vevesta.com?utm_source=vevestaX for free.",
-                        "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX.",
-                        "For faster discovery of features, explore our tool at https://www.vevesta.com?utm_source=vevestaX.",
-                        "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX."
+                        "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX",
+                        "For faster discovery of features, explore our tool at https://www.vevesta.com?utm_source=vevestaX",
+                        "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
 
