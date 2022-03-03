@@ -10,6 +10,7 @@ import json
 import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
+import os, shutil
 
 def test():
     return 'Test Executed Successfully'
@@ -227,14 +228,15 @@ class Experiment(object):
         # changing the values in timestamp column to dates (vector slicing)
         nonNumericColumns['timestamp in UTC'] = nonNumericColumns['timestamp in UTC'].str[:9]
 
+        directoryToDumpData = 'vevestaXDump'
+        self.__emptfldr(directoryToDumpData)
         # creating a new folder in current directory
-        Path("vevestaXDump").mkdir(parents=True, exist_ok=True)
+        Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
         workbbok = openpyxl.load_workbook(filename)
         workbbok.create_sheet('performancePlots')
         plotSheet=workbbok['performancePlots']
         xAxis = list(nonNumericColumns['timestamp in UTC'])
-        img_dir = 'vevestaXDump/'
         columnValue = 2
 
         for column in modelingData.columns:
@@ -253,15 +255,29 @@ class Experiment(object):
             plt.xlabel('Date')
             plt.ylabel(str(column))
 
-            plt.savefig(os.path.join(img_dir,imagename), bbox_inches='tight') 
+            plt.savefig(os.path.join(directoryToDumpData,imagename), bbox_inches='tight') 
 
-            img = openpyxl.drawing.image.Image(os.path.join(img_dir,imagename))  
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imagename))  
             img.anchor = columntext
             plotSheet.add_image(img)
 
             columnValue+=20
 
         workbbok.save(filename)
+
+    # to turncate teh content inside the vevestaXDump folder if it exist
+    def __emptfldr(self, dir_name):
+        folder = dir_name
+        if os.path.isdir(folder):
+            for filename in os.listdir(folder):
+                file_path = os.path.join(folder, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
