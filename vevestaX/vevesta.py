@@ -9,6 +9,7 @@ import requests
 import json
 import matplotlib.pyplot as plt
 import openpyxl
+from pathlib import Path
 
 def test():
     return 'Test Executed Successfully'
@@ -108,7 +109,7 @@ class Experiment(object):
 
     # Exp = Experiment
     # -------------
-    def getMessage(self):
+    def __getMessage(self):
         messagesList = ["For additional features, explore our tool at https://www.vevesta.com?utm_source=vevestaX for free.",
                         "Track evolution of Data Science projects at https://www.vevesta.com?utm_source=vevestaX for free.",
                         "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX",
@@ -201,91 +202,66 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-        # self._plot(filename)
+        self.__plot(filename)
 
         if showMessage:
-            message = self.getMessage()
+            message = self.__getMessage()
             print(message)
 
-        
 
-
-
-    def _plot(self, filename):
+    def __plot(self, filename):
 
         modelingData = None
 
         if (filename == None):
             return print("Error: Provide the Excel File to plot the models")
 
-        # skipcols = ['experimentID', 'features']
-        # cols = for column in modelingData
-
         if (os.path.isfile(filename)):
             modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
-
-        modelingData['timestamp in UTC'] = pandas.to_datetime(['timestamp in UTC'],)
-        print(modelingData['timestamp in UTC'].dtypes)
-
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
         modelingData.drop(nonNumericColumns, axis=1, inplace=True)
         modelingData.drop('experimentID', axis=1, inplace=True)
-        print(modelingData)
-        # print(nonNumericColumns)
+        
+        # changing the values in timestamp column to dates (vector slicing)
+        nonNumericColumns['timestamp in UTC'] = nonNumericColumns['timestamp in UTC'].str[:9]
+
+        # creating a new folder in current directory
+        Path("vevestaXDump").mkdir(parents=True, exist_ok=True)
 
         workbbok = openpyxl.load_workbook(filename)
         workbbok.create_sheet('performancePlots')
-        # workbook = xlsxwriter.Workbook(filename)
         plotSheet=workbbok['performancePlots']
         xAxis = list(nonNumericColumns['timestamp in UTC'])
-        
-        columnValue = 4
+        img_dir = 'vevestaXDump/'
+        columnValue = 2
+
         for column in modelingData.columns:
             yAxis = list(modelingData[column])
 
+            imagename = str(column)+'.png'
+            columntext = 'A'
+            columntext += str(columnValue)
+
+            # creates a seperate plots for every timestamp vs column and saves it
             fig,ax=plt.subplots()
             ax.plot(xAxis,yAxis)
-            
-
-            # Widen the first column to make the text clearer.
-            # plotSheet.set_column('A:A', 40)
-
+            # rotating the x axis labels
             plt.xticks(rotation = 45)
-            
-            columntext = 'A'
-
-            columntext += str(columnValue)      
-            
-        
-            plt.title('timestamp vs '+str(column))
-            plt.xlabel('Timestamp')
+            plt.title('Date vs '+str(column))
+            plt.xlabel('Date')
             plt.ylabel(str(column))
 
-            plt.savefig(str(column)+'.png')  
-            imagename = str(column)+'.png'  
+            plt.savefig(os.path.join(img_dir,imagename), bbox_inches='tight') 
 
-            img = openpyxl.drawing.image.Image(imagename)   
-
+            img = openpyxl.drawing.image.Image(os.path.join(img_dir,imagename))  
             img.anchor = columntext
             plotSheet.add_image(img)
 
             columnValue+=20
 
         workbbok.save(filename)
-        # workbook.close()
-    
-    # to save the plot in a directory
-    def directorysave(fig, column):
-        script_dir = os.path.dirname('vevestaXdump')
-        results_dir = os.path.join(script_dir, '/')
-        sample_file_name = column
-
-        if not os.path.isdir(results_dir):
-            os.makedirs(results_dir)
-
-        fig.savefig(results_dir + sample_file_name)
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
