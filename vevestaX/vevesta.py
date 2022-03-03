@@ -224,7 +224,7 @@ class Experiment(object):
             if 'modelling' in excelFile.sheetnames:
                 modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
             else:
-                return print("Modelling sheet doesn't exist in excel file")
+                return 
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
@@ -240,9 +240,9 @@ class Experiment(object):
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
-        workbbok = openpyxl.load_workbook(filename)
-        workbbok.create_sheet('performancePlots')
-        plotSheet=workbbok['performancePlots']
+        workbook = openpyxl.load_workbook(filename)
+        workbook.create_sheet('performancePlots')
+        plotSheet=workbook['performancePlots']
         xAxis = list(nonNumericColumns['timestamp'])
         columnValue = 2
 
@@ -270,7 +270,7 @@ class Experiment(object):
 
             columnValue+=20
 
-        workbbok.save(filename)
+        workbook.save(filename)
 
     # to turncate teh content inside the vevestaXDump folder if it exist
     def __emptfldr(self, dir_name):
