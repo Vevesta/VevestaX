@@ -1,8 +1,8 @@
+from email.utils import localtime
 import pandas
 import inspect
 import os.path
 import ipynbname
-from datetime import datetime
 import random
 import sys
 import requests
@@ -126,6 +126,7 @@ class Experiment(object):
         featureEngineeringData = None
         messageData = None
         experimentID = 1
+        localTimestamp = localtime().strftime("%Y-%m-%d %H:%M:%S")
         mode = 'w'
 
         if (filename == None):
@@ -160,22 +161,22 @@ class Experiment(object):
 
         if self._dataSourcing is None and self._featureEngineering is None:
             modeling = pandas.DataFrame(
-                data={**{'experimentID': experimentID, 'timestamp in UTC': datetime.utcnow().isoformat()},
+                data={**{'experimentID': experimentID, 'timestamp': localTimestamp},
                       **{k: [v] for k, v in self.variables.items()}}, index=[0])
         elif self._dataSourcing is None:
             modeling = pandas.DataFrame(data={
                 **{'experimentID': experimentID, 'features': ','.join(self.featureEngineering),
-                   'timestamp in UTC': datetime.utcnow().isoformat()}, **{k: [v] for k, v in self.variables.items()}},
+                   'timestamp': localTimestamp}, **{k: [v] for k, v in self.variables.items()}},
                 index=[0])
         elif self._featureEngineering is None:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
-                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                                 'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.variables.items()}}, index=[0])
         else:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID,
                                                  'features': ','.join(self.dataSourcing) + ',' + ','.join(
                                                      self.featureEngineering),
-                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                                 'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.variables.items()}}, index=[0])
 
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
@@ -187,7 +188,7 @@ class Experiment(object):
             'message': message,
             'version': version,
             'filename': self.get_filename(),
-            'timestamp in UTC': datetime.utcnow().isoformat()
+            'timestamp': localTimestamp
         }
 
         df_messages = pandas.DataFrame(index=[1], data=data)
@@ -203,7 +204,7 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-        self.__plot(filename)
+        # self.__plot(filename)
 
         if showMessage:
             message = self.__getMessage()
@@ -218,16 +219,22 @@ class Experiment(object):
             return print("Error: Provide the Excel File to plot the models")
 
         if (os.path.isfile(filename)):
-            modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+            excelFile = openpyxl.load_workbook(filename, read_only=True)
+            # check if modelling sheet exist in excel file
+            if 'modelling' in excelFile.sheetnames:
+                modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+            else:
+                return print("Modelling sheet doesn't exist in excel file")
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
         modelingData.drop(nonNumericColumns, axis=1, inplace=True)
         modelingData.drop('experimentID', axis=1, inplace=True)
-        
-        # changing the values in timestamp column to dates (vector slicing)
-        nonNumericColumns['timestamp in UTC'] = nonNumericColumns['timestamp in UTC'].str[:9]
 
+        # checks if there are any columns after the timestamp column
+        if len(modelingData.columns) == 0:
+            return print("No variables to plot against Date")
+        
         directoryToDumpData = 'vevestaXDump'
         self.__emptfldr(directoryToDumpData)
         # creating a new folder in current directory
@@ -236,7 +243,7 @@ class Experiment(object):
         workbbok = openpyxl.load_workbook(filename)
         workbbok.create_sheet('performancePlots')
         plotSheet=workbbok['performancePlots']
-        xAxis = list(nonNumericColumns['timestamp in UTC'])
+        xAxis = list(nonNumericColumns['timestamp'])
         columnValue = 2
 
         for column in modelingData.columns:
