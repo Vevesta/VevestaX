@@ -1,4 +1,4 @@
-from email.utils import localtime
+import datetime
 import pandas
 import inspect
 import ipynbname
@@ -125,7 +125,7 @@ class Experiment(object):
         featureEngineeringData = None
         messageData = None
         experimentID = 1
-        localTimestamp = localtime().strftime("%Y-%m-%d %H:%M:%S")
+        localTimestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         mode = 'w'
 
         if (filename == None):
@@ -218,10 +218,12 @@ class Experiment(object):
 
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
+        
+        modelingData = self.__getModellignSheetData(fileName)
 
-        # checks if file exist then only if fetches modelling data
-        if (os.path.isfile(fileName)):
-            modelingData = self.__getModellignSheetData(fileName)
+        # returns nothing if dataframe is empty
+        if modelingData.empty:
+            return
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
@@ -262,16 +264,19 @@ class Experiment(object):
                 plt.ylabel(str(column))
 
                 plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
-
+                plt.close()
+                
                 img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
                 img.anchor = columnText
                 plotSheet.add_image(img)
+                
 
                 columnValue+=20
 
             workBook.save(fileName)
+            workBook.close()
 
-    # to turncate teh content inside the vevestaXDump folder if it exist
+    # to truncate the content inside the vevestaXDump folder if it exist
     def __truncateFolder(self, folderName):
         if os.path.isdir(folderName):
             for filename in os.listdir(folderName):
@@ -286,11 +291,13 @@ class Experiment(object):
 
     # function to get modelling sheet data
     def __getModellignSheetData(self, fileName):
-        excelFile = openpyxl.load_workbook(fileName, read_only=True)
-            # check if modelling sheet exist in excel file
-        if 'modelling' in excelFile.sheetnames:
-            modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
-            return modelingData
+        # checks if file exist then only if fetches modelling data
+        if (os.path.isfile(fileName)):
+            excelFile = openpyxl.load_workbook(fileName, read_only=True)
+                # check if modelling sheet exist in excel file
+            if 'modelling' in excelFile.sheetnames:
+                modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
+                return modelingData
         
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
