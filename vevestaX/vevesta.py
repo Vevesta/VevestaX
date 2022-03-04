@@ -1,7 +1,6 @@
 from email.utils import localtime
 import pandas
 import inspect
-import os.path
 import ipynbname
 import random
 import sys
@@ -273,11 +272,10 @@ class Experiment(object):
         workBook.save(fileName)
 
     # to turncate teh content inside the vevestaXDump folder if it exist
-    def __truncateFolder(self, dir_name):
-        folder = dir_name
-        if os.path.isdir(folder):
-            for filename in os.listdir(folder):
-                file_path = os.path.join(folder, filename)
+    def __truncateFolder(self, folderName):
+        if os.path.isdir(folderName):
+            for filename in os.listdir(folderName):
+                file_path = os.path.join(folderName, filename)
                 try:
                     if os.path.isfile(file_path) or os.path.islink(file_path):
                         os.unlink(file_path)
