@@ -211,18 +211,18 @@ class Experiment(object):
             print(message)
 
 
-    def __plot(self, filename):
+    def __plot(self, fileName):
 
         modelingData = None
 
-        if (filename == None):
+        if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
 
-        if (os.path.isfile(filename)):
-            excelFile = openpyxl.load_workbook(filename, read_only=True)
+        if (os.path.isfile(fileName)):
+            excelFile = openpyxl.load_workbook(fileName, read_only=True)
             # check if modelling sheet exist in excel file
             if 'modelling' in excelFile.sheetnames:
-                modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+                modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
             else:
                 return 
         
@@ -233,47 +233,47 @@ class Experiment(object):
 
         # checks if there are any columns after the timestamp column
         if len(modelingData.columns) == 0:
-            return print("No variables to plot against Date")
+            return 
         
         directoryToDumpData = 'vevestaXDump'
-        self.__emptfldr(directoryToDumpData)
+        self.__truncateFolder(directoryToDumpData)
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
-        workbook = openpyxl.load_workbook(filename)
-        workbook.create_sheet('performancePlots')
-        plotSheet=workbook['performancePlots']
+        workBook = openpyxl.load_workbook(fileName)
+        workBook.create_sheet('performancePlots')
+        plotSheet=workBook['performancePlots']
         xAxis = list(nonNumericColumns['timestamp'])
         columnValue = 2
 
         for column in modelingData.columns:
             yAxis = list(modelingData[column])
 
-            imagename = str(column)+'.png'
-            columntext = 'A'
-            columntext += str(columnValue)
+            imageName = str(column)+'.png'
+            columnText = 'A'
+            columnText += str(columnValue)
 
             # creates a seperate plots for every timestamp vs column and saves it
             fig,ax=plt.subplots()
             ax.plot(xAxis,yAxis)
             # rotating the x axis labels
             plt.xticks(rotation = 45)
-            plt.title('Date vs '+str(column))
-            plt.xlabel('Date')
+            plt.title('Timestamp vs '+str(column))
+            plt.xlabel('Timestamp')
             plt.ylabel(str(column))
 
-            plt.savefig(os.path.join(directoryToDumpData,imagename), bbox_inches='tight') 
+            plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
 
-            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imagename))  
-            img.anchor = columntext
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
+            img.anchor = columnText
             plotSheet.add_image(img)
 
             columnValue+=20
 
-        workbook.save(filename)
+        workBook.save(fileName)
 
     # to turncate teh content inside the vevestaXDump folder if it exist
-    def __emptfldr(self, dir_name):
+    def __truncateFolder(self, dir_name):
         folder = dir_name
         if os.path.isdir(folder):
             for filename in os.listdir(folder):
