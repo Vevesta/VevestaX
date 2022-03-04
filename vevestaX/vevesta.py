@@ -130,7 +130,7 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
-        print("Dumped the experiment in the file " + filename)
+        
 
         # check if file already exists
         if (os.path.isfile(filename)):
@@ -203,7 +203,9 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-        # self.__plot(filename)
+        self.__plot(filename)
+
+        print("Dumped the experiment in the file " + filename)
 
         if showMessage:
             message = self.__getMessage()
@@ -217,13 +219,9 @@ class Experiment(object):
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
 
+        # checks if file exist then only if fetches modelling data
         if (os.path.isfile(fileName)):
-            excelFile = openpyxl.load_workbook(fileName, read_only=True)
-            # check if modelling sheet exist in excel file
-            if 'modelling' in excelFile.sheetnames:
-                modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
-            else:
-                return 
+            modelingData = self.__getModellignSheetData(fileName)
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
@@ -239,37 +237,39 @@ class Experiment(object):
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
-        workBook = openpyxl.load_workbook(fileName)
-        workBook.create_sheet('performancePlots')
-        plotSheet=workBook['performancePlots']
-        xAxis = list(nonNumericColumns['timestamp'])
-        columnValue = 2
+        # checks if file exist then only loads it and create a new sheet for plots
+        if (os.path.isfile(fileName)):
+            workBook = openpyxl.load_workbook(fileName)
+            workBook.create_sheet('performancePlots')
+            plotSheet=workBook['performancePlots']
+            xAxis = list(nonNumericColumns['timestamp'])
+            columnValue = 2
 
-        for column in modelingData.columns:
-            yAxis = list(modelingData[column])
+            for column in modelingData.columns:
+                yAxis = list(modelingData[column])
 
-            imageName = str(column)+'.png'
-            columnText = 'A'
-            columnText += str(columnValue)
+                imageName = str(column)+'.png'
+                columnText = 'A'
+                columnText += str(columnValue)
 
-            # creates a seperate plots for every timestamp vs column and saves it
-            fig,ax=plt.subplots()
-            ax.plot(xAxis,yAxis)
-            # rotating the x axis labels
-            plt.xticks(rotation = 45)
-            plt.title('Timestamp vs '+str(column))
-            plt.xlabel('Timestamp')
-            plt.ylabel(str(column))
+                # creates a seperate plots for every timestamp vs column and saves it
+                fig,ax=plt.subplots()
+                ax.plot(xAxis,yAxis)
+                # rotating the x axis labels
+                plt.xticks(rotation = 45)
+                plt.title('Timestamp vs '+str(column))
+                plt.xlabel('Timestamp')
+                plt.ylabel(str(column))
 
-            plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
+                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
 
-            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
-            img.anchor = columnText
-            plotSheet.add_image(img)
+                img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
+                img.anchor = columnText
+                plotSheet.add_image(img)
 
-            columnValue+=20
+                columnValue+=20
 
-        workBook.save(fileName)
+            workBook.save(fileName)
 
     # to turncate teh content inside the vevestaXDump folder if it exist
     def __truncateFolder(self, folderName):
@@ -284,6 +284,14 @@ class Experiment(object):
                 except Exception as e:
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+    # function to get modelling sheet data
+    def __getModellignSheetData(self, fileName):
+        excelFile = openpyxl.load_workbook(fileName, read_only=True)
+            # check if modelling sheet exist in excel file
+        if 'modelling' in excelFile.sheetnames:
+            modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
+            return modelingData
+        
     def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
