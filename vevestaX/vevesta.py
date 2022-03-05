@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
+from functools import singledispatch
 
 def test():
     return 'Test Executed Successfully'
@@ -211,7 +212,6 @@ class Experiment(object):
             message = self.__getMessage()
             print(message)
 
-
     def __plot(self, fileName):
 
         modelingData = None
@@ -219,7 +219,7 @@ class Experiment(object):
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
         
-        modelingData = self.__getModellignSheetData(fileName)
+        modelingData = self.getModellingSheetData(fileName)
 
         # returns nothing if dataframe is empty
         if modelingData.empty:
@@ -251,12 +251,12 @@ class Experiment(object):
                 yAxis = list(modelingData[column])
 
                 imageName = str(column)+'.png'
-                columnText = 'A'
+                columnText = 'B'
                 columnText += str(columnValue)
 
                 # creates a seperate plots for every timestamp vs column and saves it
                 fig,ax=plt.subplots()
-                ax.plot(xAxis,yAxis)
+                ax.plot(xAxis,yAxis, linestyle='-', marker='o')
                 # rotating the x axis labels
                 plt.xticks(rotation = 45)
                 plt.title('Timestamp vs '+str(column))
@@ -265,7 +265,7 @@ class Experiment(object):
 
                 plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
                 plt.close()
-                
+
                 img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
                 img.anchor = columnText
                 plotSheet.add_image(img)
@@ -274,7 +274,7 @@ class Experiment(object):
                 columnValue+=20
 
             workBook.save(fileName)
-            workBook.close()
+        workBook.close()
 
     # to truncate the content inside the vevestaXDump folder if it exist
     def __truncateFolder(self, folderName):
@@ -289,8 +289,8 @@ class Experiment(object):
                 except Exception as e:
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
-    # function to get modelling sheet data
-    def __getModellignSheetData(self, fileName):
+    # generic function to get modelling sheet data from any excel file with sheetName modelling
+    def getModellingSheetData(self, fileName):
         # checks if file exist then only if fetches modelling data
         if (os.path.isfile(fileName)):
             excelFile = openpyxl.load_workbook(fileName, read_only=True)
@@ -299,7 +299,7 @@ class Experiment(object):
                 modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
                 return modelingData
         
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
@@ -312,7 +312,7 @@ class Experiment(object):
             'Content-Type': 'application/json'
         }
         payload = {
-            "projectId": project_id,
+            "projectId": projectId,
             "title": techniqueUsed,
             "message": message,
             "modeling": self.variables,
