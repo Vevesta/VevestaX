@@ -219,7 +219,8 @@ class Experiment(object):
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
         
-        modelingData = self.getModellingSheetData(fileName)
+        sheetName = 'modelling'
+        modelingData = self.__getModellingSheetData(fileName, sheetName)
 
         # returns nothing if dataframe is empty
         if modelingData.empty:
@@ -290,13 +291,13 @@ class Experiment(object):
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # generic function to get modelling sheet data from any excel file with sheetName modelling
-    def getModellingSheetData(self, fileName):
+    def __getModellingSheetData(self, fileName, sheetName):
         # checks if file exist then only if fetches modelling data
         if (os.path.isfile(fileName)):
             excelFile = openpyxl.load_workbook(fileName, read_only=True)
                 # check if modelling sheet exist in excel file
-            if 'modelling' in excelFile.sheetnames:
-                modelingData = pandas.read_excel(fileName, sheet_name='modelling', index_col=[])
+            if sheetName in excelFile.sheetnames:
+                modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
         
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None):
