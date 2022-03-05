@@ -1,14 +1,16 @@
+import datetime
 import pandas
 import inspect
-import os.path
 import ipynbname
-from datetime import datetime
 import random
 import sys
 import requests
 import json
 import matplotlib.pyplot as plt
 import openpyxl
+from pathlib import Path
+import os, shutil
+from functools import singledispatch
 
 def test():
     return 'Test Executed Successfully'
@@ -108,7 +110,7 @@ class Experiment(object):
 
     # Exp = Experiment
     # -------------
-    def getMessage(self):
+    def __getMessage(self):
         messagesList = ["For additional features, explore our tool at https://www.vevesta.com?utm_source=vevestaX for free.",
                         "Track evolution of Data Science projects at https://www.vevesta.com?utm_source=vevestaX for free.",
                         "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX",
@@ -124,11 +126,12 @@ class Experiment(object):
         featureEngineeringData = None
         messageData = None
         experimentID = 1
+        localTimestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         mode = 'w'
 
         if (filename == None):
             filename = "vevesta.xlsx"
-        print("Dumped the experiment in the file " + filename)
+        
 
         # check if file already exists
         if (os.path.isfile(filename)):
@@ -158,22 +161,22 @@ class Experiment(object):
 
         if self._dataSourcing is None and self._featureEngineering is None:
             modeling = pandas.DataFrame(
-                data={**{'experimentID': experimentID, 'timestamp in UTC': datetime.utcnow().isoformat()},
+                data={**{'experimentID': experimentID, 'timestamp': localTimestamp},
                       **{k: [v] for k, v in self.variables.items()}}, index=[0])
         elif self._dataSourcing is None:
             modeling = pandas.DataFrame(data={
                 **{'experimentID': experimentID, 'features': ','.join(self.featureEngineering),
-                   'timestamp in UTC': datetime.utcnow().isoformat()}, **{k: [v] for k, v in self.variables.items()}},
+                   'timestamp': localTimestamp}, **{k: [v] for k, v in self.variables.items()}},
                 index=[0])
         elif self._featureEngineering is None:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
-                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                                 'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.variables.items()}}, index=[0])
         else:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID,
                                                  'features': ','.join(self.dataSourcing) + ',' + ','.join(
                                                      self.featureEngineering),
-                                                 'timestamp in UTC': datetime.utcnow().isoformat()},
+                                                 'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.variables.items()}}, index=[0])
 
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
@@ -185,7 +188,7 @@ class Experiment(object):
             'message': message,
             'version': version,
             'filename': self.get_filename(),
-            'timestamp in UTC': datetime.utcnow().isoformat()
+            'timestamp': localTimestamp
         }
 
         df_messages = pandas.DataFrame(index=[1], data=data)
@@ -201,93 +204,103 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-        # self._plot(filename)
+        self.__plot(filename)
+
+        print("Dumped the experiment in the file " + filename)
 
         if showMessage:
-            message = self.getMessage()
+            message = self.__getMessage()
             print(message)
 
-        
-
-
-
-    def _plot(self, filename):
+    def __plot(self, fileName):
 
         modelingData = None
 
-        if (filename == None):
+        if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
+        
+        sheetName = 'modelling'
+        modelingData = self.__getModellingSheetData(fileName, sheetName)
 
-        # skipcols = ['experimentID', 'features']
-        # cols = for column in modelingData
-
-        if (os.path.isfile(filename)):
-            modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
-
-        modelingData['timestamp in UTC'] = pandas.to_datetime(['timestamp in UTC'],)
-        print(modelingData['timestamp in UTC'].dtypes)
-
+        # returns nothing if dataframe is empty
+        if modelingData.empty:
+            return
         
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
         modelingData.drop(nonNumericColumns, axis=1, inplace=True)
         modelingData.drop('experimentID', axis=1, inplace=True)
-        print(modelingData)
-        # print(nonNumericColumns)
 
-        workbbok = openpyxl.load_workbook(filename)
-        workbbok.create_sheet('performancePlots')
-        # workbook = xlsxwriter.Workbook(filename)
-        plotSheet=workbbok['performancePlots']
-        xAxis = list(nonNumericColumns['timestamp in UTC'])
+        # checks if there are any columns after the timestamp column
+        if len(modelingData.columns) == 0:
+            return 
         
-        columnValue = 4
-        for column in modelingData.columns:
-            yAxis = list(modelingData[column])
+        directoryToDumpData = 'vevestaXDump'
+        self.__truncateFolder(directoryToDumpData)
+        # creating a new folder in current directory
+        Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
-            fig,ax=plt.subplots()
-            ax.plot(xAxis,yAxis)
-            
+        # checks if file exist then only loads it and create a new sheet for plots
+        if (os.path.isfile(fileName)):
+            workBook = openpyxl.load_workbook(fileName)
+            workBook.create_sheet('performancePlots')
+            plotSheet=workBook['performancePlots']
+            xAxis = list(nonNumericColumns['timestamp'])
+            columnValue = 2
 
-            # Widen the first column to make the text clearer.
-            # plotSheet.set_column('A:A', 40)
+            for column in modelingData.columns:
+                yAxis = list(modelingData[column])
 
-            plt.xticks(rotation = 45)
-            
-            columntext = 'A'
+                imageName = str(column)+'.png'
+                columnText = 'B'
+                columnText += str(columnValue)
 
-            columntext += str(columnValue)      
-            
+                # creates a seperate plots for every timestamp vs column and saves it
+                fig,ax=plt.subplots()
+                ax.plot(xAxis,yAxis, linestyle='-', marker='o')
+                # rotating the x axis labels
+                plt.xticks(rotation = 45)
+                plt.title('Timestamp vs '+str(column))
+                plt.xlabel('Timestamp')
+                plt.ylabel(str(column))
+
+                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
+                plt.close()
+
+                img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
+                img.anchor = columnText
+                plotSheet.add_image(img)
+                
+
+                columnValue+=20
+
+            workBook.save(fileName)
+        workBook.close()
+
+    # to truncate the content inside the vevestaXDump folder if it exist
+    def __truncateFolder(self, folderName):
+        if os.path.isdir(folderName):
+            for filename in os.listdir(folderName):
+                file_path = os.path.join(folderName, filename)
+                try:
+                    if os.path.isfile(file_path) or os.path.islink(file_path):
+                        os.unlink(file_path)
+                    elif os.path.isdir(file_path):
+                        shutil.rmtree(file_path)
+                except Exception as e:
+                    print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    # generic function to get modelling sheet data from any excel file with sheetName modelling
+    def __getModellingSheetData(self, fileName, sheetName):
+        # checks if file exist then only if fetches modelling data
+        if (os.path.isfile(fileName)):
+            excelFile = openpyxl.load_workbook(fileName, read_only=True)
+                # check if modelling sheet exist in excel file
+            if sheetName in excelFile.sheetnames:
+                modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
+                return modelingData
         
-            plt.title('timestamp vs '+str(column))
-            plt.xlabel('Timestamp')
-            plt.ylabel(str(column))
-
-            plt.savefig(str(column)+'.png')  
-            imagename = str(column)+'.png'  
-
-            img = openpyxl.drawing.image.Image(imagename)   
-
-            img.anchor = columntext
-            plotSheet.add_image(img)
-
-            columnValue+=20
-
-        workbbok.save(filename)
-        # workbook.close()
-    
-    # to save the plot in a directory
-    def directorysave(fig, column):
-        script_dir = os.path.dirname('vevestaXdump')
-        results_dir = os.path.join(script_dir, '/')
-        sample_file_name = column
-
-        if not os.path.isdir(results_dir):
-            os.makedirs(results_dir)
-
-        fig.savefig(results_dir + sample_file_name)
-
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, project_id=None):
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
@@ -300,7 +313,7 @@ class Experiment(object):
             'Content-Type': 'application/json'
         }
         payload = {
-            "projectId": project_id,
+            "projectId": projectId,
             "title": techniqueUsed,
             "message": message,
             "modeling": self.variables,
