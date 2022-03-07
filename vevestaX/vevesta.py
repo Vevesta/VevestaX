@@ -142,20 +142,20 @@ class Experiment(object):
             experimentID = max(modelingData["experimentID"]) + 1
 
         if self.__dataSourcing is None:
-            df__dataSourcing = pandas.DataFrame(index=[1])
+            df_dataSourcing = pandas.DataFrame(index=[1])
         else:
-            df__dataSourcing = pandas.DataFrame(1, index=[1], columns=self.__dataSourcing)
+            df_dataSourcing = pandas.DataFrame(1, index=[1], columns=self.__dataSourcing)
 
-        df__dataSourcing.insert(0, 'experimentID', experimentID)
-        df__dataSourcing = pandas.concat([existingData, df__dataSourcing], ignore_index=True).fillna(0)
+        df_dataSourcing.insert(0, 'experimentID', experimentID)
+        df_dataSourcing = pandas.concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
 
         if self.featureEngineering is None:
-            df__featureEngineering = pandas.DataFrame(index=[1])
+            df_featureEngineering = pandas.DataFrame(index=[1])
         else:
-            df__featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
+            df_featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
 
-        df__featureEngineering.insert(0, 'experimentID', experimentID)
-        df__featureEngineering = pandas.concat([featureEngineeringData, df__featureEngineering],
+        df_featureEngineering.insert(0, 'experimentID', experimentID)
+        df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering],
                                               ignore_index=True).fillna(0)
 
         if self.__dataSourcing is None and self.__featureEngineering is None:
@@ -195,9 +195,9 @@ class Experiment(object):
 
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
-            df__dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
+            df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
 
-            df__featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
+            df_featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
@@ -258,8 +258,8 @@ class Experiment(object):
                 fig,ax=plt.subplots()
                 ax.plot(xAxis,yAxis, linestyle='-', marker='o')
                 # rotating the x axis labels
-                plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
-                # plt.xticks(rotation = 45)
+                # plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
+                plt.xticks(rotation = 45)
                 plt.title('Timestamp vs '+str(column))
                 plt.xlabel('Timestamp')
                 plt.ylabel(str(column))
