@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
-from functools import singledispatch
 
 def test():
     return 'Test Executed Successfully'
@@ -18,12 +17,12 @@ def test():
 
 class Experiment(object):
     def __init__(self):
-        self._dataSourcing = None
-        self._featureEngineering = None
+        self.__dataSourcing = None
+        self.__featureEngineering = None
         self._data=None
     
         self.startlocals = None
-        self.variables = {}
+        self.__variables = {}
 
     def get_filename(self):
         try:
@@ -43,12 +42,12 @@ class Experiment(object):
 
     @property
     def dataSourcing(self):
-        return self._dataSourcing
+        return self.__dataSourcing
 
     @dataSourcing.setter
     def dataSourcing(self, value):
         if type(value) == pandas.core.frame.DataFrame:
-            self._dataSourcing = value.columns
+            self.__dataSourcing = value.columns
             self._data=value
             self._sampleSize=len(value)
             self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
@@ -56,7 +55,7 @@ class Experiment(object):
  
     @property
     def ds(self):
-        return self._dataSourcing
+        return self.__dataSourcing
 
     @dataSourcing.setter
     def ds(self, value):
@@ -64,25 +63,25 @@ class Experiment(object):
 
     @property
     def featureEngineering(self):
-        return self._featureEngineering
+        return self.__featureEngineering
 
     @featureEngineering.setter
     def featureEngineering(self, value):
-        if self._dataSourcing is None:
+        if self.__dataSourcing is None:
             print("Data Sourcing step missed.")
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
-                self._featureEngineering = cols
+                self.__featureEngineering = cols
 
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 cols = cols.drop(self.dataSourcing)
-                self._featureEngineering = cols
+                self.__featureEngineering = cols
 
     @property
     def fe(self):
-        return self._featureEngineering
+        return self.__featureEngineering
 
     @featureEngineering.setter
     def fe(self, value):
@@ -96,13 +95,13 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.variables = {**self.variables, **{i: temp.get(i) for i in temp if
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
                                                i not in self.startlocals and i[0] != '_' and type(temp[i]) in [int,
                                                                                                                float,
                                                                                                                bool,
                                                                                                                str]}}
 
-        return self.variables
+        return self.__variables
 
     # create alias of method modellingStart and modellingEnd
     start = startModelling
@@ -142,42 +141,42 @@ class Experiment(object):
             messageData = pandas.read_excel(filename, sheet_name='messages', index_col=[])
             experimentID = max(modelingData["experimentID"]) + 1
 
-        if self._dataSourcing is None:
-            df_dataSourcing = pandas.DataFrame(index=[1])
+        if self.__dataSourcing is None:
+            df__dataSourcing = pandas.DataFrame(index=[1])
         else:
-            df_dataSourcing = pandas.DataFrame(1, index=[1], columns=self._dataSourcing)
+            df__dataSourcing = pandas.DataFrame(1, index=[1], columns=self.__dataSourcing)
 
-        df_dataSourcing.insert(0, 'experimentID', experimentID)
-        df_dataSourcing = pandas.concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
+        df__dataSourcing.insert(0, 'experimentID', experimentID)
+        df__dataSourcing = pandas.concat([existingData, df__dataSourcing], ignore_index=True).fillna(0)
 
         if self.featureEngineering is None:
-            df_featureEngineering = pandas.DataFrame(index=[1])
+            df__featureEngineering = pandas.DataFrame(index=[1])
         else:
-            df_featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
+            df__featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
 
-        df_featureEngineering.insert(0, 'experimentID', experimentID)
-        df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering],
+        df__featureEngineering.insert(0, 'experimentID', experimentID)
+        df__featureEngineering = pandas.concat([featureEngineeringData, df__featureEngineering],
                                               ignore_index=True).fillna(0)
 
-        if self._dataSourcing is None and self._featureEngineering is None:
+        if self.__dataSourcing is None and self.__featureEngineering is None:
             modeling = pandas.DataFrame(
                 data={**{'experimentID': experimentID, 'timestamp': localTimestamp},
-                      **{k: [v] for k, v in self.variables.items()}}, index=[0])
-        elif self._dataSourcing is None:
+                      **{k: [v] for k, v in self.__variables.items()}}, index=[0])
+        elif self.__dataSourcing is None:
             modeling = pandas.DataFrame(data={
                 **{'experimentID': experimentID, 'features': ','.join(self.featureEngineering),
-                   'timestamp': localTimestamp}, **{k: [v] for k, v in self.variables.items()}},
+                   'timestamp': localTimestamp}, **{k: [v] for k, v in self.__variables.items()}},
                 index=[0])
-        elif self._featureEngineering is None:
+        elif self.__featureEngineering is None:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
                                                  'timestamp': localTimestamp},
-                                              **{k: [v] for k, v in self.variables.items()}}, index=[0])
+                                              **{k: [v] for k, v in self.__variables.items()}}, index=[0])
         else:
             modeling = pandas.DataFrame(data={**{'experimentID': experimentID,
                                                  'features': ','.join(self.dataSourcing) + ',' + ','.join(
                                                      self.featureEngineering),
                                                  'timestamp': localTimestamp},
-                                              **{k: [v] for k, v in self.variables.items()}}, index=[0])
+                                              **{k: [v] for k, v in self.__variables.items()}}, index=[0])
 
         modeling = pandas.concat([modelingData, modeling], ignore_index=True)
 
@@ -196,9 +195,9 @@ class Experiment(object):
 
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
-            df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
+            df__dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
 
-            df_featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
+            df__featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
@@ -220,7 +219,7 @@ class Experiment(object):
             return print("Error: Provide the Excel File to plot the models")
         
         sheetName = 'modelling'
-        modelingData = self.__getModellingSheetData(fileName, sheetName)
+        modelingData = self.__getExcelSheetData(fileName, sheetName)
 
         # returns nothing if dataframe is empty
         if modelingData.empty:
@@ -259,7 +258,8 @@ class Experiment(object):
                 fig,ax=plt.subplots()
                 ax.plot(xAxis,yAxis, linestyle='-', marker='o')
                 # rotating the x axis labels
-                plt.xticks(rotation = 45)
+                plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
+                # plt.xticks(rotation = 45)
                 plt.title('Timestamp vs '+str(column))
                 plt.xlabel('Timestamp')
                 plt.ylabel(str(column))
@@ -291,7 +291,7 @@ class Experiment(object):
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # generic function to get modelling sheet data from any excel file with sheetName modelling
-    def __getModellingSheetData(self, fileName, sheetName):
+    def __getExcelSheetData(self, fileName, sheetName):
         # checks if file exist then only if fetches modelling data
         if (os.path.isfile(fileName)):
             excelFile = openpyxl.load_workbook(fileName, read_only=True)
@@ -316,9 +316,9 @@ class Experiment(object):
             "projectId": projectId,
             "title": techniqueUsed,
             "message": message,
-            "modeling": self.variables,
-            "dataSourced": self._dataSourcing.tolist(),
-            "featureEngineered": self._featureEngineering.tolist()
+            "modeling": self.__variables,
+            "dataSourced": self.__dataSourcing.tolist(),
+            "featureEngineered": self.__featureEngineering.tolist()
         }
         response = requests.post(url=backend_url, headers=headers, data=json.dumps(payload))
         if response.status_code == 200:
