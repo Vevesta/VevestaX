@@ -257,6 +257,9 @@ class Experiment(object):
                 # creates a seperate plots for every timestamp vs column and saves it
                 fig,ax=plt.subplots()
                 ax.plot(xAxis,yAxis, linestyle='-', marker='o')
+                # size of plot horizontally fixed to 5 inches and height to 10 inches
+                plt.figure(figsize=(5, 10))
+                
                 # rotating the x axis labels
                 # plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
                 plt.xticks(rotation = 45)
