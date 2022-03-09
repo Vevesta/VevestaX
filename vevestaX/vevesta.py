@@ -257,14 +257,16 @@ class Experiment(object):
                 # creates a seperate plots for every timestamp vs column and saves it
                 fig,ax=plt.subplots()
                 ax.plot(xAxis,yAxis, linestyle='-', marker='o')
+                # size of plot horizontally fixed to 5 inches and height to 5 inches
+                plt.gcf().set_size_inches(13,5)
                 # rotating the x axis labels
-                # plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
-                plt.xticks(rotation = 45)
+                plt.setp(ax.get_xticklabels(), rotation=30, horizontalalignment='right', fontsize='x-small')
+
                 plt.title('Timestamp vs '+str(column))
                 plt.xlabel('Timestamp')
                 plt.ylabel(str(column))
 
-                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight') 
+                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight', dpi=100) 
                 plt.close()
 
                 img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
@@ -272,7 +274,7 @@ class Experiment(object):
                 plotSheet.add_image(img)
                 
 
-                columnValue+=20
+                columnValue+=27
 
             workBook.save(fileName)
         workBook.close()
