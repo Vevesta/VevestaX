@@ -112,19 +112,20 @@ class Experiment(object):
     def parameters(self, func):
         def wrapper(*args, **kwargs):
             # to get parameters of function that are passed
-            func_args = inspect.signature(func).bind(*args, **kwargs).arguments
-            func_args = dict(func_args)
+            functionParameters = inspect.signature(func).bind(*args, **kwargs).arguments
+            functionParameters = dict(functionParameters)
             # to get values that are not passed and defautlt values
-            sig = inspect.signature(func)
-            for param in sig.parameters.values():
+            defaultParameters = inspect.signature(func)
+            for param in defaultParameters.parameters.values():
                 if ( param.default is not param.empty):
-                    # checks in ke exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
-                    if param.name not in func_args:
-                        func_args[param.name] = param.default
+                    # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
+                    if param.name not in functionParameters:
+                        functionParameters[param.name] = param.default
             
-            for key, value in func_args.items():
-                if key not in self.__variables:
-                    self.__variables[key] = value
+            for key, value in functionParameters.items():
+                if type(value) in [int, float, bool, str]:
+                    if key not in self.__variables:
+                        self.__variables[key] = value
 
         return wrapper
 
