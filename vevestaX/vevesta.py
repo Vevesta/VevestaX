@@ -122,10 +122,7 @@ class Experiment(object):
                     if param.name not in functionParameters:
                         functionParameters[param.name] = param.default
             
-            for key, value in functionParameters.items():
-                if type(value) in [int, float, bool, str]:
-                    if key not in self.__variables:
-                        self.__variables[key] = value
+            self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
 
         return wrapper
 
