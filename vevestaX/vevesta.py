@@ -121,10 +121,7 @@ class Experiment(object):
                     # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
                     if param.name not in functionParameters:
                         functionParameters[param.name] = param.default
-                else:
-                    # this condition checks if the defult value is 0 than variable won't be tracked
-                    if param.default == 0:
-                        del functionParameters[param.names]
+
             
             self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
 
