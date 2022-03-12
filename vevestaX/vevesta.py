@@ -117,10 +117,9 @@ class Experiment(object):
             # to get values that are not passed and defautlt values
             defaultParameters = inspect.signature(func)
             for param in defaultParameters.parameters.values():
-                if ( param.default is not param.empty):
-                    # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
-                    if param.name not in functionParameters:
-                        functionParameters[param.name] = param.default
+                # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
+                if ( param.default is not param.empty) and (param.name not in functionParameters):
+                    functionParameters[param.name] = param.default
             
             self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
 
