@@ -106,6 +106,24 @@ class Experiment(object):
     # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
+    
+    
+    # function to get arguments of a function
+    def parameters(self, func):
+        def wrapper(*args, **kwargs):
+            # to get parameters of function that are passed
+            functionParameters = inspect.signature(func).bind(*args, **kwargs).arguments
+            functionParameters = dict(functionParameters)
+            # to get values that are not passed and defautlt values
+            defaultParameters = inspect.signature(func)
+            for param in defaultParameters.parameters.values():
+                # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
+                if ( param.default is not param.empty) and (param.name not in functionParameters):
+                    functionParameters[param.name] = param.default
+            
+            self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
+
+        return wrapper
 
     # Exp = Experiment
     # -------------
@@ -301,7 +319,7 @@ class Experiment(object):
             if sheetName in excelFile.sheetnames:
                 modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
-        
+
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
