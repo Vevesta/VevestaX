@@ -109,13 +109,13 @@ class Experiment(object):
     
     
     # function to get arguments of a function
-    def parameters(self, func):
+    def parameters(self, functionName):
         def wrapper(*args, **kwargs):
             # to get parameters of function that are passed
-            functionParameters = inspect.signature(func).bind(*args, **kwargs).arguments
+            functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
             functionParameters = dict(functionParameters)
             # to get values that are not passed and defautlt values
-            defaultParameters = inspect.signature(func)
+            defaultParameters = inspect.signature(functionName)
             for param in defaultParameters.parameters.values():
                 # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
                 if ( param.default is not param.empty) and (param.name not in functionParameters):
