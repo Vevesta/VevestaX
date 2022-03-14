@@ -109,7 +109,7 @@ class Experiment(object):
     
     
     # function to get arguments of a function
-    def parameters(self, functionName):
+    def params(self, functionName):
         def wrapper(*args, **kwargs):
             # to get parameters of function that are passed
             functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
