@@ -57,8 +57,7 @@ Code snippet:
 ```
 #Track variables which have been used for modelling
 V.start()
-# you can also use:
-V.startModelling()
+# you can also use: V.startModelling()
 
 
 # All the variables mentioned here will be tracked
@@ -69,8 +68,7 @@ loss='rmse'
 
 #end tracking of variables
 V.end()
-# or, you can also use :
-V.endModelling()
+# or, you can also use : V.endModelling()
 ```
 How to dump the features and modelling variables in an given xlsx file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
