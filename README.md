@@ -8,11 +8,11 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 
 
 
-How to install the library:
+## How to install the library:
 ```
 pip install vevestaX
 ```
-How to import a library and create the object
+## How to import a library and create the object
 ```
 #import the vevesta Library
 from vevestaX import vevesta as v
@@ -20,7 +20,7 @@ V=v.Experiment()
 ```
 
 
-How to extract features present in input data.
+## How to extract features present in input data.
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
 Code snippet:
 ```
@@ -38,7 +38,7 @@ V.ds=df
 V.ds
 ```
 
-How to extract engineered features
+## How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
 
 Code snippet
@@ -51,7 +51,8 @@ V.featureEngineering = df
 #Print the features engineered
 V.fe
 ```
-How to track variables used in modelling section of the code. V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block.
+## How to track variables used in the code.
+V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block.
 ![image](https://user-images.githubusercontent.com/81908188/140041422-97be7287-111d-40c3-bc8f-d921db90acf8.png)
 Code snippet:
 ```
@@ -70,7 +71,7 @@ loss='rmse'
 V.end()
 # or, you can also use : V.endModelling()
 ```
-How to dump the features and modelling variables in an given xlsx file
+## How to dump the features and modelling variables in an given excel file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
 Code snippet:
 ```
