@@ -107,23 +107,28 @@ class Experiment(object):
     start = startModelling
     end = endModelling
     
-    
     # function to get arguments of a function
-    def parameters(self, functionName):
-        def wrapper(*args, **kwargs):
-            # to get parameters of function that are passed
-            functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
-            functionParameters = dict(functionParameters)
-            # to get values that are not passed and defautlt values
-            defaultParameters = inspect.signature(functionName)
-            for param in defaultParameters.parameters.values():
-                # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
-                if ( param.default is not param.empty) and (param.name not in functionParameters):
-                    functionParameters[param.name] = param.default
-            
-            self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
+    def outerParam(**decoratorparam):
+        def params(self, functionName):
+            def wrapper(*args, **kwargs):
+                # to get parameters of function that are passed
+                functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
+                functionParameters = dict(functionParameters)
+                # to get values that are not passed and defautlt values
+                defaultParameters = inspect.signature(functionName)
+                for param in defaultParameters.parameters.values():
+                    # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
+                    if ( param.default is not param.empty) and (param.name not in functionParameters):
+                        functionParameters[param.name] = param.default
 
-        return wrapper
+                for key, value in decoratorparam.items():
+                    if (key in functionParameters) and (type[value] in [int, str, float, bool]):
+                        functionParameters[value] = functionParameters.pop(key)
+                
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
+
+            return wrapper
+        return params
 
     # Exp = Experiment
     # -------------
