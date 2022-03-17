@@ -19,10 +19,12 @@ class Experiment(object):
     def __init__(self):
         self.__dataSourcing = None
         self.__featureEngineering = None
-        self._data=None
+        self.__data=None
     
-        self.startlocals = None
+        self.__primitiveDataTypes = [int, str, float, bool]
+        self.__startlocals = None
         self.__variables = {}
+        self.__filename = self.get_filename()
 
     def get_filename(self):
         try:
@@ -48,10 +50,10 @@ class Experiment(object):
     def dataSourcing(self, value):
         if type(value) == pandas.core.frame.DataFrame:
             self.__dataSourcing = value.columns
-            self._data=value
+            self.__data=value
             self._sampleSize=len(value)
             self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
-            self._data=self._data.sample(self._sampleSize)
+            self.__data=self.__data.sample(self._sampleSize)
  
     @property
     def ds(self):
@@ -88,7 +90,7 @@ class Experiment(object):
         self.featureEngineering = value
 
     def startModelling(self):
-        self.startlocals = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
+        self.__startlocals = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
 
     def endModelling(self):
 
@@ -96,10 +98,7 @@ class Experiment(object):
         self.temp = inspect.getmembers(inspect.stack()[1])
 
         self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
-                                               i not in self.startlocals and i[0] != '_' and type(temp[i]) in [int,
-                                                                                                               float,
-                                                                                                               bool,
-                                                                                                               str]}}
+                                               i not in self.__startlocals and i[0] != '_' and type(temp[i]) in self.__primitiveDataTypes}}
 
         return self.__variables
 
@@ -108,8 +107,8 @@ class Experiment(object):
     end = endModelling
     
     # function to get arguments of a function
-    def outerParam(**decoratorparam):
-        def params(self, functionName):
+    def param(self, **decoratorparam):
+        def params(functionName):
             def wrapper(*args, **kwargs):
                 # to get parameters of function that are passed
                 functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
@@ -122,7 +121,7 @@ class Experiment(object):
                         functionParameters[param.name] = param.default
 
                 for key, value in decoratorparam.items():
-                    if (key in functionParameters) and (type[value] in [int, str, float, bool]):
+                    if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
                 
                 self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
@@ -209,7 +208,7 @@ class Experiment(object):
             'techniqueUsed': techniqueUsed,
             'message': message,
             'version': version,
-            'filename': self.get_filename(),
+            'filename': self.__filename,
             'timestamp': localTimestamp
         }
 
@@ -224,7 +223,7 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
-            pandas.DataFrame(self._data).to_excel(writer,sheet_name='sampledata',index=False)  
+            pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
 
         self.__plot(filename)
 
