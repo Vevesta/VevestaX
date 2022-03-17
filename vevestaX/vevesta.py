@@ -24,7 +24,7 @@ class Experiment(object):
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
         self.__variables = {}
-        self.get_filename()
+        self.__filename = self.get_filename()
 
     def get_filename(self):
         try:
@@ -208,7 +208,7 @@ class Experiment(object):
             'techniqueUsed': techniqueUsed,
             'message': message,
             'version': version,
-            'filename': self.get_filename(),
+            'filename': self.__filename,
             'timestamp': localTimestamp
         }
 
