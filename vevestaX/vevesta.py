@@ -20,6 +20,7 @@ class Experiment(object):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data=None
+        self.__correlation = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -51,9 +52,10 @@ class Experiment(object):
         if type(value) == pandas.core.frame.DataFrame:
             self.__dataSourcing = value.columns
             self.__data=value
-            self._sampleSize=len(value)
-            self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
-            self.__data=self.__data.sample(self._sampleSize)
+            self.__sampleSize=len(value)
+            self.__correlation = value.corr(method='pearson')
+            self.__sampleSize=100 if self.__sampleSize>=100 else self.__sampleSize
+            self.__data=self.__data.sample(self.__sampleSize)
  
     @property
     def ds(self):
@@ -74,12 +76,14 @@ class Experiment(object):
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 self.__featureEngineering = cols
+                self.__correlation = value.corr(method='pearson')
 
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
+                self.__correlation = value.corr(method='pearson')
 
     @property
     def fe(self):
@@ -224,6 +228,8 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
+
+            pandas.DataFrame(self.__correlation).to_excel(writer, sheet_name='EDA-correlation', index=False)
 
         self.__plot(filename)
 
