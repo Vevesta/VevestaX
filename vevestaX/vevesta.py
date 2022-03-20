@@ -76,15 +76,15 @@ class Experiment(object):
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 self.__featureEngineering = cols
-                self.__correlation = value.corr(method='pearson')
 
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
                 cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
-                self.__correlation = value.corr(method='pearson')
 
+        self.__correlation = value.corr(method='pearson')
+    
     @property
     def fe(self):
         return self.__featureEngineering
