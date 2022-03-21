@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
+import numpy as np
 
 def test():
     return 'Test Executed Successfully'
@@ -20,6 +21,7 @@ class Experiment(object):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data=None
+        self.__correlation = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -51,9 +53,10 @@ class Experiment(object):
         if type(value) == pandas.core.frame.DataFrame:
             self.__dataSourcing = value.columns
             self.__data=value
-            self._sampleSize=len(value)
-            self._sampleSize=100 if self._sampleSize>=100 else self._sampleSize
-            self.__data=self.__data.sample(self._sampleSize)
+            self.__sampleSize=len(value)
+            self.__correlation = value.corr(method='pearson')
+            self.__sampleSize=100 if self.__sampleSize>=100 else self.__sampleSize
+            self.__data=self.__data.sample(self.__sampleSize)
  
     @property
     def ds(self):
@@ -81,6 +84,9 @@ class Experiment(object):
                 cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
+        if type(value) == pandas.core.frame.DataFrame:
+            self.__correlation = value.corr(method='pearson')
+    
     @property
     def fe(self):
         return self.__featureEngineering
@@ -139,6 +145,10 @@ class Experiment(object):
                         "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
+    
+    def colorCellExcel(self, val):
+        color = 'blue' if 0.7 > val > -0.7 else 'yellow'
+        return 'background-color: %s' % color
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -224,6 +234,11 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
+
+            if self.__correlation is not None:
+                pandas.DataFrame(self.__correlation).style.\
+                applymap(self.colorCellExcel).\
+                to_excel(writer, sheet_name='EDA-correlation', index=False)
 
         self.__plot(filename)
 
