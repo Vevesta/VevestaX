@@ -10,6 +10,7 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
+import numpy as np
 
 def test():
     return 'Test Executed Successfully'
@@ -144,6 +145,10 @@ class Experiment(object):
                         "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
+    
+    def colorCellExcel(self, val):
+        color = 'blue' if 0.7 > val > -0.7 else 'yellow'
+        return 'background-color: %s' % color
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -230,7 +235,10 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
 
-            pandas.DataFrame(self.__correlation).to_excel(writer, sheet_name='EDA-correlation', index=False)
+            if self.__correlation is not None:
+                pandas.DataFrame(self.__correlation).style.\
+                applymap(self.colorCellExcel).\
+                to_excel(writer, sheet_name='EDA-correlation', index=False)
 
         self.__plot(filename)
 
