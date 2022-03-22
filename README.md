@@ -95,4 +95,6 @@ If you liked the library, please give us a github star and [retweet](https://twi
 
 For additional features, explore our tool at [Vevesta](https://www.vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
+Looking for beta testers for the library. Register [here](https://forms.gle/wM1GKyYS7fDTxmS56)
+
 We at vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [Medium](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
