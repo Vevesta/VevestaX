@@ -147,7 +147,7 @@ class Experiment(object):
         return (messagesList[random.randint(0, len(messagesList) - 1)])
     
     def colorCellExcel(self, val):
-        if -1 < val <= -0.9:
+        if -1 <= val <= -0.9:
             color = '#0D47A1'
             return 'background-color: %s' % color
         elif -0.9 < val <= -0.8:
@@ -212,7 +212,7 @@ class Experiment(object):
             return 'background-color: %s' % color
 
     def textColor(self, val):
-        if -0.1<val<0.1:
+        if -0.1 < val < 0.1:
             color = 'black'
         else: 
             color = 'white'
