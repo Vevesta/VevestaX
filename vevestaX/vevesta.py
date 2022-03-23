@@ -147,8 +147,76 @@ class Experiment(object):
         return (messagesList[random.randint(0, len(messagesList) - 1)])
     
     def colorCellExcel(self, val):
-        color = 'blue' if 0.7 > val > -0.7 else 'yellow'
-        return 'background-color: %s' % color
+        if -1 <= val <= -0.9:
+            color = '#0D47A1'
+            return 'background-color: %s' % color
+        elif -0.9 < val <= -0.8:
+            color = '#1565C0'
+            return 'background-color: %s' % color
+        elif -0.8 < val <= -0.7:
+            color = '#1976D2'
+            return 'background-color: %s' % color
+        elif -0.7 < val <= -0.6:
+            color = '#2962FF'
+            return 'background-color: %s' % color
+        elif -0.6 < val <= -0.5:
+            color = '#2979FF'
+            return 'background-color: %s' % color
+        elif -0.5 < val <= -0.4:
+            color = '#1E88E5'
+            return 'background-color: %s' % color
+        elif -0.4 < val <= -0.3:
+            color = '#42A5F5'
+            return 'background-color: %s' % color
+        elif -0.3 < val <= -0.2:
+            color = '#64B5F6'
+            return 'background-color: %s' % color
+        elif -0.2 < val <= -0.1:
+            color = '#90CAF9'
+            return 'background-color: %s' % color
+        elif -0.1 < val <= 0:
+            color = '#BBDEFB'
+            return 'background-color: %s' % color
+        elif val == 0:
+            color = '#E3F2FD'
+            return 'background-color: %s' % color
+        elif 0 < val <= 0.1:
+            color = '#F1F8E9'
+            return 'background-color: %s' % color
+        elif 0.1 < val <= 0.2:
+            color = '#DCEDC8'
+            return 'background-color: %s' % color
+        elif 0.2 < val <= 0.3:
+            color = '#C5E1A5'
+            return 'background-color: %s' % color
+        elif 0.3 < val <= 0.4:
+            color = '#AED581'
+            return 'background-color: %s' % color
+        elif 0.4 < val <= 0.5:
+            color = '#9CCC65'
+            return 'background-color: %s' % color
+        elif 0.5 < val <= 0.6:
+            color = '#7CB342'
+            return 'background-color: %s' % color
+        elif 0.6 < val <= 0.7:
+            color = '#689F38'
+            return 'background-color: %s' % color
+        elif 0.7 < val <= 0.8:
+            color = '#558B2F'
+            return 'background-color: %s' % color
+        elif 0.8 < val <= 0.9:
+            color = '#33691E'
+            return 'background-color: %s' % color
+        elif 0.9 < val <= 1:
+            color = '#2E7D32'
+            return 'background-color: %s' % color
+
+    def textColor(self, val):
+        if -0.1 < val < 0.1:
+            color = 'black'
+        else: 
+            color = 'white'
+        return 'color: %s' % color
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -238,6 +306,7 @@ class Experiment(object):
             if self.__correlation is not None:
                 pandas.DataFrame(self.__correlation).style.\
                 applymap(self.colorCellExcel).\
+                applymap(self.textColor).\
                 to_excel(writer, sheet_name='EDA-correlation', index=False)
 
         self.__plot(filename)
