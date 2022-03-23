@@ -146,7 +146,7 @@ class Experiment(object):
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
     
-    def colorCellExcel(self, val):
+    def __colorCellExcel(self, val):
         if -1 <= val <= -0.9:
             color = '#0D47A1'
             return 'background-color: %s' % color
@@ -211,7 +211,7 @@ class Experiment(object):
             color = '#2E7D32'
             return 'background-color: %s' % color
 
-    def textColor(self, val):
+    def __textColor(self, val):
         if -0.1 < val < 0.1:
             color = 'black'
         else: 
@@ -305,9 +305,9 @@ class Experiment(object):
 
             if self.__correlation is not None:
                 pandas.DataFrame(self.__correlation).style.\
-                applymap(self.colorCellExcel).\
-                applymap(self.textColor).\
-                to_excel(writer, sheet_name='EDA-correlation', index=False)
+                applymap(self.__colorCellExcel).\
+                applymap(self.__textColor).\
+                to_excel(writer, sheet_name='EDA-correlation', index=True)
 
         self.__plot(filename)
 
