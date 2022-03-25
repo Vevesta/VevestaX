@@ -99,6 +99,17 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 ### Feature Engineering tab
 ![image](https://user-images.githubusercontent.com/81908188/160064990-570e3a10-e13f-45e6-b089-7e1aa99e24b9.png)
 
+### Modelling tab
+![image](https://user-images.githubusercontent.com/81908188/160065199-7030314b-fcaf-4a53-91d1-f47b6725b4c7.png)
+
+### Messages tab
+![image](https://user-images.githubusercontent.com/81908188/160065290-a04d8f96-496a-4567-8c4b-f9a4514c2ba3.png)
+
+### EDA-correlation tab
+![image](https://user-images.githubusercontent.com/81908188/160065377-6a3b5695-d497-4fc3-921d-2e9b8f28dced.png)
+
+### Experiments performance plots
+![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
