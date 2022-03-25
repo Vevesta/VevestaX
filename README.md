@@ -91,12 +91,12 @@ V.dump(techniqueUsed='XGBoost')
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/1hs08dZfZ8bSfU1Aem_sX2aaoNYlslRBU/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true)
 
-##Output snapshots
+## Output snapshots
 
-###Sourced Data tab
+### Sourced Data tab
 ![image](https://user-images.githubusercontent.com/81908188/160064875-7642a251-0c10-4acf-97b1-a9bde1fb0b0f.png)
 
-###Feature Engineering tab
+### Feature Engineering tab
 ![image](https://user-images.githubusercontent.com/81908188/160064990-570e3a10-e13f-45e6-b089-7e1aa99e24b9.png)
 
 
