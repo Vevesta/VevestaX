@@ -107,7 +107,9 @@ class Experiment(object):
                         "Track evolution of Data Science projects at www.vevesta.com for free.",
                         "Manage notes, codes and models in one single place by using our tool at www.vevesta.com.",
                         "For faster discovery of features, explore our tool at www.vevesta.com.",
-                        "Find the right technique for your Machine Learning project at www.vevesta.com."
+                        "Find the right technique for your Machine Learning project at www.vevesta.com.",
+                        "Give us a reason to celebrate, mail us on what you liked about VevestaX on vevestax@vevesta.com",
+                        "Give us a reason to cheer, give us a star on github (github link)"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
 
