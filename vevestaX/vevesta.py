@@ -143,12 +143,12 @@ class Experiment(object):
                         "Manage notes, codes and models in one single place by using our tool at https://www.vevesta.com?utm_source=vevestaX",
                         "For faster discovery of features, explore our tool at https://www.vevesta.com?utm_source=vevestaX",
                         "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX",
-                        "Give us a reason to celebrate, mail us on what you liked about VevestaX on vevestax@vevesta.com",
+                        "Give us a reason to celebrate, give us your feedback at vevestax@vevesta.com",
                         "Give us a reason to cheer, give us a star on github: https://github.com/Vevesta/VevestaX",
-                        "We are working rigorously to give you a better experience with the open source library, VevestaX. Mail us at vevestax@vevesta.com to follow the latest updates to the library.",
-                        "We are building VevestaX to make the life of a data scientist easier. Give us a github star at https://github.com/Vevesta/VevestaX so that we can reach a wider audience.",
+                        "Mail us at vevestax@vevesta.com to follow the latest updates to the library, VevestaX.",
+                        "Support our library on Github by giving us a github star at https://github.com/Vevesta/VevestaX so that we can reach a wider audience.",
                         "Manage your experiments, notes, documents and models at Vevesta, the next generation Github for data scientists. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX for more information.",
-                        "Spread the word in the machine learning community by giving us a Github star at https://github.com/Vevesta/VevestaX",
+                        "Help spread the word in the machine learning community by giving us a Github star at https://github.com/Vevesta/VevestaX",
                         "Love VevestaX? Give us a shoutout at vevestax@vevesta.com"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
