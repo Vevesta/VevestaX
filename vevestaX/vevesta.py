@@ -146,8 +146,8 @@ class Experiment(object):
                         "Give us a reason to celebrate, give us your feedback at vevestax@vevesta.com",
                         "Give us a reason to cheer, give us a star on github: https://github.com/Vevesta/VevestaX",
                         "Mail us at vevestax@vevesta.com to follow the latest updates to the library, VevestaX.",
-                        "Support our library on Github by giving us a github star at https://github.com/Vevesta/VevestaX so that we can reach a wider audience.",
-                        "Manage your experiments, notes, documents and models at Vevesta, the next generation Github for data scientists. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX for more information.",
+                        "Help your machine learning community work better by giving us a github star at https://github.com/Vevesta/VevestaX",
+                        "Easily organize and manage your notes, documents, code, data and models. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX",
                         "Help spread the word in the machine learning community by giving us a Github star at https://github.com/Vevesta/VevestaX",
                         "Love VevestaX? Give us a shoutout at vevestax@vevesta.com"
                         ]
