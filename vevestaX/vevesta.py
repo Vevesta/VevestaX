@@ -148,7 +148,7 @@ class Experiment(object):
                         "We are working rigorously to give you a better experience with the open source library, VevestaX. Mail us at vevestax@vevesta.com to follow the latest updates to the library.",
                         "We are building VevestaX to make the life of a data scientist easier. Give us a github star at https://github.com/Vevesta/VevestaX so that we can reach a wider audience.",
                         "Manage your experiments, notes, documents and models at Vevesta, the next generation Github for data scientists. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX for more information.",
-                        "Spread the word in the Machine Learning community by giving us a Github star at https://github.com/Vevesta/VevestaX",
+                        "Spread the word in the machine learning community by giving us a Github star at https://github.com/Vevesta/VevestaX",
                         "Love VevestaX? Give us a shoutout at vevestax@vevesta.com"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
