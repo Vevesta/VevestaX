@@ -116,7 +116,7 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
 
-For additional features, explore our tool at [Vevesta](https://www.vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
+For additional features, explore our tool at [Vevesta](https://vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
 Looking for beta users for the library. Register [here](https://forms.gle/wM1GKyYS7fDTxmS56)
 
