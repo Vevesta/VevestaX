@@ -345,13 +345,13 @@ class Experiment(object):
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
         columnNames = list(missingData.columns)
         imageName = "missingValue.png"
-        imageName2 = "missingValuePerFeatur.png"
+        imageName2 = "missingValuePerFeature.png"
 
         plt.figure(figsize=(13,8))
         # plt.xticks(columnNames)
         plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
-        plt.title("Sample Number vs Feature Name")
-        plt.xlabel("Feature Name")
+        plt.title("Sample Number vs Column Number")
+        plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
         plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_tight="tight", dpi=100)
         plt.close()
