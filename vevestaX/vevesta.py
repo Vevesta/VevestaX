@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
-import numpy as np
 
 def test():
     return 'Test Executed Successfully'
@@ -22,6 +21,7 @@ class Experiment(object):
         self.__featureEngineering = None
         self.__data=None
         self.__correlation = None
+        self.__missingValues = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -144,12 +144,13 @@ class Experiment(object):
                         "For faster discovery of features, explore our tool at https://www.vevesta.com?utm_source=vevestaX",
                         "Find the right technique for your Machine Learning project at https://www.vevesta.com?utm_source=vevestaX",
                         "Give us a reason to celebrate, give us your feedback at vevestax@vevesta.com",
-                        "Give us a reason to cheer, give us a star on github: https://github.com/Vevesta/VevestaX",
+                        "Give us a reason to cheer, give us a star on Github: https://github.com/Vevesta/VevestaX",
                         "Mail us at vevestax@vevesta.com to follow the latest updates to the library, VevestaX.",
-                        "Help your ML community work better by giving us a github star at https://github.com/Vevesta/VevestaX",
+                        "Help your ML community work better by giving us a Github star at https://github.com/Vevesta/VevestaX",
                         "Easily organize and manage your notes, documents, code, data and models. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX",
                         "Spread the word in your ML community by giving us a Github star at https://github.com/Vevesta/VevestaX",
-                        "Love VevestaX? Give us a shoutout at vevestax@vevesta.com"
+                        "Love VevestaX? Give us a shoutout at vevestax@vevesta.com",
+                        "Get access to latest release ahead of others by subscribing to vevestax@vevesta.com"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
     
@@ -315,6 +316,8 @@ class Experiment(object):
                 applymap(self.__colorCellExcel).\
                 applymap(self.__textColor).\
                 to_excel(writer, sheet_name='EDA-correlation', index=True)
+        
+        self.__missingEDAValues(filename)
 
         self.__plot(filename)
 
@@ -323,6 +326,52 @@ class Experiment(object):
         if showMessage:
             message = self.__getMessage()
             print(message)
+
+    def __missingEDAValues(self, fileName):
+        
+        missingData = None
+        if (fileName == None):
+            return print("Error: Provide the Excel File to plot the models")        
+
+        missingData = self.__correlation
+        if missingData.empty and len(missingData)==0:
+            return
+        
+        columnTextImgone = 'B2'
+        columnTextImgtwo = 'B44'
+        directoryToDumpData = 'vevestaXDump'
+        # creating a new folder in current directory
+        Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
+        columnNames = list(missingData.columns)
+        imageName = "missingValue.png"
+        imageName2 = "missingValuePerFeature.png"
+
+        plt.figure(figsize=(13,8))
+        # plt.xticks(columnNames)
+        plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
+        plt.title("Sample Number vs Column Number")
+        plt.xlabel("Column Number")
+        plt.ylabel("Sample Number")
+        plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_tight="tight", dpi=100)
+        plt.close()
+        
+        plot = missingData.isna().mean().sort_values().plot(kind="bar", figsize=(13, 10),title="Percentage of missing values per feature",ylabel="Ratio of missing values per feature",xlabel="Feature Names", )
+        fig = plot.get_figure()
+        fig.savefig(os.path.join(directoryToDumpData,imageName2), bbox_tight="tight", dpi=100)
+        plt.close(fig)
+
+        if (os.path.isfile(fileName)):
+            workBook = openpyxl.load_workbook(fileName)
+            workBook.create_sheet('EDA-missingValues')
+            plotSheet=workBook['EDA-missingValues']
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))
+            img.anchor = columnTextImgone
+            plotSheet.add_image(img)
+            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName2))
+            image.anchor = columnTextImgtwo
+            plotSheet.add_image(image)
+            workBook.save(fileName)
+        workBook.close()
 
     def __plot(self, fileName):
 
