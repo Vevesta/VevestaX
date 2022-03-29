@@ -335,7 +335,6 @@ class Experiment(object):
 
         missingData = self.__correlation
         if missingData.empty and len(missingData)==0:
-            print("return to nothing")
             return
         
         columnTextImgone = 'B2'
