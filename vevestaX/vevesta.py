@@ -10,7 +10,6 @@ import matplotlib.pyplot as plt
 import openpyxl
 from pathlib import Path
 import os, shutil
-import numpy as np
 
 def test():
     return 'Test Executed Successfully'
@@ -22,6 +21,7 @@ class Experiment(object):
         self.__featureEngineering = None
         self.__data=None
         self.__correlation = None
+        self.__missingValues = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -150,6 +150,7 @@ class Experiment(object):
                         "Easily organize and manage your notes, documents, code, data and models. Explore Vevesta at https://www.vevesta.com?utm_source=vevestaX",
                         "Spread the word in your ML community by giving us a Github star at https://github.com/Vevesta/VevestaX",
                         "Love VevestaX? Give us a shoutout at vevestax@vevesta.com"
+                        "Get access to latest release ahead of others by subscribing to vevestax@vevesta.com"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
     
@@ -315,14 +316,51 @@ class Experiment(object):
                 applymap(self.__colorCellExcel).\
                 applymap(self.__textColor).\
                 to_excel(writer, sheet_name='EDA-correlation', index=True)
-
+        
         self.__plot(filename)
+
+        self.__missingEDAValues(filename)
 
         print("Dumped the experiment in the file " + filename)
 
         if showMessage:
             message = self.__getMessage()
             print(message)
+
+    def __missingEDAValues(self, fileName):
+        
+        missingData = None
+
+        if (fileName == None):
+            return print("Error: Provide the Excel File to plot the models")        
+
+        columnText = 'A2'
+        missingData = self.__correlation
+        if missingData.empty and len(missingData)==0:
+            return
+        
+        directoryToDumpData = 'vevestaXDump'
+        # creating a new folder in current directory
+        Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
+
+        imageName = "missingValue.png"
+        
+        plt.figure(figsize=(13,8))
+        plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="gray")
+        plt.xlabel("feature Name")
+        plt.ylabel("Sample Number")
+        plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_tight="tight", dpi=100)
+        plt.close()
+        if (os.path.isfile(fileName)):
+            workBook = openpyxl.load_workbook(fileName)
+            workBook.create_sheet('EDA-missingValues')
+            plotSheet=workBook['EDA-missingValues']
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))
+            img.anchor = columnText
+            plotSheet.add_image(img)
+            workBook.save(fileName)
+
+        workBook.close()
 
     def __plot(self, fileName):
 
