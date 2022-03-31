@@ -342,7 +342,6 @@ class Experiment(object):
         directoryToDumpData = 'vevestaXDump'
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
-        columnNames = list(missingData.columns)
         imageName = "missingValue.png"
         imageName2 = "missingValuePerFeature.png"
 
@@ -355,7 +354,7 @@ class Experiment(object):
         plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_tight="tight", dpi=100)
         plt.close()
         
-        plot = missingData.isna().mean().sort_values().plot(kind="bar", figsize=(13, 10),title="Percentage of missing values per feature",ylabel="Ratio of missing values per feature",xlabel="Feature Names", )
+        plot = missingData.isna().mean().sort_values().plot(kind="bar", figsize=(13, 11),title="Percentage of missing values per feature",ylabel="Ratio of missing values per feature",xlabel="Feature Names")
         fig = plot.get_figure()
         fig.savefig(os.path.join(directoryToDumpData,imageName2), bbox_tight="tight", dpi=100)
         plt.close(fig)
