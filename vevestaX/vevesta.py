@@ -342,31 +342,36 @@ class Experiment(object):
         directoryToDumpData = 'vevestaXDump'
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
-        imageName = "missingValue.png"
-        imageName2 = "missingValuePerFeature.png"
+        missingValueImageFile = "missingValue.png"
+        missingValueRatioImageFile = "missingValuePerFeature.png"
 
         plt.figure(figsize=(13,8))
-        # plt.xticks(columnNames)
         plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
-        plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_tight="tight", dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,missingValueImageFile), bbox_tight="tight", dpi=100)
         plt.close()
         
-        plot = missingData.isna().mean().sort_values().plot(kind="bar", figsize=(13, 11),title="Percentage of missing values per feature",ylabel="Ratio of missing values per feature",xlabel="Feature Names")
-        fig = plot.get_figure()
-        fig.savefig(os.path.join(directoryToDumpData,imageName2), bbox_tight="tight", dpi=100)
-        plt.close(fig)
+        missingRatioData = missingData.isna().mean().sort_values()
+        xAxis = list(pandas.DataFrame(missingRatioData.index))
+        yAxis = list(missingRatioData)
+        plt.figure(figsize=(13,11))
+        plt.bar(xAxis,yAxis)
+        plt.title("Percentage of missing values per feature")
+        plt.xlabel("Feature Names")
+        plt.ylabel("Ratio of missing values per feature")
+        plt.savefig(os.path.join(directoryToDumpData,missingValueRatioImageFile), bbox_tight="tight", dpi=100)
+        plt.close()
 
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
             workBook.create_sheet('EDA-missingValues')
             plotSheet=workBook['EDA-missingValues']
-            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueImageFile))
             img.anchor = columnTextImgone
             plotSheet.add_image(img)
-            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName2))
+            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
             workBook.save(fileName)
