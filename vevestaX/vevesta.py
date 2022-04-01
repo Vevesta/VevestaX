@@ -328,6 +328,9 @@ class Experiment(object):
             print(message)
 
     def __missingEDAValues(self, fileName):
+
+        if self.__data.empty or len(self.__data)==0:
+            return
         
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
