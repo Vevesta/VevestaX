@@ -329,6 +329,9 @@ class Experiment(object):
 
     def __missingEDAValues(self, fileName):
         
+        if (fileName == None):
+            return print("Error: Provide the Excel File to plot the models")
+
         columnTextImgone = 'B2'
         columnTextImgtwo = 'B44'
         directoryToDumpData = 'vevestaXDump'
