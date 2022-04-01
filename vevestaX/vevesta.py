@@ -21,7 +21,6 @@ class Experiment(object):
         self.__featureEngineering = None
         self.__data=None
         self.__correlation = None
-        self.__missingValues = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -55,8 +54,6 @@ class Experiment(object):
             self.__data=value
             self.__sampleSize=len(value)
             self.__correlation = value.corr(method='pearson')
-            self.__sampleSize=100 if self.__sampleSize>=100 else self.__sampleSize
-            self.__data=self.__data.sample(self.__sampleSize)
  
     @property
     def ds(self):
@@ -301,6 +298,9 @@ class Experiment(object):
         df_messages = pandas.DataFrame(index=[1], data=data)
         df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
 
+        self.__sampleSize=100 if self.__sampleSize>=100 else self.__sampleSize
+        sampledData=self.__data.sample(self.__sampleSize)
+
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
@@ -309,7 +309,7 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
-            pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
+            pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)  
 
             if self.__correlation is not None:
                 pandas.DataFrame(self.__correlation).style.\
@@ -328,52 +328,63 @@ class Experiment(object):
             print(message)
 
     def __missingEDAValues(self, fileName):
-        
-        missingData = None
-        if (fileName == None):
-            return print("Error: Provide the Excel File to plot the models")        
 
-        missingData = self.__correlation
-        if missingData.empty and len(missingData)==0:
+        if self.__data.empty or len(self.__data)==0:
             return
         
+        if (fileName == None):
+            return print("Error: Provide the Excel File to plot the models")
+
         columnTextImgone = 'B2'
         columnTextImgtwo = 'B44'
         directoryToDumpData = 'vevestaXDump'
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
-        missingValueImageFile = "missingValue.png"
-        missingValueRatioImageFile = "missingValuePerFeature.png"
+        ValueImageFile = "Value.png"
+        ValueRatioImageFile = "ValuePerFeature.png"
+        NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
 
         plt.figure(figsize=(13,8))
-        plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
+        plt.imshow(self.__data.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
-        plt.savefig(os.path.join(directoryToDumpData,missingValueImageFile), bbox_tight="tight", dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueImageFile), bbox_tight="tight", dpi=100)
         plt.close()
         
-        missingRatioData = missingData.isna().mean().sort_values()
-        xAxis = list(pandas.DataFrame(missingRatioData.index))
-        yAxis = list(missingRatioData)
+        RatioData = self.__data.isna().mean().sort_values()
+        xAxis = list(RatioData.index)
+        yAxis = list(RatioData)
         plt.figure(figsize=(13,11))
         plt.bar(xAxis,yAxis)
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
         plt.ylabel("Ratio of missing values per feature")
-        plt.savefig(os.path.join(directoryToDumpData,missingValueRatioImageFile), bbox_tight="tight", dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile), bbox_tight="tight", dpi=100)
+        plt.close()
+
+
+        self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution", rot=90).flatten()
+        plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile), bbox_tight="tight", dpi=100)
         plt.close()
 
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
             workBook.create_sheet('EDA-missingValues')
             plotSheet=workBook['EDA-missingValues']
-            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueImageFile))
+            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,ValueImageFile))
             img.anchor = columnTextImgone
             plotSheet.add_image(img)
-            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueRatioImageFile))
+            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,ValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
+
+            # adding the plot for the Numeric Fetaure Distribution
+            workBook.create_sheet('EDA-NumericfeatureDistribution')
+            fetaureplotsheet = workBook['EDA-NumericfeatureDistribution']
+            featureImg = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile))
+            featureImg.anchor = columnTextImgone
+            fetaureplotsheet.add_image(featureImg)
             workBook.save(fileName)
         workBook.close()
 
