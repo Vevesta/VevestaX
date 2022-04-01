@@ -21,7 +21,6 @@ class Experiment(object):
         self.__featureEngineering = None
         self.__data=None
         self.__correlation = None
-        self.__missingValues = None
     
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
@@ -330,6 +329,8 @@ class Experiment(object):
     def __missingEDAValues(self, fileName):
         
         missingData = None
+        numericalFeatureData=None
+
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")        
 
@@ -337,6 +338,10 @@ class Experiment(object):
         if missingData.empty and len(missingData)==0:
             return
         
+        numericalFeatureData = self.__data
+        if numericalFeatureData.empty and len(numericalFeatureData) == 0:
+            return 
+
         columnTextImgone = 'B2'
         columnTextImgtwo = 'B44'
         directoryToDumpData = 'vevestaXDump'
@@ -366,7 +371,7 @@ class Experiment(object):
         plt.close()
 
 
-        missingData.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution", rot=90).flatten()
+        numericalFeatureData.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution").flatten()
         plt.savefig(os.path.join(directoryToDumpData,missingValueNumericalFeatureImage), bbox_tight="tight", dpi=100)
         plt.close()
 
