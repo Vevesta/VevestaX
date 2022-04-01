@@ -344,6 +344,7 @@ class Experiment(object):
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
         missingValueImageFile = "missingValue.png"
         missingValueRatioImageFile = "missingValuePerFeature.png"
+        missingValueNumericalFeatureImage = "NumericalFeature.png"
 
         plt.figure(figsize=(13,8))
         plt.imshow(missingData.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
@@ -364,6 +365,11 @@ class Experiment(object):
         plt.savefig(os.path.join(directoryToDumpData,missingValueRatioImageFile), bbox_tight="tight", dpi=100)
         plt.close()
 
+
+        missingData.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution", rot=90).flatten()
+        plt.savefig(os.path.join(directoryToDumpData,missingValueNumericalFeatureImage), bbox_tight="tight", dpi=100)
+        plt.close()
+
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
             workBook.create_sheet('EDA-missingValues')
@@ -374,6 +380,13 @@ class Experiment(object):
             image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
+
+            # adding the plot for the Numeric Fetaure Distribution
+            workBook.create_sheet('EDA-NumericfeatureDistribution')
+            fetaureplotsheet = workBook['EDA-NumericfeatureDistribution']
+            featureImg = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,missingValueNumericalFeatureImage))
+            featureImg.anchor = columnTextImgone
+            fetaureplotsheet.add_image(featureImg)
             workBook.save(fileName)
         workBook.close()
 
