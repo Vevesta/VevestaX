@@ -299,7 +299,7 @@ class Experiment(object):
         df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
 
         self.__sampleSize=100 if self.__sampleSize>=100 else self.__sampleSize
-        self.__data=self.__data.sample(self.__sampleSize)
+        sampledData=self.__data.sample(self.__sampleSize)
 
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
@@ -309,7 +309,7 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
-            pandas.DataFrame(self.__data).to_excel(writer,sheet_name='sampledata',index=False)  
+            pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)  
 
             if self.__correlation is not None:
                 pandas.DataFrame(self.__correlation).style.\
