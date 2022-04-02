@@ -101,7 +101,7 @@ class Experiment(object):
         self.temp = inspect.getmembers(inspect.stack()[1])
 
         self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
-                                               i not in self.__startlocals and i[0] != '_' and type(temp[i]) in self.__primitiveDataTypes}}
+                                               i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str,int,float,bool)))}}
 
         return self.__variables
 
