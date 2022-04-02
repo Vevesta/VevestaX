@@ -101,7 +101,7 @@ class Experiment(object):
         self.temp = inspect.getmembers(inspect.stack()[1])
 
         self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
-                                               i not in self.__startlocals and i[0] != '_' and type(temp[i]) in self.__primitiveDataTypes}}
+                                               i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str,int,float,bool)))}}
 
         return self.__variables
 
@@ -349,7 +349,7 @@ class Experiment(object):
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
-        plt.savefig(os.path.join(directoryToDumpData,ValueImageFile), bbox_tight="tight", dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueImageFile),bbox_inches='tight', dpi=100)
         plt.close()
         
         RatioData = self.__data.isna().mean().sort_values()
@@ -360,12 +360,12 @@ class Experiment(object):
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
         plt.ylabel("Ratio of missing values per feature")
-        plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile), bbox_tight="tight", dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
 
-        self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution", rot=90).flatten()
-        plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile), bbox_tight="tight", dpi=100)
+        self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution").flatten()
+        plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
         if (os.path.isfile(fileName)):
