@@ -349,7 +349,7 @@ class Experiment(object):
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
-        plt.savefig(os.path.join(directoryToDumpData,ValueImageFile), dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueImageFile),bbox_inches='tight', dpi=100)
         plt.close()
         
         RatioData = self.__data.isna().mean().sort_values()
@@ -360,12 +360,12 @@ class Experiment(object):
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
         plt.ylabel("Ratio of missing values per feature")
-        plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile), dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
 
-        self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution", rot=90).flatten()
-        plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile), dpi=100)
+        self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution").flatten()
+        plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
         if (os.path.isfile(fileName)):
