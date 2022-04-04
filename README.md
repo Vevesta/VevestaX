@@ -94,7 +94,7 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 ## Output snapshots
 
 ### Sourced Data tab
-![image](https://user-images.githubusercontent.com/81908188/160064875-7642a251-0c10-4acf-97b1-a9bde1fb0b0f.png)
+![image](https://user-images.githubusercontent.com/81908188/161520626-0e981ec9-eddf-4c4f-a896-272a7e0f4869.png)
 
 ### Feature Engineering tab
 ![image](https://user-images.githubusercontent.com/81908188/160064990-570e3a10-e13f-45e6-b089-7e1aa99e24b9.png)
