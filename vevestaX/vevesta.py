@@ -21,7 +21,7 @@ class Experiment(object):
         self.__featureEngineering = None
         self.__data=None
         self.__correlation = None
-    
+
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
         self.__variables = {}
@@ -54,7 +54,7 @@ class Experiment(object):
             self.__data=value
             self.__sampleSize=len(value)
             self.__correlation = value.corr(method='pearson')
- 
+
     @property
     def ds(self):
         return self.__dataSourcing
@@ -83,7 +83,7 @@ class Experiment(object):
 
         if type(value) == pandas.core.frame.DataFrame:
             self.__correlation = value.corr(method='pearson')
-    
+
     @property
     def fe(self):
         return self.__featureEngineering
@@ -108,7 +108,7 @@ class Experiment(object):
     # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
-    
+
     # function to get arguments of a function
     def param(self, **decoratorparam):
         def params(functionName):
@@ -126,7 +126,7 @@ class Experiment(object):
                 for key, value in decoratorparam.items():
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
-                
+
                 self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
 
             return wrapper
@@ -150,7 +150,7 @@ class Experiment(object):
                         "Get access to latest release ahead of others by subscribing to vevestax@vevesta.com"
                         ]
         return (messagesList[random.randint(0, len(messagesList) - 1)])
-    
+
     def __colorCellExcel(self, val):
         if -1 <= val <= -0.9:
             color = '#0D47A1'
@@ -219,7 +219,7 @@ class Experiment(object):
     def __textColor(self, val):
         if -0.1 < val < 0.1:
             color = 'black'
-        else: 
+        else:
             color = 'white'
         return 'color: %s' % color
 
@@ -235,7 +235,7 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
-        
+
 
         # check if file already exists
         if (os.path.isfile(filename)):
@@ -309,14 +309,14 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
-            pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)  
+            pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)
 
             if self.__correlation is not None:
                 pandas.DataFrame(self.__correlation).style.\
                 applymap(self.__colorCellExcel).\
                 applymap(self.__textColor).\
                 to_excel(writer, sheet_name='EDA-correlation', index=True)
-        
+
         self.__missingEDAValues(filename)
 
         self.__plot(filename)
@@ -331,7 +331,7 @@ class Experiment(object):
 
         if self.__data.empty or len(self.__data)==0:
             return
-        
+
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
 
@@ -351,7 +351,7 @@ class Experiment(object):
         plt.ylabel("Sample Number")
         plt.savefig(os.path.join(directoryToDumpData,ValueImageFile),bbox_inches='tight', dpi=100)
         plt.close()
-        
+
         RatioData = self.__data.isna().mean().sort_values()
         xAxis = list(RatioData.index)
         yAxis = list(RatioData)
@@ -394,14 +394,14 @@ class Experiment(object):
 
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
-        
+
         sheetName = 'modelling'
         modelingData = self.__getExcelSheetData(fileName, sheetName)
 
         # returns nothing if dataframe is empty
         if modelingData.empty:
             return
-        
+
         # excluding numeric, datetime type
         nonNumericColumns = modelingData.select_dtypes(exclude=['number', 'datetime'])
         modelingData.drop(nonNumericColumns, axis=1, inplace=True)
@@ -409,8 +409,8 @@ class Experiment(object):
 
         # checks if there are any columns after the timestamp column
         if len(modelingData.columns) == 0:
-            return 
-        
+            return
+
         directoryToDumpData = 'vevestaXDump'
         self.__truncateFolder(directoryToDumpData)
         # creating a new folder in current directory
@@ -443,13 +443,13 @@ class Experiment(object):
                 plt.xlabel('Timestamp')
                 plt.ylabel(str(column))
 
-                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight', dpi=100) 
+                plt.savefig(os.path.join(directoryToDumpData,imageName), bbox_inches='tight', dpi=100)
                 plt.close()
 
-                img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))  
+                img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,imageName))
                 img.anchor = columnText
                 plotSheet.add_image(img)
-                
+
 
                 columnValue+=27
 
@@ -479,13 +479,24 @@ class Experiment(object):
                 modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None):
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachment=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
         token = open("access_token.txt", "r").read()
-        backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT/VevestaX'
-        headers = {
+        backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
+
+        # upload attachment
+        if attachment:
+            files = {'file': open(attachment, 'rb')}
+            headers_for_file = {'Authorization': 'Bearer '+token}
+            params = {'taskId': 0}
+            response = requests.post(url=backend_url+'/Attachments', headers=headers_for_file, params=params, files=files)
+            attachments = list()
+            attachments.append(response.json())
+
+        # upload note
+        headers_for_note = {
             'Authorization': 'Bearer ' + token,
             'Access-Control-Allow-Origin': '*',
             'Accept': '*/*',
@@ -499,10 +510,11 @@ class Experiment(object):
             "dataSourced": self.__dataSourcing.tolist(),
             "featureEngineered": self.__featureEngineering.tolist()
         }
-        response = requests.post(url=backend_url, headers=headers, data=json.dumps(payload))
+        if attachment:
+            payload['attachments'] = attachments
+        response = requests.post(url=backend_url+'/VevestaX', headers=headers_for_note, data=json.dumps(payload))
+
         if response.status_code == 200:
             print("Wrote experiment to tool, vevesta")
         else:
             print("Failed to write experiment to tool, vevesta")
-
-
