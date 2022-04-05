@@ -487,9 +487,10 @@ class Experiment(object):
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
 
         # upload attachment
+        filename = self.get_filename()
+        file_exists = os.path.exists(filename)
         if attachmentFlag:
-            filename = self.get_filename()
-            if filename:
+            if file_exists:
                 files = {'file': open(filename, 'rb')}
                 headers_for_file = {'Authorization': 'Bearer '+token}
                 params = {'taskId': 0}
@@ -513,7 +514,7 @@ class Experiment(object):
             "featureEngineered": self.__featureEngineering.tolist()
         }
         if attachmentFlag:
-            if filename:
+            if file_exists:
                 payload['attachments'] = attachments
             else:
                 payload['errorMessage'] = 'File not pushed to Vevesta'
