@@ -40,7 +40,6 @@ class Experiment(object):
                 filename = os.path.basename(filePath)
         except:
             filename = None
-
         return filename
 
     @property
@@ -343,6 +342,7 @@ class Experiment(object):
         ValueImageFile = "Value.png"
         ValueRatioImageFile = "ValuePerFeature.png"
         NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
+        NonNumericFeaturesImgFile = "NonNumericFeatures.png"
 
         plt.figure(figsize=(13,8))
         plt.imshow(self.__data.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
@@ -368,6 +368,19 @@ class Experiment(object):
         plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
+        # Identify non-numerical features
+        nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
+        if len(nonNumericalColumns.columns) is not 0:
+            # Create figure object with 3 subplots
+            fig, axes = plt.subplots(ncols=1, nrows=len(nonNumericalColumns.columns), figsize=(18, 20))
+            # Loop through features and put each subplot on a matplotlib axis object
+            for col, ax in zip(nonNumericalColumns.columns, axes.ravel()):
+                # Selects one single feature and counts number of unique value and Plots this information in a figure with log-scaled y-axis
+                nonNumericalColumns[col].value_counts().plot(logy=True, title=col, lw=0, marker="X", ax=ax, markersize=5)
+                # plt.tight_layout()
+                plt.savefig(os.path.join(directoryToDumpData,NonNumericFeaturesImgFile),bbox_inches='tight', dpi=100)
+            plt.close()
+
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
             workBook.create_sheet('EDA-missingValues')
@@ -385,6 +398,15 @@ class Experiment(object):
             featureImg = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
+
+            # adding non-numeric column
+            if os.path.exists(os.path.join(directoryToDumpData,NonNumericFeaturesImgFile)):
+                workBook.create_sheet('EDA-NonNumericFeatures')
+                nonNumericPlotSheet = workBook['EDA-NonNumericFeatures']
+                nonNumericFeatureImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,NonNumericFeaturesImgFile))
+                nonNumericFeatureImage.anchor = columnTextImgone
+                nonNumericPlotSheet.add_image(nonNumericFeatureImage)
+
             workBook.save(fileName)
         workBook.close()
 
