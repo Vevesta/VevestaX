@@ -501,7 +501,7 @@ class Experiment(object):
                 modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachment=None):
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
@@ -509,13 +509,16 @@ class Experiment(object):
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
 
         # upload attachment
-        if attachment:
-            files = {'file': open(attachment, 'rb')}
-            headers_for_file = {'Authorization': 'Bearer '+token}
-            params = {'taskId': 0}
-            response = requests.post(url=backend_url+'/Attachments', headers=headers_for_file, params=params, files=files)
-            attachments = list()
-            attachments.append(response.json())
+        filename = self.get_filename()
+        file_exists = os.path.exists(filename)
+        if attachmentFlag:
+            if file_exists:
+                files = {'file': open(filename, 'rb')}
+                headers_for_file = {'Authorization': 'Bearer '+token}
+                params = {'taskId': 0}
+                response = requests.post(url=backend_url+'/Attachments', headers=headers_for_file, params=params, files=files)
+                attachments = list()
+                attachments.append(response.json())
 
         # upload note
         headers_for_note = {
@@ -532,11 +535,16 @@ class Experiment(object):
             "dataSourced": self.__dataSourcing.tolist(),
             "featureEngineered": self.__featureEngineering.tolist()
         }
-        if attachment:
-            payload['attachments'] = attachments
+        if attachmentFlag:
+            if file_exists:
+                payload['attachments'] = attachments
+            else:
+                payload['errorMessage'] = 'File not pushed to Vevesta'
+                print('File not pushed to Vevesta')
+
         response = requests.post(url=backend_url+'/VevestaX', headers=headers_for_note, data=json.dumps(payload))
 
         if response.status_code == 200:
-            print("Wrote experiment to tool, vevesta")
+            print("Wrote experiment to tool, Vevesta")
         else:
-            print("Failed to write experiment to tool, vevesta")
+            print("Failed to write experiment to tool, Vevesta")
