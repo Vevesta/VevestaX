@@ -78,7 +78,7 @@ class Experiment(object):
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
-                cols = [col for col in cols if col not in self.__dataSourcing)]
+                cols = [col for col in cols if col not in self.__dataSourcing]
                 #cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
