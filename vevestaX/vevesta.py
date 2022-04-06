@@ -26,6 +26,7 @@ class Experiment(object):
         self.__startlocals = None
         self.__variables = {}
         self.__filename = self.get_filename()
+        self.__sampleSize = 0
 
     def get_filename(self):
         try:
@@ -77,7 +78,8 @@ class Experiment(object):
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
-                cols = cols.drop(self.dataSourcing)
+                cols = [col for col in cols if col not in self.__dataSourcing)]
+                #cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
         if type(value) == pandas.core.frame.DataFrame:
