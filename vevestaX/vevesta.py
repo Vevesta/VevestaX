@@ -26,6 +26,7 @@ class Experiment(object):
         self.__startlocals = None
         self.__variables = {}
         self.__filename = self.get_filename()
+        self.__sampleSize = 0
 
     def get_filename(self):
         try:
@@ -77,7 +78,8 @@ class Experiment(object):
         else:
             if type(value) == pandas.core.frame.DataFrame:
                 cols = value.columns
-                cols = cols.drop(self.dataSourcing)
+                cols = [col for col in cols if col not in self.__dataSourcing]
+                #cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
         if type(value) == pandas.core.frame.DataFrame:
@@ -235,6 +237,12 @@ class Experiment(object):
         if (filename == None):
             filename = "vevesta.xlsx"
 
+
+        #updating variables
+        #when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
+        if(len(self.__variables) == 0):
+            temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
+            self.__variables = { **{i: temp.get(i) for i in temp if i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str,int,float,bool)))}}
 
         # check if file already exists
         if (os.path.isfile(filename)):
