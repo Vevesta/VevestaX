@@ -124,4 +124,4 @@ For additional features, explore our tool at [Vevesta](https://vevesta.com) . Fo
 
 Looking for beta users for the library. Register [here](https://forms.gle/wM1GKyYS7fDTxmS56)
 
-We at vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [Medium](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
+We at Vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [Medium](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
