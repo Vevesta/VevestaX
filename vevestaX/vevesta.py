@@ -238,6 +238,11 @@ class Experiment(object):
             filename = "vevesta.xlsx"
 
 
+        #updating variables
+        #when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
+        if(len(self.__variables) == 0):
+	         self.__variables = { **{i: temp.get(i) for i in temp if i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str,int,float,bool)))}}
+
         # check if file already exists
         if (os.path.isfile(filename)):
             # mode = 'a'
