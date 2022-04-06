@@ -75,6 +75,10 @@ loss='rmse'
 V.end()
 # or, you can also use : V.endModelling()
 ```
+
+## How to track all variables in the code while writing less code
+You can absolutely eliminate using V.start() and V.end() function calls. All the primitive data type variables are written to the excel file by default. Note: while on colab or kaggle, V.start() and V.end() feature hasn't been rolled out. Instead all the variables used in the code are tracked by default.
+
 ## How to dump the features and modelling variables in an given excel file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
 Code snippet:
