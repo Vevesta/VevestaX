@@ -27,6 +27,7 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
+        self.__skipEDA = False
 
     def get_filename(self):
         try:
@@ -223,6 +224,9 @@ class Experiment(object):
         else:
             color = 'white'
         return 'color: %s' % color
+    
+    def speedUp(self):
+        self.__skipEDA = True
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -317,14 +321,16 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)
+            
+            if self.__skipEDA == True:
+                if self.__correlation is not None:
+                    pandas.DataFrame(self.__correlation).style.\
+                    applymap(self.__colorCellExcel).\
+                    applymap(self.__textColor).\
+                    to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-            if self.__correlation is not None:
-                pandas.DataFrame(self.__correlation).style.\
-                applymap(self.__colorCellExcel).\
-                applymap(self.__textColor).\
-                to_excel(writer, sheet_name='EDA-correlation', index=True)
-
-        self.__missingEDAValues(filename)
+        if self.__skipEDA == True:
+            self.__missingEDAValues(filename)
 
         self.__plot(filename)
 
@@ -556,4 +562,3 @@ class Experiment(object):
             print("Wrote experiment to tool, Vevesta")
         else:
             print("Failed to write experiment to tool, Vevesta")
-            
