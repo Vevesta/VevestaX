@@ -93,6 +93,10 @@ Code snippet:
 ```
 V.dump(techniqueUsed='XGBoost')
 ```
+## How to commit file,features and parameters to Vevesta
+```
+V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, attachmentFlag=True)
+```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/1T_MOyLSSmysfaFEkHkNlxqqtzDS2b5DQ/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true)
 
 ## Output snapshots
