@@ -378,7 +378,7 @@ class Experiment(object):
 
         # Identify non-numerical features
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
-        if len(nonNumericalColumns.columns) is not 0:
+        if len(nonNumericalColumns.columns) != 0:
             # Create figure object with 3 subplots
             fig, axes = plt.subplots(ncols=1, nrows=len(nonNumericalColumns.columns), figsize=(18, 20))
             # Loop through features and put each subplot on a matplotlib axis object
@@ -540,8 +540,8 @@ class Experiment(object):
             "title": techniqueUsed,
             "message": message,
             "modeling": self.__variables,
-            "dataSourced": self.__dataSourcing.tolist(),
-            "featureEngineered": self.__featureEngineering.tolist()
+            "dataSourced": self.__dataSourcing,
+            "featureEngineered": self.__featureEngineering
         }
         if attachmentFlag:
             if file_exists:
