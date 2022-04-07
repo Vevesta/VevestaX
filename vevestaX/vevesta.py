@@ -540,7 +540,7 @@ class Experiment(object):
             "title": techniqueUsed,
             "message": message,
             "modeling": self.__variables,
-            "dataSourced": self.__dataSourcing,
+            "dataSourced": self.__dataSourcing.tolist(),
             "featureEngineered": self.__featureEngineering
         }
         if attachmentFlag:
@@ -556,3 +556,4 @@ class Experiment(object):
             print("Wrote experiment to tool, Vevesta")
         else:
             print("Failed to write experiment to tool, Vevesta")
+            
