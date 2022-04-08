@@ -226,7 +226,6 @@ class Experiment(object):
         else:
             color = 'white'
         return 'color: %s' % color
-    
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
