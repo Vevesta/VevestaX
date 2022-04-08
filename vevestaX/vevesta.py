@@ -54,7 +54,7 @@ class Experiment(object):
             self.__dataSourcing = value.columns
             self.__data=value
             self.__sampleSize=len(value)
-            if self.speedUp == True:
+            if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
     @property
@@ -85,7 +85,7 @@ class Experiment(object):
                 self.__featureEngineering = cols
 
         if type(value) == pandas.core.frame.DataFrame:
-            if self.speedUp == True:
+            if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
     @property
@@ -321,15 +321,15 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)
             
-            if self.speedUp == True:
+            if self.speedUp == False:
                 if self.__correlation is not None:
                     pandas.DataFrame(self.__correlation).style.\
                     applymap(self.__colorCellExcel).\
                     applymap(self.__textColor).\
                     to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-        if self.speedUp == True:
-            self.__missingEDAValues(filename)
+        if self.speedUp == False:
+            self.__EDA(filename)
 
         self.__plot(filename)
 
@@ -339,7 +339,7 @@ class Experiment(object):
             message = self.__getMessage()
             print(message)
 
-    def __missingEDAValues(self, fileName):
+    def __EDA(self, fileName):
 
         if self.__data.empty or len(self.__data)==0:
             return
