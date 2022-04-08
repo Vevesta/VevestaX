@@ -16,6 +16,8 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 3. [How to extract features present in input pandas dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-dataframe)
 4. [How to extract engineered features](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-engineered-features)
 5. [How to track variables used](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-track-variables-used)
+6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
+7. 
 
 ## How to install VevestaX
 ```
@@ -80,7 +82,7 @@ V.end()
 ## How to track all variables in the code while writing less code
 You can absolutely eliminate using V.start() and V.end() function calls. All the primitive data type variables used in the code are tracked and written to the excel file by default. Note: while on colab or kaggle, V.start() and V.end() feature hasn't been rolled out. Instead all the variables used in the code are tracked by default.
 
-## How to dump the features and modelling variables in an given excel file
+## How to write the features and modelling variables in an given excel file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
 Code snippet:
 ```
