@@ -11,13 +11,15 @@
 VevestaX is an open source Python package for ML Engineers and Data Scientists.  It includes modules for tracking features sourced from data, feature engineering and variables. The output is an excel file which has tabs namely, data sourcing, feature engineering, modelling, performance plots for tracking performance of variables(accuracy etc) over multiple experiments and lastly, EDA plots. The library can be used with Jupyter notebook, IDEs like spyder, Colab, Kaggle notebook or while running the python script through command line. VevestaX is framework agnostic. You can use it with any machine learning or deep learning framework.
 
 ## Table of Contents
-1 [How to Install VevestaX](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-install-VevestaX)
+1. [How to Install VevestaX](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-install-VevestaX)
+2. [How to import VevestaX and create the experiment object](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-import-VevestaX-and-create-the-experiment-object)
+3. [How to extract features present in input pandas dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-dataframe)
 
 ## How to install VevestaX
 ```
 pip install vevestaX
 ```
-## How to import a library and create the object
+## How to import VevestaX and create the experiment object
 ```
 #import the vevesta Library
 from vevestaX import vevesta as v
@@ -25,7 +27,7 @@ V=v.Experiment()
 ```
 
 
-## How to extract features present in input data.
+## How to extract features present in input pandas dataframe
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
 Code snippet:
 ```
