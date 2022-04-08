@@ -14,6 +14,8 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 1. [How to Install VevestaX](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-install-VevestaX)
 2. [How to import VevestaX and create the experiment object](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-import-VevestaX-and-create-the-experiment-object)
 3. [How to extract features present in input pandas dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-dataframe)
+4. [How to extract engineered features](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-engineered-features)
+5. [How to track variables used](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-track-variables-used)
 
 ## How to install VevestaX
 ```
@@ -52,7 +54,7 @@ V.fe=df
 # you can also use:
 V.featureEngineering = df
 ```
-## How to track variables used in the code.
+## How to track variables used
 V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block. All computed variables will be tracked between V.start() and V.end(). If V.start() and V.end() is not used, all the variables used in the code will be tracked.
 ![image](https://user-images.githubusercontent.com/81908188/140041422-97be7287-111d-40c3-bc8f-d921db90acf8.png)
 Code snippet:
