@@ -17,7 +17,8 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 4. [How to extract engineered features](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-engineered-features)
 5. [How to track variables used](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-track-variables-used)
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
-7. 
+7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
+8. [How to commit file,features and parameters to Vevesta]
 
 ## How to install VevestaX
 ```
