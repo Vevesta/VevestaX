@@ -100,7 +100,7 @@ V.dump(techniqueUsed='XGBoost')
 ```
 ## How to commit file, features and parameters to Vevesta
 
-![image](https://user-images.githubusercontent.com/81908188/162436362-d7b3ac4c-2e04-4568-8dd5-3b8d0779a6e0.png)
+![image](https://user-images.githubusercontent.com/81908188/162436558-f25a3b8b-bd94-45e6-9219-6e01716afdac.png)
 
 Code Snippet:
 ```
