@@ -27,7 +27,7 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
-        self.__skipEDA = False
+        self.speedUp = False
 
     def get_filename(self):
         try:
@@ -54,7 +54,8 @@ class Experiment(object):
             self.__dataSourcing = value.columns
             self.__data=value
             self.__sampleSize=len(value)
-            self.__correlation = value.corr(method='pearson')
+            if self.speedUp == True:
+                self.__correlation = value.corr(method='pearson')
 
     @property
     def ds(self):
@@ -84,7 +85,8 @@ class Experiment(object):
                 self.__featureEngineering = cols
 
         if type(value) == pandas.core.frame.DataFrame:
-            self.__correlation = value.corr(method='pearson')
+            if self.speedUp == True:
+                self.__correlation = value.corr(method='pearson')
 
     @property
     def fe(self):
@@ -225,8 +227,6 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
     
-    def speedUp(self):
-        self.__skipEDA = True
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -322,14 +322,14 @@ class Experiment(object):
             df_messages.to_excel(writer, sheet_name='messages', index=False)
             pandas.DataFrame(sampledData).to_excel(writer,sheet_name='sampledata',index=False)
             
-            if self.__skipEDA == True:
+            if self.speedUp == True:
                 if self.__correlation is not None:
                     pandas.DataFrame(self.__correlation).style.\
                     applymap(self.__colorCellExcel).\
                     applymap(self.__textColor).\
                     to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-        if self.__skipEDA == True:
+        if self.speedUp == True:
             self.__missingEDAValues(filename)
 
         self.__plot(filename)
