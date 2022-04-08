@@ -99,6 +99,10 @@ Code snippet:
 V.dump(techniqueUsed='XGBoost')
 ```
 ## How to commit file, features and parameters to Vevesta
+
+![image](https://user-images.githubusercontent.com/81908188/162436362-d7b3ac4c-2e04-4568-8dd5-3b8d0779a6e0.png)
+
+Code Snippet:
 ```
 V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, attachmentFlag=True)
 ```
