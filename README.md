@@ -19,6 +19,7 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
 7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
+9. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 
 ## How to install VevestaX
 ```
@@ -103,7 +104,7 @@ V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, pro
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/1T_MOyLSSmysfaFEkHkNlxqqtzDS2b5DQ/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true)
 
-## Output snapshots
+## Snapshots of output excel file
 
 ### Sourced Data tab
 ![image](https://user-images.githubusercontent.com/81908188/161520626-0e981ec9-eddf-4c4f-a896-272a7e0f4869.png)
