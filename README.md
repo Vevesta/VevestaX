@@ -37,9 +37,6 @@ df.head(2)
 V.ds=df
 # you can also use:
 #   V.dataSourcing = df
-
-#Print the feature being used
-V.ds
 ```
 
 ## How to extract engineered features
@@ -51,9 +48,6 @@ Code snippet
 V.fe=df  
 # you can also use:
 V.featureEngineering = df
-
-#Print the features engineered
-V.fe
 ```
 ## How to track variables used in the code.
 V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block.
@@ -68,6 +62,8 @@ V.start()
 # All the variables mentioned here will be tracked
 epochs=100
 seed=3
+accuracy = 90 #this is hard coded here, but will be computed variable
+recall = 99 #this is hard coded here, but will be computed variable
 loss='rmse'
 
 
