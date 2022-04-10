@@ -16,7 +16,7 @@ def test():
 
 
 class Experiment(object):
-    def __init__(self):
+    def __init__(self, speedUp = False):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data=None
@@ -27,7 +27,7 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
-        self.speedUp = False
+        self.speedUp = speedUp
 
     def get_filename(self):
         try:
@@ -340,8 +340,15 @@ class Experiment(object):
             print(message)
 
     def __EDA(self, fileName):
+        if type(self.__data) == pandas.core.frame.DataFrame:
+            self.__EDAForPandas(fileName)
+
+    def __EDAForPandas(self, fileName):
 
         if self.__data.empty or len(self.__data)==0:
+            return
+
+        if type(self.__data) != pandas.core.frame.DataFrame:
             return
 
         if (fileName == None):
@@ -356,7 +363,9 @@ class Experiment(object):
         ValueRatioImageFile = "ValuePerFeature.png"
         NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
+        FeatureHistogramImageFile = "FeatureHistogram.png"
 
+        # EDA missing values
         plt.figure(figsize=(13,8))
         plt.imshow(self.__data.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0,7,0,7])
         plt.title("Sample Number vs Column Number")
@@ -365,6 +374,7 @@ class Experiment(object):
         plt.savefig(os.path.join(directoryToDumpData,ValueImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
+        # eda numeric feature distribution
         RatioData = self.__data.isna().mean().sort_values()
         xAxis = list(RatioData.index)
         yAxis = list(RatioData)
@@ -376,7 +386,7 @@ class Experiment(object):
         plt.savefig(os.path.join(directoryToDumpData,ValueRatioImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
-
+        # eda non numeric feature distribution
         self.__data.plot(lw=0,marker="x",subplots=True,layout=(-1, 4),figsize=(20, 25),markersize=5, title="Numeric feature Distribution").flatten()
         plt.savefig(os.path.join(directoryToDumpData,NumericalFeatureDistributionImageFile),bbox_inches='tight', dpi=100)
         plt.close()
@@ -393,6 +403,14 @@ class Experiment(object):
                 # plt.tight_layout()
                 plt.savefig(os.path.join(directoryToDumpData,NonNumericFeaturesImgFile),bbox_inches='tight', dpi=100)
             plt.close()
+
+        # feature distribution
+        fig = self.__data.hist(bins=len(self.__data), figsize=(30, 25), layout=(-1, 3), edgecolor="black", xlabelsize=15, ylabelsize=15)
+        [x.title.set_size(15) for x in fig.ravel()]
+        [x.tick_params(axis='x', labelrotation=90) for x in fig.ravel()]
+        plt.plot()
+        plt.savefig(os.path.join(directoryToDumpData,FeatureHistogramImageFile),bbox_inches='tight', dpi=100)
+        plt.close()
 
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
@@ -419,6 +437,14 @@ class Experiment(object):
                 nonNumericFeatureImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,NonNumericFeaturesImgFile))
                 nonNumericFeatureImage.anchor = columnTextImgone
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
+
+            if os.path.exists(os.path.join(directoryToDumpData,FeatureHistogramImageFile)):
+                workBookName = 'EDA-Feature Histogram'
+                workBook.create_sheet(workBookName)
+                featureDistribution = workBook[workBookName]
+                featureDistributionImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,FeatureHistogramImageFile))
+                featureDistributionImage.anchor = columnTextImgone
+                featureDistribution.add_image(featureDistributionImage)
 
             workBook.save(fileName)
         workBook.close()
