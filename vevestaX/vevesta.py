@@ -16,7 +16,7 @@ def test():
 
 
 class Experiment(object):
-    def __init__(self):
+    def __init__(self, speedUp = False):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data=None
@@ -27,7 +27,7 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
-        self.speedUp = False
+        self.speedUp = speedUp
 
     def get_filename(self):
         try:
@@ -344,6 +344,9 @@ class Experiment(object):
         if self.__data.empty or len(self.__data)==0:
             return
 
+        if type(self.__data) != pandas.core.frame.DataFrame:
+            return
+
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
 
@@ -432,11 +435,10 @@ class Experiment(object):
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
 
             if os.path.exists(os.path.join(directoryToDumpData,FeatureHistogramImageFile)):
-                workBook.create_sheet('EDA-Feature Histogram')
-                featureDistribution = workBook['EDA-Feature Histogram']
+                workBookName = workBook.create_sheet('EDA-Feature Histogram')
                 featureDistributionImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
-                featureDistribution.add_image(featureDistributionImage)
+                workBookName.add_image(featureDistributionImage)
 
             workBook.save(fileName)
         workBook.close()
