@@ -356,7 +356,7 @@ class Experiment(object):
         ValueRatioImageFile = "ValuePerFeature.png"
         NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
-        FeatureDistributionImageFile = "FeatureDistrubution.png"
+        FeatureHistogramImageFile = "FeatureHistogram.png"
 
         # EDA missing values
         plt.figure(figsize=(13,8))
@@ -402,7 +402,7 @@ class Experiment(object):
         [x.title.set_size(15) for x in fig.ravel()]
         [x.tick_params(axis='x', labelrotation=90) for x in fig.ravel()]
         plt.plot()
-        plt.savefig(os.path.join(directoryToDumpData,FeatureDistributionImageFile),bbox_inches='tight', dpi=100)
+        plt.savefig(os.path.join(directoryToDumpData,FeatureHistogramImageFile),bbox_inches='tight', dpi=100)
         plt.close()
 
         if (os.path.isfile(fileName)):
@@ -431,10 +431,10 @@ class Experiment(object):
                 nonNumericFeatureImage.anchor = columnTextImgone
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
 
-            if os.path.exists(os.path.join(directoryToDumpData,FeatureDistributionImageFile)):
-                workBook.create_sheet('Feature Distribution')
-                featureDistribution = workBook['Feature Distribution']
-                featureDistributionImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,FeatureDistributionImageFile))
+            if os.path.exists(os.path.join(directoryToDumpData,FeatureHistogramImageFile)):
+                workBook.create_sheet('EDA-Feature Histogram')
+                featureDistribution = workBook['EDA-Feature Histogram']
+                featureDistributionImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
                 featureDistribution.add_image(featureDistributionImage)
 
