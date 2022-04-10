@@ -329,8 +329,7 @@ class Experiment(object):
                     to_excel(writer, sheet_name='EDA-correlation', index=True)
 
         if self.speedUp == False:
-            if type(self.__data) == pandas.core.frame.DataFrame:
-                self.__EDA(filename)
+            self.__EDA(filename)
 
         self.__plot(filename)
 
