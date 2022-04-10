@@ -339,7 +339,7 @@ class Experiment(object):
         if showMessage:
             message = self.__getMessage()
             print(message)
-            
+
     def __EDA(self, fileName):
         if type(self.__data) == pandas.core.frame.DataFrame:
             self.__EDAForPandas(fileName)
@@ -440,10 +440,12 @@ class Experiment(object):
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
 
             if os.path.exists(os.path.join(directoryToDumpData,FeatureHistogramImageFile)):
-                workBookName = workBook.create_sheet('EDA-Feature Histogram')
+                workBookName = 'EDA-Feature Histogram'
+                workBook.create_sheet(workBookName)
+                featureDistribution = workBook[workBookName]
                 featureDistributionImage = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData,FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
-                workBookName.add_image(featureDistributionImage)
+                featureDistribution.add_image(featureDistributionImage)
 
             workBook.save(fileName)
         workBook.close()
