@@ -132,7 +132,7 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 ![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
 
-# How to speed up the code 
+## How to speed up the code 
 The library does EDA automatically on the data. In order to accelerate compute and skip EDA, set the flag speedUp=True as shown in the code snippet.
 
 ```
