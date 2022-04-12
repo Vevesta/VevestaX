@@ -99,7 +99,7 @@ Code snippet:
 V.dump(techniqueUsed='XGBoost')
 ```
 ## How to commit file, features and parameters to Vevesta
-Vevesta is next generation knowledge repository/GitHub for data science project. The tool is free to use. Please create a login on [vevesta](https://www.vevesta.com/demo) . Then go to Setting section, download the access token. If my chance you face difficulties, please do mail vevestaX@vevesta.com.
+Vevesta is next generation knowledge repository/GitHub for data science project. The tool is free to use. Please create a login on [vevesta](https://www.vevesta.com/demo) . Then go to Setting section, download the access token. Place this token in the same folder as the jupyter notebook or python script. If my chance you face difficulties, please do mail vevestaX@vevesta.com.
 
 You can commit the file(code),features and parameters to Vevesta by using the following command. You will find the project id for your project on the home page.
 
