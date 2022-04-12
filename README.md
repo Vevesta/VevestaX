@@ -132,6 +132,17 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 ![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
 
+# How to speed up the code 
+The library does EDA automatically on the data. In order to accelerate compute and skip EDA, set the flag speedUp=True as shown in the code snippet.
+
+```
+#import the vevesta Library
+from vevestaX import vevesta as v
+V=v.Experiment(speedUp = True)
+#or u can also use
+V = v.Experiment(True)
+```
+
 
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
