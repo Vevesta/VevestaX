@@ -139,9 +139,9 @@ The library does EDA automatically on the data. In order to accelerate compute a
 ```
 #import the vevesta Library
 from vevestaX import vevesta as v
-V=v.Experiment(speedUp = True)
-#or u can also use
 V = v.Experiment(True)
+#or u can also use
+#V=v.Experiment(speedUp = True)
 ```
 
 
