@@ -113,6 +113,26 @@ V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, pro
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/1T_MOyLSSmysfaFEkHkNlxqqtzDS2b5DQ/edit?usp=sharing&ouid=103382336064969333270&rtpof=true&sd=true)
 
 ## Snapshots of output excel file
+After running calling the dump or commit function for each run of the code. The features used, features engineered and the variables used in the experiments get logged into the excel file. In the below experiment, the commit/dump function is called 6 times and each time an experiment/code run is written into the excel sheet.
+ 
+For example, code snippet used to track code runs/experiments are as below:
+
+```
+df = pd.read_csv("wine.csv") 
+V.ds = df
+df["salary_Ratio1"] = df["alchol_content"]/5
+V.fe = df
+accuracy = 90 #this will be a computed variable, may be an output of XGBoost algorithm
+recall = 89  #this will be a computed variable, may be an output of XGBoost algorithm
+```
+
+For the above code snippet, each row in the excel sheet corresponds to an experiment/code run. The excel sheet will have the following:
+1. Data Sourcing tab: Marks which Features (or columns) in wine.csv were read from the input file. Presence of the feature is marked as 1 and absence as 0.
+2. Feature Engineering tab: Features engineered such as salary_Ratio1 exist as columns in the excel. Value 1 means that feature was engineered in that particular experiment and 0 means it was absent.
+3. Modelling tab: This tab tracks all the variables used in the code. Say variable precision was computed in the experiment, then for the experiment ID i, precision will be a column whose value is computed precision variable. Note: V.start() and V.end() are code blocks that you might define. In that case, the code can have multiple code blocks. The variables in all these code blocks are tracked together. Let us define 3 code blocks in the code, first one with precision, 2nd one with recall and accuracy and 3rd one with epoch, seed and no of trees. Then for experiment Id <n>, all the variables, namely precision, recall, accuracy, epoch, seed and no. of trees will be tracked as one experiment and dumped in a single row with experiment id <n>.
+4. Messages tab: Data Scientists like to create new files when they change technique or approach to the problem. So everytime you run the code, it tracks the experiment ID with the name of the file which had the variables, features and features engineered.
+
+
 
 ### Sourced Data tab
 ![image](https://user-images.githubusercontent.com/81908188/161520626-0e981ec9-eddf-4c4f-a896-272a7e0f4869.png)
