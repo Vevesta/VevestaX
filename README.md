@@ -72,8 +72,8 @@ V.start()
 # All the variables mentioned here will be tracked
 epochs=100
 seed=3
-accuracy = 90 #this is hard coded here, but will be computed variable
-recall = 99 #this is hard coded here, but will be computed variable
+accuracy = computeAccuracy() #this will be computed variable
+recall = computeRecall() #This will be computed variable
 loss='rmse'
 
 
