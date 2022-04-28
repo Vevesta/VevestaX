@@ -90,7 +90,6 @@ EDA-performance plot plots the values of variables used in the code with the exp
 
 ![EDA-performance plot](https://miro.medium.com/max/1400/1*D7LLQtwv5tDt2-iTA87PUA.png)
 
-[For Source Code Click Here](https://gist.github.com/sarthakkedia123/9e41f5450120886d956af59e2dc7d944.js)
 
 Vevesta is the next generation GitHub for Machine Learning Project. Explore vevesta for free. For more such stories, follow us on twitter at @vevesta1
 
