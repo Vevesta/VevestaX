@@ -59,8 +59,6 @@ Finally, to get a plot of the feature importance scores
 
 * *model.feature_importance()*
 
-For more information on VevestaX, visit [Github](https://github.com/Vevesta/VevestaX)
-
 ## Sample output of the VevestaX library:
 Data Sourcing tab details the features used in the experiment with 1 indicating feature present and 0 indicating its absence in the experiment.
 
