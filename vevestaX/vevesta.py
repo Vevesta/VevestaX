@@ -370,8 +370,13 @@ class Experiment(object):
         if (type(self.__data) == pandas.core.frame.DataFrame):
             sampledData = self.__data.sample(self.__sampleSize)
 
-        if (type(self.__data) == pyspark.sql.dataframe.DataFrame):
-            sampledData = self.__data.sample(True, 1.0 * self.__sampleSize)
+        if type(self.__data) == pyspark.sql.dataframe.DataFrame:
+            if self.__data.count() >= 100:
+                sampledData = self.__data.sample(100 / self.__data.count())
+
+            if self.__data.count() < 100:
+                sampledData = self.__data.sample(1.0)
+
 
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
