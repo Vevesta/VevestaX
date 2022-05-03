@@ -4,11 +4,11 @@ setup(
 
     name='vevestaX',
     packages=find_packages(include=['vevestaX']),
-    version='3.3.0',
+    version='5.0.0',
     description='Stupidly simple library to track machine learning experiments as well as features',
     author='Vevesta Labs',
     license='Apache 2.0',
-    install_requires=['pandas','Jinja2','ipynbname','datetime','openpyxl','xlrd','requests','matplotlib'],
+    install_requires=['pandas','Jinja2','ipynbname','datetime','openpyxl','xlrd','requests','matplotlib','pyspark'],
     setup_requires=['pytest-runner'],
     tests_require=['pytest==4.4.1'],
     test_suite='tests',
