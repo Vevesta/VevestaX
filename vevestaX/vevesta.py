@@ -58,29 +58,29 @@ class Experiment(object):
     @dataSourcing.setter
     def dataSourcing(self, value):
         if type(value) == pandas.core.frame.DataFrame:
-            self.__dataSourcing = value.columns  # it takes a columns name
-            self.__data = value  # it return a whole dataframe
-            self.__sampleSize = len(value)  # it gives a no of rows it dataframe
+            self.__dataSourcing = value.columns.tolist()
+            self.__data = value
+            self.__sampleSize = len(value)
             if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
         if type(value) == pyspark.sql.dataframe.DataFrame:
-            self.__dataSourcing = value.columns  # it takes a columns name
-            self.__data = value  # it return a whole dataframe
-            self.__sampleSize = value.count()  # it gives a no of rows it dataframe
+            self.__dataSourcing = value.columns
+            self.__data = value
+            self.__sampleSize = value.count()
             if self.speedUp == False:
                 spark = SparkSession.builder.appName("vevesta").getOrCreate()
                 columnNames = []
                 columnNames = value.columns
                 for i in range(len(value.columns)):
                     value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vector_col = "corr_features"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vector_col)
-                df_vector = assembler.transform(value).select(vector_col)
-                matrix = Correlation.corr(df_vector, vector_col).collect()[0][0]
-                corr_matrix = matrix.toArray().tolist()
-                df_corr = spark.createDataFrame(corr_matrix, columnNames)
-                self.__correlation = df_corr
+                vectorCol = "corrfeatures"
+                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+                df_vector = assembler.transform(value).select(vectorCol)
+                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+                corrMatrix = matrix.toArray().tolist()
+                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+                self.__correlation = dfCorr
 
     @property
     def ds(self):  # its doing the same work as dataSourcing do
@@ -130,13 +130,13 @@ class Experiment(object):
                 columnNames = value.columns
                 for i in range(len(value.columns)):
                     value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vector_col = "corr_features"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vector_col)
-                df_vector = assembler.transform(value).select(vector_col)
-                matrix = Correlation.corr(df_vector, vector_col).collect()[0][0]
-                corr_matrix = matrix.toArray().tolist()
-                df_corr = spark.createDataFrame(corr_matrix, columnNames)
-                self.__correlation = df_corr
+                vectorCol = "corrfeatures"
+                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+                df_vector = assembler.transform(value).select(vectorCol)
+                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+                corrMatrix = matrix.toArray().tolist()
+                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+                self.__correlation = dfCorr
 
     @property
     def fe(self):
@@ -154,10 +154,7 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
-                                                   i not in self.__startlocals and i[0] != '_' and (
-                                                           type(temp[i]) in self.__primitiveDataTypes or isinstance(
-                                                       temp[i], (str, int, float, bool)))}}
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
 
         return self.__variables
 
@@ -183,9 +180,7 @@ class Experiment(object):
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
 
-                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if
-                                                           type(value) in [int, float, bool,
-                                                                           str] and key not in self.__variables}}
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool,str] and key not in self.__variables}}
 
             return wrapper
 
@@ -209,7 +204,7 @@ class Experiment(object):
             "Love VevestaX? Give us a shoutout at vevestax@vevesta.com",
             "Get access to latest release ahead of others by subscribing to vevestax@vevesta.com"
         ]
-        return (messagesList[random.randint(0, len(messagesList) - 1)])  # generating a random number
+        return (messagesList[random.randint(0, len(messagesList) - 1)])
 
     def __colorCellExcel(self, val):
         if -1 <= val <= -0.9:
@@ -376,7 +371,7 @@ class Experiment(object):
             sampledData = self.__data.sample(self.__sampleSize)
 
         if (type(self.__data) == pyspark.sql.dataframe.DataFrame):
-            sampledData = self.__data.sample(False, 0.3, self.__sampleSize)
+            sampledData = self.__data.sample(True, 1.0 * self.__sampleSize)
 
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
@@ -395,7 +390,6 @@ class Experiment(object):
 
             if self.speedUp == False:
                 if self.__correlation is not None:
-                    # print("correlation dataframe type ",type(self.__correlation))
                     if (type(sampledData) == pandas.core.frame.DataFrame):
                         pandas.DataFrame(self.__correlation).style. \
                             applymap(self.__colorCellExcel). \
@@ -403,9 +397,7 @@ class Experiment(object):
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
                     if (type(sampledData) == pyspark.sql.dataframe.DataFrame):
-                        # self.__correlation1 = self.__correlation.select(*(sum(c(c).isNull().cast("float")).alias(c) for c in self.__correlation.columns))
                         correlation = self.__correlation.toPandas()
-                        # print(correlation)
                         pandas.DataFrame(correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
