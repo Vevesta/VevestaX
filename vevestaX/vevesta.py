@@ -278,7 +278,7 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
 
-    def profilingReport(self):
+    def __profilingReport(self):
         data = [
             {'Number_of_observation': self.__data.shape[0],
              'Number_of_variables': self.__data.shape[1],
@@ -403,7 +403,10 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
 
-            self.profilingReport().to_excel(writer, sheet_name='Profiling Report', index=False)
+            if (type(self.__data) == pandas.core.frame.DataFrame) and not self.__data.empty:
+                dataframeProfile = self.__profilingReport()
+                if not dataframeProfile.empty:
+                    dataframeProfile.to_excel(writer, sheet_name='Profiling Report', index=False)
 
             if (type(sampledData) == pandas.core.frame.DataFrame):
                 pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
