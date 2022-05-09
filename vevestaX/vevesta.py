@@ -154,7 +154,10 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
+                                                   i not in self.__startlocals and i[0] != '_' and (
+                                                           type(temp[i]) in self.__primitiveDataTypes or isinstance(
+                                                       temp[i], (str, int, float, bool)))}}
 
         return self.__variables
 
@@ -180,7 +183,9 @@ class Experiment(object):
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
 
-                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool,str] and key not in self.__variables}}
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if
+                                                           type(value) in [int, float, bool,
+                                                                           str] and key not in self.__variables}}
 
             return wrapper
 
@@ -278,12 +283,27 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
 
+    def profilingReport(self):
+        data = [
+            {'Number_of_observation': self.__data.shape[0],
+            'Number_of_variables': self.__data.shape[1],
+            'Missing_cells': self.__data.isna().sum().sum(),
+            'Missing_cells(%)': (self.__data.isnull().sum().sum() * 100) / (self.__data.notnull().sum().sum() + self.__data.isnull().sum().sum()),
+            'Duplicate_rows':  self.__data.duplicated().sum(),
+            'Duplicate_rows(%)': (self.__data.duplicated().sum() *100) / len(self.__data),
+            'Total_size_in_memory(byte)': self.__data.memory_usage().sum(),
+            'Average_record_size_in_memory(byte)': self.__data.memory_usage().sum() / len(self.__data)
+            }
+        ]
+        return pandas.DataFrame(data)
+
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
         existingData = None
         modelingData = None
         featureEngineeringData = None
         messageData = None
+        dataStatics = None
         experimentID = 1
         localTimestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         mode = 'w'
@@ -377,15 +397,17 @@ class Experiment(object):
             if self.__data.count() < 100:
                 sampledData = self.__data.sample(1.0)
 
-
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
 
             df_featureEngineering.to_excel(writer, sheet_name='featureEngineering', index=False)
+
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
+
+            self.profilingReport().to_excel(writer, sheet_name='Profiling Report', index=False)
 
             if (type(sampledData) == pandas.core.frame.DataFrame):
                 pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
@@ -422,6 +444,9 @@ class Experiment(object):
     def __EDA(self, fileName):
         if type(self.__data) == pandas.core.frame.DataFrame:
             self.__EDAForPandas(fileName)
+
+        # if type(self.__data) == pyspark.sql.dataframe.DataFrame:
+        #     self.__EDAForPyspark(fileName)
 
     def __EDAForPandas(self, fileName):
 
