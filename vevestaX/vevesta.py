@@ -278,6 +278,22 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
 
+    def __profilingReport(self):
+        data = [
+            {'Number_of_observation': self.__data.shape[0],
+             'Number_of_variables': self.__data.shape[1],
+             'Missing_cells': self.__data.isna().sum().sum(),
+             'Missing_cells(%)': (self.__data.isnull().sum().sum() * 100) / (
+                         self.__data.notnull().sum().sum() + self.__data.isnull().sum().sum()),
+             'Duplicate_rows': self.__data.duplicated().sum(),
+             'Duplicate_rows(%)': (self.__data.duplicated().sum() * 100) / len(self.__data),
+             'Total_size_in_memory(byte)': self.__data.memory_usage().sum(),
+             'Average_record_size_in_memory(byte)': self.__data.memory_usage().sum() / len(self.__data)
+             }
+        ]
+        return pandas.DataFrame(data)
+
+
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
         existingData = None
@@ -386,6 +402,11 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
+
+            if (type(self.__data) == pandas.core.frame.DataFrame) and not self.__data.empty:
+                dataframeProfile = self.__profilingReport()
+                if not dataframeProfile.empty:
+                    dataframeProfile.to_excel(writer, sheet_name='Profiling Report', index=False)
 
             if (type(sampledData) == pandas.core.frame.DataFrame):
                 pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
