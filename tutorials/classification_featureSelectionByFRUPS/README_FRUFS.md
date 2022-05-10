@@ -102,3 +102,5 @@ Vevesta is the next generation GitHub for Machine Learning Project. Explore veve
 [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
 
 [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
+
+[MachineLearningPlus Article](https://www.machinelearningplus.com/deployment/feature-selection-using-frufs-and-vevestax/)
