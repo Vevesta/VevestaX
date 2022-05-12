@@ -278,21 +278,33 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
 
-    def __profilingReport(self):
+    def __profilingReport(self, fileName):
+        sheetName = 'Profiling Report'
+        if self.speedUp:
+            return
+        if self.__data.empty or len(self.__data) == 0:
+            return
+        if type(self.__data) != pandas.core.frame.DataFrame:
+            return
+        if fileName is None:
+            return print("Error: Provide the Excel File")
+
         data = [
             {'Number_of_observation': self.__data.shape[0],
              'Number_of_variables': self.__data.shape[1],
              'Missing_cells': self.__data.isna().sum().sum(),
              'Missing_cells(%)': (self.__data.isnull().sum().sum() * 100) / (
-                         self.__data.notnull().sum().sum() + self.__data.isnull().sum().sum()),
+                     self.__data.notnull().sum().sum() + self.__data.isnull().sum().sum()),
              'Duplicate_rows': self.__data.duplicated().sum(),
              'Duplicate_rows(%)': (self.__data.duplicated().sum() * 100) / len(self.__data),
              'Total_size_in_memory(byte)': self.__data.memory_usage().sum(),
              'Average_record_size_in_memory(byte)': self.__data.memory_usage().sum() / len(self.__data)
              }
         ]
-        return pandas.DataFrame(data)
-
+        profilingDataframe = pandas.DataFrame(data)
+        if os.path.isfile(fileName):
+            with pandas.ExcelWriter(fileName, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+                profilingDataframe.to_excel(writer, sheet_name=sheetName, index=False)
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
@@ -403,12 +415,7 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
 
-            if (type(self.__data) == pandas.core.frame.DataFrame) and not self.__data.empty:
-                dataframeProfile = self.__profilingReport()
-                if not dataframeProfile.empty:
-                    dataframeProfile.to_excel(writer, sheet_name='Profiling Report', index=False)
-
-            if (type(sampledData) == pandas.core.frame.DataFrame):
+            if type(sampledData) == pandas.core.frame.DataFrame:
                 pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
 
             if (type(self.__data) == pyspark.sql.dataframe.DataFrame):
@@ -429,10 +436,13 @@ class Experiment(object):
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
+        self.__profilingReport(filename)
+
         if self.speedUp == False:
             self.__EDA(filename)
 
         self.__plot(filename)
+
 
         print("Dumped the experiment in the file " + filename)
 
