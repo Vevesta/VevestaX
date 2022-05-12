@@ -13,7 +13,7 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 ## Table of Contents
 1. [How to Install VevestaX](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-install-VevestaX)
 2. [How to import VevestaX and create the experiment object](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-import-VevestaX-and-create-the-experiment-object)
-3. [How to extract features present in input pandas dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-dataframe)
+3. [How to extract features present in input pandas/pyspark dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-or-pyspark-dataframe)
 4. [How to extract engineered features](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-engineered-features)
 5. [How to track variables used](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-track-variables-used)
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
@@ -34,7 +34,7 @@ V=v.Experiment()
 ```
 
 
-## How to extract features present in input pandas dataframe
+## How to extract features present in input pandas or pyspark dataframe
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
 Code snippet:
 ```
