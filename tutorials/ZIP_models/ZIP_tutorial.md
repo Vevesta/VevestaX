@@ -74,7 +74,7 @@ In our Python tutorial on the ZIP model, we’ll use a data set of camping trips
 
 Here is a frequency of Dependent Variable i.e. Fish Count in the dataset,
 
-![image](https://miro.medium.com/1*VCGrSWL4VgP067WTVMvGqg.png)
+![image](https://user-images.githubusercontent.com/81908188/168215725-c105d530-760b-47f9-92f7-8b4462714a65.png)
 
 As we can see, there are excess zeroes in this data set. We’ll train a ZIP model on this data set to test this theory and hopefully achieve a better fit than the regular Poisson model.
 
