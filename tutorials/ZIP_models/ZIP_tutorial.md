@@ -29,7 +29,7 @@ The probability (𝜓𝑖) that the observation 𝑖 is in Always-0 group is pre
 
 Then the probability that the observation 𝑖 is in Not always-0 group becomes (1-𝜓𝑖) . For observations in Not always-0 group, their positive count outcome is predicted by the standard Poisson model, so that can be written as:
 
-![image](https://miro.medium.com/max/330/1*UfwM8TYXau0LlBPP_Vul0A.png)
+![image](https://miro.medium.com/1*UfwM8TYXau0LlBPP_Vul0A.png)
 
 where 𝜇𝑖 is the conditional mean.
 
@@ -37,7 +37,7 @@ Then, mixed probabilities for ZIP are expressed as follows:
 
 * Zero counts in Always-0 group
 
-![image](https://miro.medium.com/max/492/1*4bxAftTpreDDo_4LXwF6NA.png)
+![image](https://miro.medium.com/1*4bxAftTpreDDo_4LXwF6NA.png)
 
 * Zero counts in Not Always-0 group
 
