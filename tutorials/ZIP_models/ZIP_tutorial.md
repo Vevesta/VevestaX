@@ -164,15 +164,12 @@ This completes our look at the Zero-Inflated Poisson regression model.
 
 **References**
 
-[*Time Series Reasoning*](https://timeseriesreasoning.com/contents/zero-inflated-poisson-regression-model/)
+1. [*Time Series Reasoning*](https://timeseriesreasoning.com/contents/zero-inflated-poisson-regression-model/)
+2. [*alvindayu.com*](https://alvindayu.com/yu-the-zero-inflated-poisson-regression-model-time-series-&url=https://alvindayu.com/al-the-zero-inflated-poisson-regression-model-time-series)
+3. [*usu.edu*](https://www.usu.edu/math/jrstevens/biostat/projects2013/rep_ZIP.pdf)
+4. [*VevestaX GitHub Link*](https://github.com/Vevesta/VevestaX)
 
-[*alvindayu.com*](https://alvindayu.com/yu-the-zero-inflated-poisson-regression-model-time-series-&url=https://alvindayu.com/al-the-zero-inflated-poisson-regression-model-time-series)
-
-[*usu.edu*](https://www.usu.edu/math/jrstevens/biostat/projects2013/rep_ZIP.pdf)
-
-[*VevestaX GitHub Link*](https://github.com/Vevesta/VevestaX)
-
-Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=ZIP) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
+Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=ZIP_github) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
 
 **Author**
 
