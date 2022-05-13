@@ -110,29 +110,39 @@ The best part of this package is about its output. The output file of the Vevest
 **How to Use VevestaX?**
 
 * Install the package using:
-*pip install vevestaX*
+```
+pip install vevestaX
+```
 
 * Import the library in your kernel as:
-*from vevestaX import vevesta as v*
-
-*V=v.Experiment( )*
+```
+from vevestaX import vevesta as v
+V=v.Experiment( )
+```
 
 * To track the feature used:
-*V.ds = df*
-
+```
+V.ds = df
+```
 where df is the pandas data frame containing the features.
 
 ![image](https://miro.medium.com/max/1400/1*egUV7Vc-t2gupiG0UU4Myw.png)
 
 * To track features engineered
 
-*V.fe = df*
+```
+V.fe = df
+```
 
 * Finally in order to dump the features and variables used into an excel file and to see the insights what the data carries use:
-
+```
 V.dump(techniqueUsed=’ZIP Model’,filename=”ZIP.xlsx”,message=”Zero Inflated Poisson Model was used”,version=1)
-
+```
+* In order to check in the experiment and features to [vevesta](https://www.vevesta.com), use the following function:
+```
 V.commit(techniqueUsed = “Zip Model”, message=”increased accuracy”, version=1, projectId=128, attachmentFlag=True)
+```
+Note that you need to download access_token.txt into the folder where this jupyter notebook/python script resides.
 
 * Following are the insights we received after dumping the features:
 
