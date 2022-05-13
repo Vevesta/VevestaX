@@ -57,11 +57,11 @@ Here is the practical use case of the same where the state wildlife biologists w
 
 In our Python tutorial on the ZIP model, we’ll use a data set of camping trips taken by 250 groups of people, the data looks something like this:
 
-![alt text](https://miro.medium.com/max/1072/1*NAi1z35BOUFsjDxVFW0iSA.png)
+![image](https://miro.medium.com/max/1072/1*NAi1z35BOUFsjDxVFW0iSA.png)
 
 Here is a frequency of Dependent Variable i.e. Fish Count in the dataset,
 
-![alt text](https://miro.medium.com/max/1400/1*VCGrSWL4VgP067WTVMvGqg.png)
+![image](https://miro.medium.com/max/1400/1*VCGrSWL4VgP067WTVMvGqg.png)
 
 As we can see, there are excess zeroes in this data set. We’ll train a ZIP model on this data set to test this theory and hopefully achieve a better fit than the regular Poisson model.
 
@@ -71,23 +71,23 @@ Predict the number of fish caught (FISH_COUNT) by a camping group based on the v
 
 **Performing Train-Test Split**
 
-![alt text](https://miro.medium.com/max/1400/1*w25FKP4s9lFFLuSohgOGSw.png)
+![image](https://miro.medium.com/max/1400/1*w25FKP4s9lFFLuSohgOGSw.png)
 
 **Fitting the ZIP model and Calculating RMSE**
 
-![alt text](https://miro.medium.com/max/1400/1*OAK6kwsYt6WVusuK8Ooa3A.png)
+![image](https://miro.medium.com/max/1400/1*OAK6kwsYt6WVusuK8Ooa3A.png)
 
 Here, *endog* is our dependent variable, *exog* is the dataset containing the features or the independent variables and *inflation* is the model for zero inflation which can be either *logit* or *probit*.
 
 **Plotting the Actual and Predicted Values**
 
-![alt text](https://miro.medium.com/max/674/1*4Y4nb9SyxIcsTEtEbBml6w.png)
+![image](https://miro.medium.com/max/674/1*4Y4nb9SyxIcsTEtEbBml6w.png)
 
 **Comparing the results with Poisson Distribution**
 
-![alt text](https://miro.medium.com/max/1400/1*oP1mPzEerL26N1uzIXbl7Q.png)
+![image](https://miro.medium.com/max/1400/1*oP1mPzEerL26N1uzIXbl7Q.png)
 
-![alt text](https://miro.medium.com/max/700/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
+![image](https://miro.medium.com/max/700/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
 
 RMSE(ZIP Model) =7.937253933193772
 
@@ -122,7 +122,7 @@ The best part of this package is about its output. The output file of the Vevest
 
 where df is the pandas data frame containing the features.
 
-![alt text](https://miro.medium.com/max/1400/1*egUV7Vc-t2gupiG0UU4Myw.png)
+![image](https://miro.medium.com/max/1400/1*egUV7Vc-t2gupiG0UU4Myw.png)
 
 * To track features engineered
 
@@ -136,17 +136,17 @@ V.commit(techniqueUsed = “Zip Model”, message=”increased accuracy”, vers
 
 * Following are the insights we received after dumping the features:
 
-![alt text](https://miro.medium.com/max/1400/1*FwqHB7vpNUJek7H4pOb7pw.png)
+![image](https://miro.medium.com/max/1400/1*FwqHB7vpNUJek7H4pOb7pw.png)
 
-![alt text](https://miro.medium.com/max/1400/1*zX_2WGJvqDF5kH7SGZ6VKA.png)
+![image](https://miro.medium.com/max/1400/1*zX_2WGJvqDF5kH7SGZ6VKA.png)
 
-![alt text](https://miro.medium.com/max/1400/1*gP__37J7cghHJhHYB4CmgA.png)
+![image](https://miro.medium.com/max/1400/1*gP__37J7cghHJhHYB4CmgA.png)
 
-![alt text](https://miro.medium.com/max/1400/1*S2sbQ0f_HTrcHp-Y44WoCg.png)
+![image](https://miro.medium.com/max/1400/1*S2sbQ0f_HTrcHp-Y44WoCg.png)
 
-![alt text](https://miro.medium.com/max/1400/1*S9RLd7stKvnj-Tlpfixf3Q.png)
+![image](https://miro.medium.com/max/1400/1*S9RLd7stKvnj-Tlpfixf3Q.png)
 
-![alt text](https://miro.medium.com/max/1400/1*TZfmOrmth9psMau5wR2MIA.png)
+![image](https://miro.medium.com/max/1400/1*TZfmOrmth9psMau5wR2MIA.png)
 
 [*For Source Code Click Here*](https://gist.github.com/sarthakkedia123/7237a61bd9a6697583b1f46b81e43e2c)
 
