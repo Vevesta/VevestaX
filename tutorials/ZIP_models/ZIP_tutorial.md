@@ -4,6 +4,19 @@ Zero-inflated Poisson regression is used to model count data that has an excess 
 
 In this section, we’ll learn how to build a regression model for count based datasets in which the dependent variable contains an excess of zero-valued data. We will also learn how to track experiments and features, along with automatic EDA, using VevestaX.
 
+
+## Table of Contents
+1. [Mathematics behind ZIP models](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#mathematics-behind-zip-model)
+2. [How to train ZIP models using Python](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#how-to-train-the-zip-model-using-python)
+3. [Regression Goal](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#regression-goal)
+4. [Performing Train-Test Split](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#performing-train-test-split)
+5. [Fitting the ZIP model and Calculating RMSE](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#fitting-the-zip-model-and-calculating-rmse)
+6. [Plotting the Actual and Predicted Values](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#plotting-the-actual-and-predicted-values)
+7. [Comparing the results with Poisson Distribution](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#comparing-the-results-with-poisson-distribution)
+8. [Dumping the model results in Excel Sheet using VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#dumping-the-model-results-in-excel-sheet-using-vevestax)
+9. [Brief Intro about VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#brief-intro-about-vevestax)
+10. [References](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/References)
+
 Count based regression models are used where the value of dependent variable is a whole number. Few of the use cases of this model are:
 
 * Number of hits on the website per hour.
