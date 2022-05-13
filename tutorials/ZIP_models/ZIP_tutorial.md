@@ -28,18 +28,27 @@ Having a membership of Always-0 group is a binary outcome that can be predicted 
 The probability (𝜓𝑖) that the observation 𝑖 is in Always-0 group is predicted by the characteristic of observation 𝑖, so that can be written as: 𝜓𝑖 = 𝐹(𝑧𝑖 ′𝛾) where 𝑧𝑖 is the vector of covariates and 𝛾 is the vector of coefficients of logit regression.
 
 Then the probability that the observation 𝑖 is in Not always-0 group becomes (1-𝜓𝑖) . For observations in Not always-0 group, their positive count outcome is predicted by the standard Poisson model, so that can be written as:
+
 ![alt text](https://miro.medium.com/max/330/1*UfwM8TYXau0LlBPP_Vul0A.png)
+
 where 𝜇𝑖 is the conditional mean.
 
 Then, mixed probabilities for ZIP are expressed as follows:
 
 * Zero counts in Always-0 group
+
 ![alt text](https://miro.medium.com/max/492/1*4bxAftTpreDDo_4LXwF6NA.png)
+
 * Zero counts in Not Always-0 group
+
 ![alt text](https://miro.medium.com/max/836/1*hcCKyOaO_n44w8K5NkJRaQ.png)
+
 * Non zero counts in Not Always- group
+
 ![alt text](https://miro.medium.com/max/574/1*Xk8S81Q0DtgZfr96Im0ZPQ.png)
+
 * Overall
+
 ![alt text](https://miro.medium.com/max/986/1*rv-KdfBZy1u8k43pWchHuQ.png)
 
 Here is the practical use case of the same where the state wildlife biologists want to model how many fishes are being caught by the visitors visiting the state park. Some visitors do not fish, but there is no data on whether a person fished or not. Some visitors who did fish did not catch any fish so there are excess zeros in the data because of the people that did not fish.
