@@ -15,7 +15,7 @@ In this section, we’ll learn how to build a regression model for count based d
 7. [Comparing the results with Poisson Distribution](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#comparing-the-results-with-poisson-distribution)
 8. [Dumping the model results in Excel Sheet using VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#dumping-the-model-results-in-excel-sheet-using-vevestax)
 9. [Brief Intro about VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/ZIP_tutorial.md#brief-intro-about-vevestax)
-10. [References](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/References)
+10. [References](https://github.com/Vevesta/VevestaX/blob/main/tutorials/ZIP_models/references)
 
 Count based regression models are used where the value of dependent variable is a whole number. Few of the use cases of this model are:
 
