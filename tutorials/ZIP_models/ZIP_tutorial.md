@@ -21,7 +21,7 @@ When the Poisson regression model is applied to the count outcome data in real w
 
 The zero-inflated Poisson (ZIP) is an alternative that can be considered here. This model allows for assuming that there are two different types of individuals in the data: (1) Those who have a zero count with a probability of 1 (Always-0 group), and (2) those who have counts predicted by the standard Poisson (Not always-0 group). Observed zero could be from either group, and if the zero is from the Always-0 group, it indicates that the observation is free from the probability of having a positive outcome.
 
-The overall model is a mixture of the probabilities from the two groups, which allows for both the over dispersion and excess zeros that cannot be predicted by the standard Poisson model.
+The overall model is a mixture of the probabilities from the two groups, which allows for both the over dispersion and excess zeros that cannot be predicted by the standard Poisson model. For those new to Poisson model, an assumption that must be fulfilled on Poisson distribution is the mean value of data equals to the variance value (or so- called equidispersion). If the variance value is greater than the mean value, it is called overdispersion.
 
 Having a membership of Always-0 group is a binary outcome that can be predicted by logit model.
 
