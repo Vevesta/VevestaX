@@ -304,7 +304,7 @@ class Experiment(object):
         ]
         profilingDataframe = pandas.DataFrame(data)
 
-        new_dataframe = pandas.DataFrame(
+        profileOfVariableDataframe = pandas.DataFrame(
             {"Field Name": ["Distinct", "Distinct (%)", "Missing", "Missing (%)", "Infinite", "Infinite (%)", "Mean",
                             "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)",
                             "Total Memory Size"]})
@@ -326,12 +326,12 @@ class Experiment(object):
                         "Negative": (self.__data[col] > 0).sum(),
                         "Negative (%)": (self.__data[col] > 0).sum() / self.__data.shape[0],
                         "Total Memory Size": self.__data.memory_usage().sum()}
-            new_dataframe[col] = col_dict.values()
+            profileOfVariableDataframe[col] = col_dict.values()
 
         if os.path.isfile(fileName):
             with pandas.ExcelWriter(fileName, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
                 profilingDataframe.to_excel(writer, sheet_name="Profiling Report", index=False)
-                new_dataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
+                profileOfVariableDataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
 
