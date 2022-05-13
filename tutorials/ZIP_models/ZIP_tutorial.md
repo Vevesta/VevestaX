@@ -87,7 +87,7 @@ Here, *endog* is our dependent variable, *exog* is the dataset containing the fe
 
 ![image](https://miro.medium.com/max/1400/1*oP1mPzEerL26N1uzIXbl7Q.png)
 
-![image](https://miro.medium.com/max/700/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
+![image](https://miro.medium.com/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
 
 RMSE(ZIP Model) =7.937253933193772
 
