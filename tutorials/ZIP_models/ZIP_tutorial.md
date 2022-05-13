@@ -41,15 +41,15 @@ Then, mixed probabilities for ZIP are expressed as follows:
 
 * Zero counts in Not Always-0 group
 
-![image](https://miro.medium.com/max/836/1*hcCKyOaO_n44w8K5NkJRaQ.png)
+![image](https://miro.medium.com/1*hcCKyOaO_n44w8K5NkJRaQ.png)
 
 * Non zero counts in Not Always- group
 
-![image](https://miro.medium.com/max/574/1*Xk8S81Q0DtgZfr96Im0ZPQ.png)
+![image](https://miro.medium.com/1*Xk8S81Q0DtgZfr96Im0ZPQ.png)
 
 * Overall
 
-![image](https://miro.medium.com/max/986/1*rv-KdfBZy1u8k43pWchHuQ.png)
+![image](https://miro.medium.com/1*rv-KdfBZy1u8k43pWchHuQ.png)
 
 Here is the practical use case of the same where the state wildlife biologists want to model how many fishes are being caught by the visitors visiting the state park. Some visitors do not fish, but there is no data on whether a person fished or not. Some visitors who did fish did not catch any fish so there are excess zeros in the data because of the people that did not fish.
 
@@ -57,11 +57,11 @@ Here is the practical use case of the same where the state wildlife biologists w
 
 In our Python tutorial on the ZIP model, we’ll use a data set of camping trips taken by 250 groups of people, the data looks something like this:
 
-![image](https://miro.medium.com/max/1072/1*NAi1z35BOUFsjDxVFW0iSA.png)
+![image](https://miro.medium.com/1*NAi1z35BOUFsjDxVFW0iSA.png)
 
 Here is a frequency of Dependent Variable i.e. Fish Count in the dataset,
 
-![image](https://miro.medium.com/max/1400/1*VCGrSWL4VgP067WTVMvGqg.png)
+![image](https://miro.medium.com/1*VCGrSWL4VgP067WTVMvGqg.png)
 
 As we can see, there are excess zeroes in this data set. We’ll train a ZIP model on this data set to test this theory and hopefully achieve a better fit than the regular Poisson model.
 
@@ -71,21 +71,21 @@ Predict the number of fish caught (FISH_COUNT) by a camping group based on the v
 
 ## Performing Train-Test Split
 
-![image](https://miro.medium.com/max/1400/1*w25FKP4s9lFFLuSohgOGSw.png)
+![image](https://miro.medium.com/1*w25FKP4s9lFFLuSohgOGSw.png)
 
 ## Fitting the ZIP model and Calculating RMSE
 
-![image](https://miro.medium.com/max/1400/1*OAK6kwsYt6WVusuK8Ooa3A.png)
+![image](https://miro.medium.com/1*OAK6kwsYt6WVusuK8Ooa3A.png)
 
 Here, *endog* is our dependent variable, *exog* is the dataset containing the features or the independent variables and *inflation* is the model for zero inflation which can be either *logit* or *probit*.
 
 ## Plotting the Actual and Predicted Values
 
-![image](https://miro.medium.com/max/674/1*4Y4nb9SyxIcsTEtEbBml6w.png)
+![image](https://miro.medium.com/1*4Y4nb9SyxIcsTEtEbBml6w.png)
 
 ## Comparing the results with Poisson Distribution
 
-![image](https://miro.medium.com/max/1400/1*oP1mPzEerL26N1uzIXbl7Q.png)
+![image](https://miro.medium.com/1*oP1mPzEerL26N1uzIXbl7Q.png)
 
 ![image](https://miro.medium.com/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
 
@@ -97,7 +97,7 @@ It is clearly noticeable that the ZIP model has outperformed the Regular Poisson
 
 ## Dumping the model results in Excel Sheet using VevestaX
 
-![image](https://miro.medium.com/max/1400/1*dQb3Qcu6SPLI4bIzN55TMA.png)
+![image](https://miro.medium.com/1*dQb3Qcu6SPLI4bIzN55TMA.png)
 
 ## Brief Intro about VevestaX
 
@@ -125,7 +125,7 @@ V.ds = df
 ```
 where df is the pandas data frame containing the features.
 
-![image](https://miro.medium.com/max/1400/1*egUV7Vc-t2gupiG0UU4Myw.png)
+![image](https://miro.medium.com/1*egUV7Vc-t2gupiG0UU4Myw.png)
 
 * To track features engineered
 
@@ -145,17 +145,17 @@ Note that you need to download access_token.txt into the folder where this jupyt
 
 * Following are the insights we received after dumping the features:
 
-![image](https://miro.medium.com/max/1400/1*FwqHB7vpNUJek7H4pOb7pw.png)
+![image](https://miro.medium.com/1*FwqHB7vpNUJek7H4pOb7pw.png)
 
-![image](https://miro.medium.com/max/1400/1*zX_2WGJvqDF5kH7SGZ6VKA.png)
+![image](https://miro.medium.com/1*zX_2WGJvqDF5kH7SGZ6VKA.png)
 
-![image](https://miro.medium.com/max/1400/1*gP__37J7cghHJhHYB4CmgA.png)
+![image](https://miro.medium.com/1*gP__37J7cghHJhHYB4CmgA.png)
 
-![image](https://miro.medium.com/max/1400/1*S2sbQ0f_HTrcHp-Y44WoCg.png)
+![image](https://miro.medium.com/1*S2sbQ0f_HTrcHp-Y44WoCg.png)
 
-![image](https://miro.medium.com/max/1400/1*S9RLd7stKvnj-Tlpfixf3Q.png)
+![image](https://miro.medium.com/1*S9RLd7stKvnj-Tlpfixf3Q.png)
 
-![image](https://miro.medium.com/max/1400/1*TZfmOrmth9psMau5wR2MIA.png)
+![image](https://miro.medium.com/1*TZfmOrmth9psMau5wR2MIA.png)
 
 [*For Source Code Click Here*](https://gist.github.com/sarthakkedia123/7237a61bd9a6697583b1f46b81e43e2c)
 
