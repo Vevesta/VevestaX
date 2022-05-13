@@ -93,8 +93,8 @@ Predict the number of fish caught (FISH_COUNT) by a camping group based on the v
 Here, *endog* is our dependent variable, *exog* is the dataset containing the features or the independent variables and *inflation* is the model for zero inflation which can be either *logit* or *probit*.
 
 ## Plotting the Actual and Predicted Values
+![image](https://user-images.githubusercontent.com/81908188/168215210-612f407e-bc5d-4e0c-acc9-55a8f1506c57.png)
 
-![image](https://miro.medium.com/1*4Y4nb9SyxIcsTEtEbBml6w.png)
 
 ## Comparing the results with Poisson Distribution
 
