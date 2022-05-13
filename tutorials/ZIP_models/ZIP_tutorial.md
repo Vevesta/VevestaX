@@ -29,7 +29,7 @@ The probability (𝜓𝑖) that the observation 𝑖 is in Always-0 group is pre
 
 Then the probability that the observation 𝑖 is in Not always-0 group becomes (1-𝜓𝑖) . For observations in Not always-0 group, their positive count outcome is predicted by the standard Poisson model, so that can be written as:
 
-![alt text](https://miro.medium.com/max/330/1*UfwM8TYXau0LlBPP_Vul0A.png)
+![image](https://miro.medium.com/max/330/1*UfwM8TYXau0LlBPP_Vul0A.png)
 
 where 𝜇𝑖 is the conditional mean.
 
@@ -97,7 +97,7 @@ It is clearly noticeable that the ZIP model has outperformed the Regular Poisson
 
 **Dumping the model in Excel Sheet using VevestaX**
 
-![alt text](https://miro.medium.com/max/1400/1*dQb3Qcu6SPLI4bIzN55TMA.png)
+![image](https://miro.medium.com/max/1400/1*dQb3Qcu6SPLI4bIzN55TMA.png)
 
 **Brief Intro about VevestaX**
 
