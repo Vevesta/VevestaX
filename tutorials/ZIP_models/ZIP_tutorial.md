@@ -102,6 +102,8 @@ Here, *endog* is our dependent variable, *exog* is the dataset containing the fe
 
 ![image](https://miro.medium.com/1*U_UZ_Hcu1mmEAKtA-cULKA.png)
 
+![image](https://user-images.githubusercontent.com/81908188/168215447-033ce9c9-497b-4972-85f9-847a44257e31.png)
+
 RMSE(ZIP Model) =7.937253933193772
 
 RMSE(Poisson Regression)=8.37973746605465
