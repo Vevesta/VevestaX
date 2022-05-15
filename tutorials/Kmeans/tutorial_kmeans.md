@@ -4,7 +4,7 @@
 In this article we will be focusing on a very well-known unsupervised machine learning technique ‘K-Means’ and will be using a very efficient python package known as ‘VevestaX’ in order to perform Exploratory Data Analysis and Experiment Tracking.
 
 ## Table of Contents
-1.  [K-Mean Clustering]()
+1.  [K-Mean Clustering](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#k-mean-clustering)
 2.  [How the K-means algorithm works?]()
 3.  [VevestaX]()
 4.  [How To Use VevestaX?]()
@@ -32,17 +32,22 @@ The best part of this package is about its output. The output file of the Vevest
 ## How To Use VevestaX?
 Install the package as follows:
 
-* *pip install vevestaX*
+```
+pip install vevestaX
+```
 
 Import and create a vevesta object as follows:
 
-* *from vevestaX import vevesta as v*
-
-* *V=v.Experiment()*
+```
+from vevestaX import vevesta as v
+V=v.Experiment()
+```
 
 To track the feature used:
 
-* *V.ds = df*
+```
+V.ds = df
+```
 
 where df is the pandas dataframe with the input features
 
@@ -50,11 +55,15 @@ where df is the pandas dataframe with the input features
 
 To track features engineered
 
-* *V.fe = df*
+```
+V.fe = df
+```
 
 Finally in order to dump the features and variables used into an excel file and to see the insights what the data carries use:
 
-* *V.dump(techniqueUsed=’Model_Name’,filename=”vevestaDump.xlsx”,message=”precision is tracked”,version=1)*
+```
+V.dump(techniqueUsed=’Model_Name’,filename=”vevestaDump.xlsx”,message=”precision is tracked”,version=1)
+```
 
 
 Following are the insights we received after dumping the features:
@@ -73,19 +82,21 @@ Following are the insights we received after dumping the features:
 
 So what we have basically done is, firstly we have imported the necessary libraries and loaded the dataset.
 
-![](https://miro.medium.com/max/875/1*cppo5SPNWFe2YtSJYbkMqA.png)
+![image](https://miro.medium.com/max/875/1*cppo5SPNWFe2YtSJYbkMqA.png)
 
 Thereafter we had performed the train_test _split in order to get the train and test dataset.
 
-![](https://miro.medium.com/max/875/1*800Qu7ojsH8EwIxkRqKHkg.png)
+![image](https://miro.medium.com/max/875/1*800Qu7ojsH8EwIxkRqKHkg.png)
 
 Next, we cluster the data using K-Means. The number of clusters to be formed will be same as the classes in the data. The K-Means model is fitted on the train data and then the labels for test data are predicted. Finally, we calculate the baseline NMI score for the model.
 
-![](https://miro.medium.com/max/875/1*DLWTnU0X4nDhrtxMfCnd_Q.png)
+![image](https://miro.medium.com/max/875/1*DLWTnU0X4nDhrtxMfCnd_Q.png)
 
 Next in order to get the centroids of the clusters we used:
 
-* *model_kmeans.cluster_centers_*
+``` 
+model_kmeans.cluster_centers_
+```
 
 
 ![](https://miro.medium.com/max/875/1*xc8WsQQJdFWDEaKECC1qNw.png)
