@@ -9,7 +9,7 @@ In this article we will be focusing on a very well-known unsupervised machine le
 3.  [VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#vevestax)
 4.  [How To Use VevestaX?](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#how-to-use-vevestax)
 5.  [How to perform clustering using K Means and VevestaX?]()
-6.  [References]()
+6.  [References](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#references)
 
 ## K-Mean Clustering
 K-means clustering is one of the easiest and most popular unsupervised machine learning algorithms. Clustering algorithms are used to cluster similar data points, each based on their own definition of similarity. The K-means algorithm identifies the number of clusters, k and then assigns each data point to the nearest cluster.
