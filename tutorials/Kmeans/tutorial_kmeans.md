@@ -109,17 +109,13 @@ Finally we have dumped the data into Excel File using VevestaX.
 
 ## References
 
-1.  [FRUFS’s Github](https://github.com/atif-hassan/FRUFS)
+1.  [FRUFS article](https://www.vevesta.com/blog/1)
 
-2.  [FRUFS Author’s article](https://www.deepwizai.com/projects/how-to-perform-unsupervised-feature-selection-using-supervised-algorithms)
+2.  [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
 
-3.  [FRUFS article](https://www.vevesta.com/blog/1)
+3.  [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 
-4.  [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
-
-5.  [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
-
-Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=vevestax_github) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
+Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=vevestax_github_kmeans) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
 
 **Author**
 
