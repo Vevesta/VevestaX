@@ -1,7 +1,7 @@
 
-# Classification with K-Means and Vevestax library.
+# Classification with K-Means and VevestaX library.
 
-In this article we will be focusing on a very well-known unsupervised machine learning technique ‘K-Means’ and will be using a very efficient python package known as ‘VevestaX’ in order to perform Exploratory Data Analysis and Experiment Tracking.
+In this article we will be focusing on a very well-known unsupervised machine learning technique 'K-Means' and will be using a very efficient python package known as 'VevestaX' in order to perform Exploratory Data Analysis and Experiment Tracking.
 
 ## Table of Contents
 1.  [K-Mean Clustering](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#k-mean-clustering)
