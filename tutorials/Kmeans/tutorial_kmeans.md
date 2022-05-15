@@ -7,7 +7,7 @@ In this article we will be focusing on a very well-known unsupervised machine le
 1.  [K-Mean Clustering](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#k-mean-clustering)
 2.  [How the K-means algorithm works?](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#how-the-k-means-algorithm-works)
 3.  [VevestaX](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#vevestax)
-4.  [How To Use VevestaX?]()
+4.  [How To Use VevestaX?](https://github.com/Vevesta/VevestaX/blob/main/tutorials/Kmeans/tutorial_kmeans.md#how-to-use-vevestax)
 5.  [How to perform clustering using K Means and VevestaX?]()
 6.  [References]()
 
