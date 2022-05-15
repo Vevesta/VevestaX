@@ -62,7 +62,7 @@ V.fe = df
 Finally in order to dump the features and variables used into an excel file and to see the insights what the data carries use:
 
 ```
-V.dump(techniqueUsed=’Model_Name’,filename=”vevestaDump.xlsx”,message=”precision is tracked”,version=1)
+V.dump(techniqueUsed="Model_Name",filename="vevestaDump.xlsx",message="precision is tracked",version=1)
 ```
 
 
