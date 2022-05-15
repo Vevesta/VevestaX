@@ -311,20 +311,18 @@ class Experiment(object):
 
         for col in self.__data.columns:
             col_dict = {"Distinct": self.__data[col].nunique(),
-                        "Distinct (%)": self.__data[col].nunique() / self.__data.shape[0],
-                        "Missing": self.__data[col].isna().sum().sum(),
-                        "Missing (%)": (self.__data[col].isnull().sum().sum() * 100) / (
-                                self.__data[col].notnull().sum().sum() + self.__data[col].isnull().sum().sum()),
+                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
+                        "Missing": self.__data[col].isna().sum(),
+                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
                         "Infinite": np.isinf(self.__data[col]).values.sum(),
-                        "Infinite (%)": np.isinf(self.__data[col]).values.sum() / (
-                                (~self.__data[col].isna().sum().sum()) + self.__data[col].isna().sum().sum()),
+                        "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
                         "Mean": self.__data[col].mean(),
                         "Minimum": self.__data[col].min(),
                         "Maximum": self.__data[col].max(),
                         "Zeros": (self.__data[col] == 0).sum(),
-                        "Zeros (%)": (self.__data[col] == 0).sum() / self.__data.shape[0],
-                        "Negative": (self.__data[col] > 0).sum(),
-                        "Negative (%)": (self.__data[col] > 0).sum() / self.__data.shape[0],
+                        "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
+                        "Negative": (self.__data[col] < 0).sum(),
+                        "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
                         "Total Memory Size": self.__data.memory_usage().sum()}
             profileOfVariableDataframe[col] = col_dict.values()
 
