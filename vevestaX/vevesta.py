@@ -307,7 +307,7 @@ class Experiment(object):
         profileOfVariableDataframe = pandas.DataFrame(
             {"Field Name": ["Distinct", "Distinct (%)", "Missing", "Missing (%)", "Infinite", "Infinite (%)", "Mean",
                             "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)",
-                            "Total Memory Size"]})
+                            "Total Memory Size(bytes)"]})
 
         numericColumns = self.__data.select_dtypes(include=["number"]).columns
         for col in numericColumns:
@@ -324,7 +324,7 @@ class Experiment(object):
                         "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
                         "Negative": (self.__data[col] < 0).sum(),
                         "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
-                        "Total Memory Size": self.__data.memory_usage().sum()}
+                        "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"]).columns
@@ -342,7 +342,7 @@ class Experiment(object):
                         "Zeros (%)": "NA",
                         "Negative": "NA",
                         "Negative (%)": "NA",
-                        "Total Memory Size": self.__data.memory_usage().sum()}
+                        "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
         if os.path.isfile(fileName):
