@@ -58,14 +58,14 @@ class Experiment(object):
 
     @dataSourcing.setter
     def dataSourcing(self, value):
-        if type(value) == pandas.core.frame.DataFrame:
+        if isinstance(value, pandas.DataFrame):
             self.__dataSourcing = value.columns.tolist()
             self.__data = value
             self.__sampleSize = len(value)
             if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
-        if type(value) == pyspark.sql.dataframe.DataFrame:
+        if isinstance(value, pyspark.sql.dataframe.DataFrame):
             self.__dataSourcing = value.columns
             self.__data = value
             self.__sampleSize = value.count()
@@ -99,32 +99,32 @@ class Experiment(object):
     def featureEngineering(self, value):
         if self.__dataSourcing is None:
             print("Data Sourcing step missed.")
-            if type(value) == pandas.core.frame.DataFrame:
+            if isinstance(value, pandas.DataFrame):
                 cols = value.columns
                 self.__featureEngineering = cols
 
-            if type(value) == pyspark.sql.dataframe.DataFrame:
+            if isinstance(value, pyspark.sql.dataframe.DataFrame):
                 cols = value.columns
                 self.__featureEngineering = cols
 
 
         else:
-            if type(value) == pandas.core.frame.DataFrame:
+            if isinstance(value, pandas.DataFrame):
                 cols = value.columns
                 cols = [col for col in cols if col not in self.__dataSourcing]
                 # cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
-            if type(value) == pyspark.sql.dataframe.DataFrame:
+            if isinstance(value, pyspark.sql.dataframe.DataFrame):
                 cols = value.columns
                 cols = [col for col in cols if col not in self.__dataSourcing]
                 self.__featureEngineering = cols
 
-        if type(value) == pandas.core.frame.DataFrame:
+        if isinstance(value, pandas.DataFrame):
             if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
-        if type(value) == pyspark.sql.dataframe.DataFrame:
+        if isinstance(value, pyspark.sql.dataframe.DataFrame):
             if self.speedUp == False:
                 spark = SparkSession.builder.appName("vevesta").getOrCreate()
                 columnNames = []
@@ -283,9 +283,9 @@ class Experiment(object):
         sheetName = 'Profiling Report'
         if self.speedUp:
             return
-        if self.__data.empty or len(self.__data) == 0:
+        if not isinstance(self.__data, pandas.DataFrame):
             return
-        if type(self.__data) != pandas.core.frame.DataFrame:
+        if self.__data.empty or len(self.__data) == 0:
             return
         if fileName is None:
             return print("Error: Provide the Excel File")
@@ -309,37 +309,40 @@ class Experiment(object):
                             "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)",
                             "Total Memory Size"]})
 
-        for col in self.__data.columns:
-            if self.__data[col].dtype in ["int64", "float64"]:
-                col_dict = {"Distinct": self.__data[col].nunique(),
-                            "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                            "Missing": self.__data[col].isna().sum(),
-                            "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                            "Infinite": np.isinf(self.__data[col]).values.sum(),
-                            "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
-                            "Mean": self.__data[col].mean(),
-                            "Minimum": self.__data[col].min(),
-                            "Maximum": self.__data[col].max(),
-                            "Zeros": (self.__data[col] == 0).sum(),
-                            "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
-                            "Negative": (self.__data[col] < 0).sum(),
-                            "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
-                            "Total Memory Size": self.__data.memory_usage().sum()}
-            else:
-                col_dict = {"Distinct": self.__data[col].nunique(),
-                            "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                            "Missing": self.__data[col].isna().sum(),
-                            "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                            "Infinite": "NA",
-                            "Infinite (%)": "NA",
-                            "Mean": "NA",
-                            "Minimum": "NA",
-                            "Maximum": "NA",
-                            "Zeros": "NA",
-                            "Zeros (%)": "NA",
-                            "Negative": "NA",
-                            "Negative (%)": "NA",
-                            "Total Memory Size": self.__data.memory_usage().sum()}
+        numericColumns = self.__data.select_dtypes(include=["number"]).columns
+        for col in numericColumns:
+            col_dict = {"Distinct": self.__data[col].nunique(),
+                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
+                        "Missing": self.__data[col].isna().sum(),
+                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
+                        "Infinite": np.isinf(self.__data[col]).values.sum(),
+                        "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
+                        "Mean": self.__data[col].mean(),
+                        "Minimum": self.__data[col].min(),
+                        "Maximum": self.__data[col].max(),
+                        "Zeros": (self.__data[col] == 0).sum(),
+                        "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
+                        "Negative": (self.__data[col] < 0).sum(),
+                        "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
+                        "Total Memory Size": self.__data.memory_usage().sum()}
+            profileOfVariableDataframe[col] = col_dict.values()
+
+        nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"]).columns
+        for col in nonNumericalColumns:
+            col_dict = {"Distinct": self.__data[col].nunique(),
+                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
+                        "Missing": self.__data[col].isna().sum(),
+                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
+                        "Infinite": "NA",
+                        "Infinite (%)": "NA",
+                        "Mean": "NA",
+                        "Minimum": "NA",
+                        "Maximum": "NA",
+                        "Zeros": "NA",
+                        "Zeros (%)": "NA",
+                        "Negative": "NA",
+                        "Negative (%)": "NA",
+                        "Total Memory Size": self.__data.memory_usage().sum()}
             profileOfVariableDataframe[col] = col_dict.values()
 
         if os.path.isfile(fileName):
@@ -436,10 +439,10 @@ class Experiment(object):
 
         self.__sampleSize = 100 if self.__sampleSize >= 100 else self.__sampleSize
 
-        if (type(self.__data) == pandas.core.frame.DataFrame):
+        if isinstance(self.__data, pandas.DataFrame):
             sampledData = self.__data.sample(self.__sampleSize)
 
-        if type(self.__data) == pyspark.sql.dataframe.DataFrame:
+        if isinstance(self.__data, pyspark.sql.dataframe.DataFrame):
             if self.__data.count() >= 100:
                 sampledData = self.__data.sample(100 / self.__data.count())
 
@@ -456,21 +459,21 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
 
-            if type(sampledData) == pandas.core.frame.DataFrame:
+            if isinstance(self.__data, pandas.DataFrame):
                 pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
 
-            if (type(self.__data) == pyspark.sql.dataframe.DataFrame):
+            if isinstance(self.__data, pyspark.sql.dataframe.DataFrame):
                 sampledData.toPandas().to_excel(writer, sheet_name='sampledata', index=False)
 
             if self.speedUp == False:
                 if self.__correlation is not None:
-                    if (type(sampledData) == pandas.core.frame.DataFrame):
+                    if isinstance(sampledData, pandas.DataFrame):
                         pandas.DataFrame(self.__correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-                    if (type(sampledData) == pyspark.sql.dataframe.DataFrame):
+                    if isinstance(sampledData, pyspark.sql.dataframe.DataFrame):
                         correlation = self.__correlation.toPandas()
                         pandas.DataFrame(correlation).style. \
                             applymap(self.__colorCellExcel). \
@@ -492,7 +495,7 @@ class Experiment(object):
             print(message)
 
     def __EDA(self, fileName):
-        if type(self.__data) == pandas.core.frame.DataFrame:
+        if isinstance(self.__data, pandas.DataFrame):
             self.__EDAForPandas(fileName)
 
     def __EDAForPandas(self, fileName):
@@ -500,7 +503,7 @@ class Experiment(object):
         if self.__data.empty or len(self.__data) == 0:
             return
 
-        if type(self.__data) != pandas.core.frame.DataFrame:
+        if not isinstance(self.__data, pandas.DataFrame):
             return
 
         if (fileName == None):
