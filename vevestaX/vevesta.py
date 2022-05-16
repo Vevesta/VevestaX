@@ -309,37 +309,40 @@ class Experiment(object):
                             "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)",
                             "Total Memory Size"]})
 
-        for col in self.__data.columns:
-            if self.__data[col].dtype in ["int64", "float64"]:
-                col_dict = {"Distinct": self.__data[col].nunique(),
-                            "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                            "Missing": self.__data[col].isna().sum(),
-                            "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                            "Infinite": np.isinf(self.__data[col]).values.sum(),
-                            "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
-                            "Mean": self.__data[col].mean(),
-                            "Minimum": self.__data[col].min(),
-                            "Maximum": self.__data[col].max(),
-                            "Zeros": (self.__data[col] == 0).sum(),
-                            "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
-                            "Negative": (self.__data[col] < 0).sum(),
-                            "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
-                            "Total Memory Size": self.__data.memory_usage().sum()}
-            else:
-                col_dict = {"Distinct": self.__data[col].nunique(),
-                            "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                            "Missing": self.__data[col].isna().sum(),
-                            "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                            "Infinite": "NA",
-                            "Infinite (%)": "NA",
-                            "Mean": "NA",
-                            "Minimum": "NA",
-                            "Maximum": "NA",
-                            "Zeros": "NA",
-                            "Zeros (%)": "NA",
-                            "Negative": "NA",
-                            "Negative (%)": "NA",
-                            "Total Memory Size": self.__data.memory_usage().sum()}
+        numericColumns = self.__data.select_dtypes(include=["number"]).columns
+        for col in numericColumns:
+            col_dict = {"Distinct": self.__data[col].nunique(),
+                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
+                        "Missing": self.__data[col].isna().sum(),
+                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
+                        "Infinite": np.isinf(self.__data[col]).values.sum(),
+                        "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
+                        "Mean": self.__data[col].mean(),
+                        "Minimum": self.__data[col].min(),
+                        "Maximum": self.__data[col].max(),
+                        "Zeros": (self.__data[col] == 0).sum(),
+                        "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
+                        "Negative": (self.__data[col] < 0).sum(),
+                        "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
+                        "Total Memory Size": self.__data.memory_usage().sum()}
+            profileOfVariableDataframe[col] = col_dict.values()
+
+        nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"]).columns
+        for col in nonNumericalColumns:
+            col_dict = {"Distinct": self.__data[col].nunique(),
+                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
+                        "Missing": self.__data[col].isna().sum(),
+                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
+                        "Infinite": "NA",
+                        "Infinite (%)": "NA",
+                        "Mean": "NA",
+                        "Minimum": "NA",
+                        "Maximum": "NA",
+                        "Zeros": "NA",
+                        "Zeros (%)": "NA",
+                        "Negative": "NA",
+                        "Negative (%)": "NA",
+                        "Total Memory Size": self.__data.memory_usage().sum()}
             profileOfVariableDataframe[col] = col_dict.values()
 
         if os.path.isfile(fileName):
