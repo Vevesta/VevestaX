@@ -80,7 +80,7 @@ class Experiment(object):
                 df_vector = assembler.transform(value).select(vectorCol)
                 matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
                 corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix)
+                dfCorr = spark.createDataFrame(corrMatrix,columnNames)
                 self.__correlation = dfCorr
 
     @property
@@ -136,7 +136,7 @@ class Experiment(object):
                 df_vector = assembler.transform(value).select(vectorCol)
                 matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
                 corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix)
+                dfCorr = spark.createDataFrame(corrMatrix,columnNames)
                 self.__correlation = dfCorr
 
     @property
@@ -475,8 +475,8 @@ class Experiment(object):
 
                     if isinstance(sampledData, pyspark.sql.dataframe.DataFrame):
                         correlation = self.__correlation.toPandas()
-                        print(correlation)
-                        pandas.DataFrame(correlation, index=['Gender', 'Age', 'Months_Count', 'Salary', 'Expenditure', 'House_Price','salary_feature', 'salary_ratio1'], columns=self.__dataSourcing).style. \
+                        correlation.set_index(correlation.columns, inplace=True)
+                        pandas.DataFrame(correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
