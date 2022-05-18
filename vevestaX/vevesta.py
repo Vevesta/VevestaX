@@ -584,7 +584,7 @@ class Experiment(object):
             fig, axes = plt.subplots(ncols=1, nrows=len(nonNumericalColumns.columns), figsize=(18, 20))
             # Loop through features and put each subplot on a matplotlib axis object
             for col, ax in zip(nonNumericalColumns.columns, axes.ravel()):
-                # Selects one single feature and counts number of unique value and Plots this information in a figure with log-scaled y-axis
+                # Selects one single feature and counts number of unique value and Plots this information in a figure with normal scale.
                 nonNumericalColumns[col].value_counts().plot(logy=False, title=col, lw=0, marker="X", ax=ax,
                                                              markersize=5)
                 # plt.tight_layout()
