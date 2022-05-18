@@ -579,8 +579,13 @@ class Experiment(object):
         plt.close()
 
         # EDA for outliers
-        self.__data.plot(kind='box', figsize=(10, 5))
-        plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
+        red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
+        fig, axs = plt.subplots(1, len(self.__data.columns), figsize=(35, 10))
+        for i, ax in enumerate(axs.flat):
+            ax.boxplot(self.__data.iloc[:, i], flierprops=red_circle)
+            ax.set_title(self.__data.columns[i], fontsize=15)
+            ax.tick_params(axis='y', labelsize=10)
+            plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # Identify non-numerical features
