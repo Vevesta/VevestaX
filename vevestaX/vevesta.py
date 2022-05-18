@@ -548,6 +548,7 @@ class Experiment(object):
         NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
         FeatureHistogramImageFile = "FeatureHistogram.png"
+        OutliersImageFile = "Outliers.png"
 
         # EDA missing values
         plt.figure(figsize=(13, 8))
@@ -575,6 +576,11 @@ class Experiment(object):
                          title="Numeric feature Distribution").flatten()
         plt.savefig(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
                     dpi=100)
+        plt.close()
+
+        # EDA for outliers
+        self.__data.plot(kind='box', figsize=(10, 5))
+        plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # Identify non-numerical features
@@ -618,6 +624,14 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
+
+            # adding boxplot for Numeric features
+            workBook.create_sheet('EDA-Boxplot')
+            outlierplotsheet = workBook['EDA-Boxplot']
+            OutlierImg = openpyxl.drawing.image.Image(
+                os.path.join(directoryToDumpData, OutliersImageFile))
+            OutlierImg.anchor = columnTextImgone
+            outlierplotsheet.add_image(OutlierImg)
 
             # adding non-numeric column
             if os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
