@@ -17,8 +17,9 @@ from pyspark.sql import SparkSession
 from pyspark.ml.stat import Correlation
 from pyspark.ml.feature import VectorAssembler
 from pyspark.sql.types import DoubleType
-
-
+from scipy.stats import skew
+from scipy.stats import kurtosis
+import statistics
 def test():
     return 'Test Executed Successfully'
 
@@ -306,11 +307,17 @@ class Experiment(object):
 
         profileOfVariableDataframe = pandas.DataFrame(
             {"Field Name": ["Distinct", "Distinct (%)", "Missing", "Missing (%)", "Infinite", "Infinite (%)", "Mean",
-                            "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)",
-                            "Total Memory Size(bytes)"]})
+                            "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)", "Kurtosis",
+                            "Skewness", "Median", "Mode", "Outliers", "Outliers (%)", "Q1 quantile", "Q2 quantile",
+                            "Q3 quantile", "100th quantile", "Total Memory Size(bytes)"]})
 
         numericColumns = self.__data.select_dtypes(include=["number"]).columns
         for col in numericColumns:
+            # finding outliers for each column
+            Q1 = np.quantile(self.__data[col], 0.25)
+            Q3 = np.quantile(self.__data[col], 0.75)
+            IQR = Q3 - Q1
+            outlier = ((self.__data[col] < (Q1 - 1.5 * IQR)) | (self.__data[col] > (Q3 + 1.5 * IQR))).sum()
             col_dict = {"Distinct": self.__data[col].nunique(),
                         "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
                         "Missing": self.__data[col].isna().sum(),
@@ -324,6 +331,16 @@ class Experiment(object):
                         "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
                         "Negative": (self.__data[col] < 0).sum(),
                         "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
+                        "Kurtosis": kurtosis(self.__data[col], axis=0, bias=True),
+                        "Skewness": skew(self.__data[col], axis=0, bias=True),
+                        "Median": statistics.median(self.__data[col]),
+                        "Mode": statistics.mode(self.__data[col]),
+                        "Outliers": outlier,
+                        "Outliers (%)": outlier * 100 / self.__data.shape[0],
+                        "Q1 quantile": np.quantile(self.__data[col], 0.25),
+                        "Q2 quantile": np.quantile(self.__data[col], 0.5),
+                        "Q3 quantile": np.quantile(self.__data[col], 0.75),
+                        "100th quantile": np.quantile(self.__data[col], 1),
                         "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
@@ -342,6 +359,16 @@ class Experiment(object):
                         "Zeros (%)": "NA",
                         "Negative": "NA",
                         "Negative (%)": "NA",
+                        "Kurtosis": "NA",
+                        "Skewness": "NA",
+                        "Median": "NA",
+                        "Mode": "NA",
+                        "Outliers": "NA",
+                        "Outliers (%)": "NA",
+                        "Q1 quantile": "NA",
+                        "Q2 quantile": "NA",
+                        "Q3 quantile": "NA",
+                        "100th quantile": "NA",
                         "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
@@ -475,10 +502,12 @@ class Experiment(object):
 
                     if isinstance(sampledData, pyspark.sql.dataframe.DataFrame):
                         correlation = self.__correlation.toPandas()
+                        correlation.set_index(correlation.columns, inplace=True)
                         pandas.DataFrame(correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
+
 
         self.__profilingReport(filename)
 
@@ -555,8 +584,8 @@ class Experiment(object):
             fig, axes = plt.subplots(ncols=1, nrows=len(nonNumericalColumns.columns), figsize=(18, 20))
             # Loop through features and put each subplot on a matplotlib axis object
             for col, ax in zip(nonNumericalColumns.columns, axes.ravel()):
-                # Selects one single feature and counts number of unique value and Plots this information in a figure with log-scaled y-axis
-                nonNumericalColumns[col].value_counts().plot(logy=True, title=col, lw=0, marker="X", ax=ax,
+                # Selects one single feature and counts number of unique value and Plots this information in a figure with normal scale.
+                nonNumericalColumns[col].value_counts().plot(logy=False, title=col, lw=0, marker="X", ax=ax,
                                                              markersize=5)
                 # plt.tight_layout()
                 plt.savefig(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
