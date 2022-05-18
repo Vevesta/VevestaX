@@ -317,13 +317,7 @@ class Experiment(object):
             Q1 = np.quantile(self.__data[col], 0.25)
             Q3 = np.quantile(self.__data[col], 0.75)
             IQR = Q3 - Q1
-            low_lim = Q1 - 1.5 * IQR
-            up_lim = Q3 + 1.5 * IQR
-            outliers = []
-            for x in self.__data[col]:
-                if (x > up_lim) or (x < low_lim):
-                    outliers.append(x)
-
+            outlier = ((self.__data[col] < (Q1 - 1.5 * IQR)) | (self.__data[col] > (Q3 + 1.5 * IQR))).sum()
             col_dict = {"Distinct": self.__data[col].nunique(),
                         "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
                         "Missing": self.__data[col].isna().sum(),
@@ -341,8 +335,8 @@ class Experiment(object):
                         "Skewness": skew(self.__data[col], axis=0, bias=True),
                         "Median": statistics.median(self.__data[col]),
                         "Mode": statistics.mode(self.__data[col]),
-                        "Outliers": outliers,
-                        "Outliers (%)": (sum(outliers) / self.__data.shape[0]),
+                        "Outliers": outlier,
+                        "Outliers (%)": outlier * 100 / self.__data.shape[0],
                         "Q1 quantile": np.quantile(self.__data[col], 0.25),
                         "Q2 quantile": np.quantile(self.__data[col], 0.5),
                         "Q3 quantile": np.quantile(self.__data[col], 0.75),
