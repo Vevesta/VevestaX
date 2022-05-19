@@ -154,7 +154,7 @@ V=v.Experiment(true)
 ![image](https://user-images.githubusercontent.com/81908188/160065199-7030314b-fcaf-4a53-91d1-f47b6725b4c7.png)
 
 ### Messages tab
-![image](https://user-images.githubusercontent.com/81908188/160065290-a04d8f96-496a-4567-8c4b-f9a4514c2ba3.png)
+![image](https://user-images.githubusercontent.com/81908188/169261864-99528269-a816-4783-8354-18675bb21aff.png)
 
 ### EDA-correlation tab
 ![image](https://user-images.githubusercontent.com/81908188/160065377-6a3b5695-d497-4fc3-921d-2e9b8f28dced.png)
