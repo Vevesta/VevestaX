@@ -151,13 +151,16 @@ V=v.Experiment(true)
 ![image](https://user-images.githubusercontent.com/81908188/169261608-b664936b-560f-421a-9b40-421d0a2e0400.png)
 
 ### Modelling tab
-![image](https://user-images.githubusercontent.com/81908188/160065199-7030314b-fcaf-4a53-91d1-f47b6725b4c7.png)
-
-### Messages tab
 ![image](https://user-images.githubusercontent.com/81908188/169261864-99528269-a816-4783-8354-18675bb21aff.png)
+ 
+### Messages tab
+![image](https://user-images.githubusercontent.com/81908188/169262663-d60edda6-1c6a-4236-a9d4-8ed665ec00e0.png)
+
+### Sample data tab
+![image](https://user-images.githubusercontent.com/81908188/169262921-7e6d7a4b-77c6-4702-94ad-f61de8275a10.png)
 
 ### EDA-correlation tab
-![image](https://user-images.githubusercontent.com/81908188/160065377-6a3b5695-d497-4fc3-921d-2e9b8f28dced.png)
+![image](https://user-images.githubusercontent.com/81908188/169263062-76106842-dfad-4158-b95e-72efa609c578.png)
 
 ### Experiments performance plots
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
