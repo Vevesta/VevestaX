@@ -548,6 +548,7 @@ class Experiment(object):
         NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
         FeatureHistogramImageFile = "FeatureHistogram.png"
+        OutliersImageFile = "Outliers.png"
 
         # EDA missing values
         plt.figure(figsize=(13, 8))
@@ -575,6 +576,17 @@ class Experiment(object):
                          title="Numeric feature Distribution").flatten()
         plt.savefig(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
                     dpi=100)
+        plt.close()
+
+        # EDA for outliers
+        numericColumns = self.__data.select_dtypes(include=["number"])
+        red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
+        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(35, 10))
+        for i, ax in enumerate(axs.flat):
+            ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
+            ax.set_title(self.__data.columns[i], fontsize=15)
+            ax.tick_params(axis='y', labelsize=10)
+            plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # Identify non-numerical features
@@ -618,6 +630,14 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
+
+            # adding boxplot for Numeric features
+            workBook.create_sheet('EDA-Boxplot')
+            outlierplotsheet = workBook['EDA-Boxplot']
+            OutlierImg = openpyxl.drawing.image.Image(
+                os.path.join(directoryToDumpData, OutliersImageFile))
+            OutlierImg.anchor = columnTextImgone
+            outlierplotsheet.add_image(OutlierImg)
 
             # adding non-numeric column
             if os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
