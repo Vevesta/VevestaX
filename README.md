@@ -162,6 +162,13 @@ V=v.Experiment(true)
 ### EDA-correlation tab
 ![image](https://user-images.githubusercontent.com/81908188/169263062-76106842-dfad-4158-b95e-72efa609c578.png)
 
+### Overall Data Profile report tab
+![image](https://user-images.githubusercontent.com/81908188/169263357-9b1d9d9f-da79-463b-b177-4e39686694fe.png)
+
+### Variables Data Profile report tab
+![image](https://user-images.githubusercontent.com/81908188/169263941-52680a59-5bde-4464-9f07-dfac8f1eb59c.png)
+
+ 
 ### Experiments performance plots
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 ![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
