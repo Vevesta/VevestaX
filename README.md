@@ -148,7 +148,7 @@ V=v.Experiment(true)
 ![image](https://user-images.githubusercontent.com/81908188/169261190-f94c42d3-2ed7-4f33-b427-b1f4f8f9e4d2.png)
 
 ### Feature Engineering tab
-![image](https://user-images.githubusercontent.com/81908188/160064990-570e3a10-e13f-45e6-b089-7e1aa99e24b9.png)
+![image](https://user-images.githubusercontent.com/81908188/169261608-b664936b-560f-421a-9b40-421d0a2e0400.png)
 
 ### Modelling tab
 ![image](https://user-images.githubusercontent.com/81908188/160065199-7030314b-fcaf-4a53-91d1-f47b6725b4c7.png)
