@@ -142,7 +142,9 @@ For the above code snippet, each row in the excel sheet corresponds to an experi
 from vevestaX import vevesta as v
 V=v.Experiment(true)
 ```
-
+6. EDA-box Plot tab: Box plots for numeric features
+7. EDA-Numeric Feature Distribution: Scatter plot with x axis as index in the data and y axis as the value of the data point.
+8. EDA-Feature Histogram: Histogram of numeric features
 
 ### Sourced Data tab
 ![image](https://user-images.githubusercontent.com/81908188/169261190-f94c42d3-2ed7-4f33-b427-b1f4f8f9e4d2.png)
