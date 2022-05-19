@@ -568,6 +568,7 @@ class Experiment(object):
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
         plt.ylabel("Ratio of missing values per feature")
+        plt.xticks(rotation=90)
         plt.savefig(os.path.join(directoryToDumpData, ValueRatioImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
@@ -581,11 +582,12 @@ class Experiment(object):
         # EDA for outliers
         numericColumns = self.__data.select_dtypes(include=["number"])
         red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
-        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(35, 10))
+        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40,8))
         for i, ax in enumerate(axs.flat):
             ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
             ax.set_title(self.__data.columns[i], fontsize=15)
-            ax.tick_params(axis='y', labelsize=10)
+            ax.tick_params(axis='both', labelrotation=45)
+            plt.subplots_adjust(wspace=1)
             plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
