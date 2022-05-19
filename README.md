@@ -8,7 +8,7 @@
 
 # Library to track machine learning experiments, features as well as automatic EDA in a spreadsheet
 
-VevestaX is an open source Python package for ML Engineers and Data Scientists.  It includes modules for tracking features sourced from data, feature engineering and variables. The output is an excel file which has tabs namely, data sourcing, feature engineering, modelling, performance plots for tracking performance of variables(accuracy etc) over multiple experiments and lastly, EDA plots. The library can be used with Jupyter notebook, IDEs like spyder, Colab, Kaggle notebook or while running the python script through command line. VevestaX is framework agnostic. You can use it with any machine learning or deep learning framework.
+VevestaX is an open source Python package for ML Engineers and Data Scientists.  It includes modules for EDA, tracking features sourced from data, feature engineering and variables. The output is an excel file which has tabs namely, data sourcing, feature engineering, modelling, performance plots for tracking performance of variables(accuracy etc) over multiple experiments and lastly, multiple EDA plots. The library can be used with Jupyter notebook, IDEs like spyder, Colab, Kaggle notebook or while running the python script through command line. VevestaX is framework agnostic. You can use it with any machine learning or deep learning framework.
 
 ## Table of Contents
 1. [How to Install VevestaX](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-install-VevestaX)
