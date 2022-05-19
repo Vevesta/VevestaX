@@ -174,7 +174,9 @@ V=v.Experiment(true)
 ### Histogram for numeric features
 ![image](https://user-images.githubusercontent.com/81908188/169267398-6b2115aa-fb96-4c7a-aba0-4df88f637c14.png)
 
- 
+### Box plot for numeric features
+![image](https://user-images.githubusercontent.com/81908188/169293880-d6c75abf-4987-4c2c-8181-b813d79ab520.png)
+  
 ### Experiments performance plots
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 ![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
