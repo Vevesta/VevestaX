@@ -20,6 +20,8 @@ from pyspark.sql.types import DoubleType
 from scipy.stats import skew
 from scipy.stats import kurtosis
 import statistics
+
+
 def test():
     return 'Test Executed Successfully'
 
@@ -156,7 +158,8 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
+                                                   i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
 
         return self.__variables
 
@@ -182,7 +185,9 @@ class Experiment(object):
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
 
-                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool,str] and key not in self.__variables}}
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if
+                                                           type(value) in [int, float, bool,
+                                                                           str] and key not in self.__variables}}
 
             return wrapper
 
@@ -476,7 +481,6 @@ class Experiment(object):
             if self.__data.count() < 100:
                 sampledData = self.__data.sample(1.0)
 
-
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
@@ -508,14 +512,12 @@ class Experiment(object):
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-
         self.__profilingReport(filename)
 
         if self.speedUp == False:
             self.__EDA(filename)
 
         self.__plot(filename)
-
 
         print("Dumped the experiment in the file " + filename)
 
@@ -549,6 +551,7 @@ class Experiment(object):
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
         FeatureHistogramImageFile = "FeatureHistogram.png"
         OutliersImageFile = "Outliers.png"
+        NumericFeatures3Dplots = "NumericFeatures3Dplots.png"
 
         # EDA missing values
         plt.figure(figsize=(13, 8))
@@ -582,13 +585,31 @@ class Experiment(object):
         # EDA for outliers
         numericColumns = self.__data.select_dtypes(include=["number"])
         red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
-        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40,8))
+        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40, 8))
         for i, ax in enumerate(axs.flat):
             ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
             ax.set_title(self.__data.columns[i], fontsize=15)
             ax.tick_params(axis='both', labelrotation=45)
             plt.subplots_adjust(wspace=1)
             plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
+        plt.close()
+
+        # EDA for 3-D Plots
+        numericDataframe = self.__data.select_dtypes(include='number')
+        fig = plt.figure(figsize=(40, 8))
+        j = 1
+        for i in range(len(numericDataframe.columns) - 2):
+            ax = fig.add_subplot(1, len(numericDataframe.columns), j, projection='3d')
+            x = numericDataframe.iloc[:, i]
+            y = numericDataframe.iloc[:, i + 1]
+            z = numericDataframe.iloc[:, i + 2]
+            ax.scatter(x, y, z)
+            ax.set_xlabel(numericDataframe.columns[i])
+            ax.set_ylabel(numericDataframe.columns[i + 1])
+            ax.set_zlabel(numericDataframe.columns[i + 2])
+            plt.subplots_adjust(wspace=1)
+            j += 1
+        plt.savefig(os.path.join(directoryToDumpData, NumericFeatures3Dplots), bbox_inches='tight', dpi=100)
         plt.close()
 
         # Identify non-numerical features
@@ -640,6 +661,14 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, OutliersImageFile))
             OutlierImg.anchor = columnTextImgone
             outlierplotsheet.add_image(OutlierImg)
+
+            # adding 3D plots for numeric features
+            workBook.create_sheet('EDA-3Dplot')
+            ThreeDplotsheet = workBook['EDA-3Dplot']
+            ThreeDImg = openpyxl.drawing.image.Image(
+                os.path.join(directoryToDumpData, NumericFeatures3Dplots))
+            ThreeDImg.anchor = columnTextImgone
+            ThreeDplotsheet.add_image(ThreeDImg)
 
             # adding non-numeric column
             if os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
