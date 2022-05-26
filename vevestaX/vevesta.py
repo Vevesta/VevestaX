@@ -158,8 +158,7 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
-                                                   i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
 
         return self.__variables
 
@@ -185,9 +184,7 @@ class Experiment(object):
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
 
-                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if
-                                                           type(value) in [int, float, bool,
-                                                                           str] and key not in self.__variables}}
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool, str] and key not in self.__variables}}
 
             return wrapper
 
