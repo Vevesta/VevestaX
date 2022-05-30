@@ -20,6 +20,7 @@ from pyspark.sql.types import DoubleType
 from scipy.stats import skew
 from scipy.stats import kurtosis
 import statistics
+import itertools
 
 
 def test():
@@ -594,21 +595,18 @@ class Experiment(object):
             plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
-        # EDA for 3-D Plots
+        # EDA for 3D-Plots
         numericDataframe = self.__data.select_dtypes(include='number')
-        fig = plt.figure(figsize=(40, 8))
-        j = 1
-        for i in range(len(numericDataframe.columns) - 2):
-            ax = fig.add_subplot(1, len(numericDataframe.columns), j, projection='3d')
-            x = numericDataframe.iloc[:, i]
-            y = numericDataframe.iloc[:, i + 1]
-            z = numericDataframe.iloc[:, i + 2]
-            ax.scatter(x, y, z)
-            ax.set_xlabel(numericDataframe.columns[i])
-            ax.set_ylabel(numericDataframe.columns[i + 1])
-            ax.set_zlabel(numericDataframe.columns[i + 2])
+        fig = plt.figure(figsize=(100, 40))
+        k = 1
+        for pair in itertools.combinations(numericDataframe.columns, 3):
+            ax = fig.add_subplot(len(numericDataframe.columns), len(numericDataframe.columns), k, projection='3d')
+            ax.scatter3D(numericDataframe[pair[0]], numericDataframe[pair[1]], numericDataframe[pair[2]])
+            ax.set_xlabel(pair[0])
+            ax.set_ylabel(pair[1])
+            ax.set_zlabel(pair[2])
             plt.subplots_adjust(wspace=1)
-            j += 1
+            k += 1
         plt.savefig(os.path.join(directoryToDumpData, NumericFeatures3Dplots), bbox_inches='tight', dpi=100)
         plt.close()
 
