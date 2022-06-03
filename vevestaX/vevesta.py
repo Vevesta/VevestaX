@@ -20,6 +20,7 @@ from pyspark.sql.types import DoubleType
 from scipy.stats import skew
 from scipy.stats import kurtosis
 import statistics
+import itertools
 from github import Github
 
 
@@ -594,6 +595,21 @@ class Experiment(object):
             plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
+        # EDA for 3D-Plots
+        numericDataframe = self.__data.select_dtypes(include='number')
+        fig = plt.figure(figsize=(100, 40))
+        k = 1
+        for pair in itertools.combinations(numericDataframe.columns, 3):
+            ax = fig.add_subplot(len(numericDataframe.columns), len(numericDataframe.columns), k, projection='3d')
+            ax.scatter3D(numericDataframe[pair[0]], numericDataframe[pair[1]], numericDataframe[pair[2]])
+            ax.set_xlabel(pair[0])
+            ax.set_ylabel(pair[1])
+            ax.set_zlabel(pair[2])
+            plt.subplots_adjust(wspace=1)
+            k += 1
+        plt.savefig(os.path.join(directoryToDumpData, NumericFeatures3Dplots), bbox_inches='tight', dpi=100)
+        plt.close()
+
         # Identify non-numerical features
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
         if len(nonNumericalColumns.columns) != 0:
@@ -643,6 +659,15 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, OutliersImageFile))
             OutlierImg.anchor = columnTextImgone
             outlierplotsheet.add_image(OutlierImg)
+
+            # adding 3D plots for numeric features
+            workBook.create_sheet('EDA-3Dplot')
+            ThreeDplotsheet = workBook['EDA-3Dplot']
+            ThreeDImg = openpyxl.drawing.image.Image(
+                os.path.join(directoryToDumpData, NumericFeatures3Dplots))
+            ThreeDImg.anchor = columnTextImgone
+            ThreeDplotsheet.add_image(ThreeDImg)
+
 
             # adding non-numeric column
             if os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
