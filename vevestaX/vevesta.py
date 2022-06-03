@@ -20,6 +20,9 @@ from pyspark.sql.types import DoubleType
 from scipy.stats import skew
 from scipy.stats import kurtosis
 import statistics
+from github import Github
+
+
 def test():
     return 'Test Executed Successfully'
 
@@ -800,3 +803,34 @@ class Experiment(object):
             print("Wrote experiment to tool, Vevesta")
         else:
             print("Failed to write experiment to tool, Vevesta")
+
+    def git_commit(self, repoName, sourceBranch='main', newBranch=None, commitMessage=None):
+        if newBranch is None:
+            newBranch = sourceBranch
+
+        git_access_token = open('git_access_token.txt', "r").read()
+        g = Github(git_access_token)
+        repo = g.get_repo(repoName)
+        sb = repo.get_branch(sourceBranch)
+
+        ipynb_file_name = self.get_filename()
+        if os.path.exists(ipynb_file_name):
+            ipynb_file_content = open(ipynb_file_name, 'r').read()
+            try:
+                contents = repo.get_contents(ipynb_file_name, ref=sourceBranch)
+                if commitMessage is None:
+                    commitMessage = 'updated ' + ipynb_file_name
+                result = repo.update_file(
+                    contents.path,
+                    commitMessage,
+                    ipynb_file_content,
+                    sha=contents.sha,
+                    branch=newBranch
+                )
+                print(result)
+            except FileNotFoundError:
+                repo.create_git_ref(ref='refs/heads/' + newBranch, sha=sb.commit.sha)
+                if commitMessage is None:
+                    commitMessage = 'added ' + ipynb_file_name
+                result = repo.create_file(ipynb_file_name, commitMessage, ipynb_file_content, newBranch)
+                print(result)
