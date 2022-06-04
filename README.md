@@ -203,4 +203,4 @@ For additional features, explore our tool at [Vevesta](https://vevesta.com) . Fo
 
 Looking for beta users for the library. Register [here](https://forms.gle/wM1GKyYS7fDTxmS56)
 
-We at Vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [Medium](https://medium.com/@sarthak_72854/vevestax-dec069499714)
+We at Vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [here](https://medium.com/@sarthak_72854/vevestax-dec069499714](https://www.vevesta.com/blog/2))
