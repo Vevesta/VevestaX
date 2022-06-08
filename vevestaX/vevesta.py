@@ -21,6 +21,7 @@ from scipy.stats import skew
 from scipy.stats import kurtosis
 import statistics
 import itertools
+import github
 from github import Github
 
 
@@ -56,6 +57,29 @@ class Experiment(object):
         except:
             filename = None
         return filename
+
+    def __find_access_token(self):
+        token = None
+        file_name = 'access_token.txt'
+
+        directory = ".vevesta"
+        parent_dir = os.path.expanduser("~")
+        home_folder_path = os.path.join(parent_dir, directory)
+
+        sibling_file_path = file_name
+
+        if os.path.exists(sibling_file_path):
+            token = open(sibling_file_path, 'r').read()
+            try:
+                os.mkdir(home_folder_path)
+            except FileExistsError:
+                pass
+            shutil.copy(sibling_file_path, home_folder_path)
+
+        elif os.path.exists(os.path.join(home_folder_path, file_name)):
+            token = open(os.path.join(home_folder_path, file_name), "r").read()
+
+        return token
 
     @property
     def dataSourcing(self):
@@ -480,7 +504,6 @@ class Experiment(object):
             if self.__data.count() < 100:
                 sampledData = self.__data.sample(1.0)
 
-
         with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
@@ -780,12 +803,33 @@ class Experiment(object):
                 modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True):
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True,
+               repoName=None, sourceBranch=None, newBranch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
-        token = open("access_token.txt", "r").read()
+        token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
+
+        headers = {'Authorization': 'Bearer ' + token}
+        params = {'projectId': projectId}
+
+        # get git access token
+        response = requests.post(url=backend_url + '/GetGitToken', headers=headers, params=params)
+        data = response.json()
+        git_token = data['gitToken']
+        project_title = data['projectTitle']
+        if repoName is None:
+            repoName = project_title
+        if sourceBranch is None:
+            sourceBranch = techniqueUsed
+        if newBranch is None:
+            newBranch = sourceBranch
+        try:
+            self.__git_commit(git_token=git_token, repoFullName=repoName, sourceBranch=sourceBranch,
+                              newBranch=newBranch, commitMessage=message)
+        except:
+            print('Failed to push file to git')
 
         # upload attachment
         filename = self.get_filename()
@@ -801,12 +845,6 @@ class Experiment(object):
                 attachments.append(response.json())
 
         # upload note
-        headers_for_note = {
-            'Authorization': 'Bearer ' + token,
-            'Access-Control-Allow-Origin': '*',
-            'Accept': '*/*',
-            'Content-Type': 'application/json'
-        }
         payload = {
             "projectId": projectId,
             "title": techniqueUsed,
@@ -821,34 +859,46 @@ class Experiment(object):
             else:
                 payload['errorMessage'] = 'File not pushed to Vevesta'
                 print('File not pushed to Vevesta')
-
-        response = requests.post(url=backend_url + '/VevestaX', headers=headers_for_note, data=json.dumps(payload))
-
+        response = requests.post(url=backend_url + '/VevestaX', headers=headers, data=json.dumps(payload))
         if response.status_code == 200:
             print("Wrote experiment to tool, Vevesta")
         else:
             print("Failed to write experiment to tool, Vevesta")
 
-    def git_commit(self, repoName, sourceBranch='main', newBranch=None, commitMessage=None):
-        if newBranch is None:
-            newBranch = sourceBranch
+    def __git_commit(self, git_token, repoFullName, sourceBranch='main', newBranch=None, commitMessage=None):
+        g = Github(git_token)
 
-        git_access_token = open('git_access_token.txt', "r").read()
-        g = Github(git_access_token)
-        repo = g.get_repo(repoName)
-        sb = repo.get_branch(sourceBranch)
+        repo_name = repoFullName[repoFullName.index('/') + 1:]
+        try:
+            repo = g.get_repo(repoFullName)
+        except github.GithubException:
+            user = g.get_user()
+            repo = user.create_repo(repo_name,
+                                    has_issues=True,
+                                    has_wiki=True,
+                                    has_downloads=True,
+                                    has_projects=True,
+                                    auto_init=True,
+                                    allow_squash_merge=True,
+                                    allow_merge_commit=True,
+                                    allow_rebase_merge=True)
 
-        ipynb_file_name = self.get_filename()
-        if os.path.exists(ipynb_file_name):
-            ipynb_file_content = open(ipynb_file_name, 'r').read()
+        try:
+            sb = repo.get_branch(sourceBranch)
+        except github.GithubException:
+            sb = repo.get_branch('main')
+
+        file_name = self.get_filename()
+        if os.path.exists(file_name):
+            file_content = open(file_name, 'r').read()
             try:
-                contents = repo.get_contents(ipynb_file_name, ref=sourceBranch)
+                contents = repo.get_contents(file_name, ref=sourceBranch)
                 if commitMessage is None:
-                    commitMessage = 'updated ' + ipynb_file_name
+                    commitMessage = 'updated ' + file_name
                 result = repo.update_file(
                     contents.path,
                     commitMessage,
-                    ipynb_file_content,
+                    file_content,
                     sha=contents.sha,
                     branch=newBranch
                 )
@@ -856,6 +906,6 @@ class Experiment(object):
             except FileNotFoundError:
                 repo.create_git_ref(ref='refs/heads/' + newBranch, sha=sb.commit.sha)
                 if commitMessage is None:
-                    commitMessage = 'added ' + ipynb_file_name
-                result = repo.create_file(ipynb_file_name, commitMessage, ipynb_file_content, newBranch)
+                    commitMessage = 'added ' + file_name
+                result = repo.create_file(file_name, commitMessage, file_content, newBranch)
                 print(result)
