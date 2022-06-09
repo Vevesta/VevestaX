@@ -829,6 +829,7 @@ class Experiment(object):
         try:
             self.__git_commit(git_token=git_token, repoFullName=repoName, sourceBranch=sourceBranch,
                               newBranch=newBranch, commitMessage=message)
+            print('Pushed to git')
         except:
             print('Failed to push file to git')
 
