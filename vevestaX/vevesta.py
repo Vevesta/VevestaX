@@ -1,4 +1,6 @@
 import datetime
+import re
+
 import pandas
 import numpy as np
 import inspect
@@ -80,6 +82,48 @@ class Experiment(object):
             token = open(os.path.join(home_folder_path, file_name), "r").read()
 
         return token
+
+    def __find_git_token(self, backend_url, access_token):
+        file_name = 'git_token.txt'
+
+        directory = ".vevesta"
+        parent_dir = os.path.expanduser("~")
+        home_folder_path = os.path.join(parent_dir, directory)
+
+        sibling_file_path = file_name
+
+        if os.path.exists(sibling_file_path):
+            git_token = open(sibling_file_path, 'r').read()
+            try:
+                os.mkdir(home_folder_path)
+            except FileExistsError:
+                pass
+            shutil.copy(sibling_file_path, home_folder_path)
+
+        elif os.path.exists(os.path.join(home_folder_path, file_name)):
+            git_token = open(os.path.join(home_folder_path, file_name), "r").read()
+
+        else:
+            headers_for_git_token = {'Authorization': 'Bearer ' + access_token}
+            response = requests.get(url=backend_url + '/GetGitToken', headers=headers_for_git_token)
+            data = response.json()
+            git_token = data['gitToken']
+            if git_token != '':
+                try:
+                    f = open(os.path.join(home_folder_path, file_name), "w+")
+                    f.write(git_token)
+                    f.close()
+                except:
+                    pass
+
+        return git_token
+
+    def __fetch_project(self, backend_url, access_token, projectId):
+        headers_for_project = {'Authorization': 'Bearer ' + access_token}
+        params = {'projectId': projectId}
+        response = requests.get(url=backend_url + '/Project', headers=headers_for_project, params=params)
+        data = response.json()
+        return data
 
     @property
     def dataSourcing(self):
@@ -812,26 +856,23 @@ class Experiment(object):
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
 
-        headers = {'Authorization': 'Bearer ' + token}
-        params = {'projectId': projectId}
-
-        # get git access token
-        response = requests.post(url=backend_url + '/GetGitToken', headers=headers, params=params)
-        data = response.json()
-        git_token = data['gitToken']
-        project_title = data['projectTitle']
-        if repoName is None:
-            repoName = project_title
-        if sourceBranch is None:
-            sourceBranch = techniqueUsed
-        if newBranch is None:
-            newBranch = sourceBranch
+        # push to git
         try:
+            git_token = self.__find_git_token(backend_url=backend_url, access_token=token)
+            if repoName is None:
+                project = self.__fetch_project(backend_url=backend_url, access_token=token, projectId=projectId)
+                project_title = project['title']
+                repoName = project_title
+
+            if sourceBranch is None:
+                sourceBranch = techniqueUsed
+            if newBranch is None:
+                newBranch = sourceBranch
             self.__git_commit(git_token=git_token, repoFullName=repoName, sourceBranch=sourceBranch,
                               newBranch=newBranch, commitMessage=message)
-            print('Pushed to git')
-        except:
-            print('Failed to push file to git')
+            print('File pushed to git')
+        except Exception as e:
+            print('File not pushed to git')
 
         # upload attachment
         filename = self.get_filename()
@@ -847,6 +888,12 @@ class Experiment(object):
                 attachments.append(response.json())
 
         # upload note
+        headers_for_note = {
+            'Authorization': 'Bearer ' + token,
+            'Access-Control-Allow-Origin': '*',
+            'Accept': '*/*',
+            'Content-Type': 'application/json'
+        }
         payload = {
             "projectId": projectId,
             "title": techniqueUsed,
@@ -861,7 +908,7 @@ class Experiment(object):
             else:
                 payload['errorMessage'] = 'File not pushed to Vevesta'
                 print('File not pushed to Vevesta')
-        response = requests.post(url=backend_url + '/VevestaX', headers=headers, data=json.dumps(payload))
+        response = requests.post(url=backend_url + '/VevestaX', headers=headers_for_note, data=json.dumps(payload))
         if response.status_code == 200:
             print("Wrote experiment to tool, Vevesta")
         else:
@@ -870,25 +917,40 @@ class Experiment(object):
     def __git_commit(self, git_token, repoFullName, sourceBranch='main', newBranch=None, commitMessage=None):
         g = Github(git_token)
 
-        repo_name = repoFullName[repoFullName.index('/') + 1:]
+        repo_name = repoFullName[repoFullName.find('/') + 1:]
         try:
             repo = g.get_repo(repoFullName)
         except github.GithubException:
-            user = g.get_user()
-            repo = user.create_repo(repo_name,
-                                    has_issues=True,
-                                    has_wiki=True,
-                                    has_downloads=True,
-                                    has_projects=True,
-                                    auto_init=True,
-                                    allow_squash_merge=True,
-                                    allow_merge_commit=True,
-                                    allow_rebase_merge=True)
+            try:
+                repoFullName = re.sub(r'[^A-Za-z0-9_.-]', '-', repoFullName)
+                repoFullName = g.get_user().login + '/' + repoFullName
+                repo = g.get_repo(repoFullName)
+            except github.GithubException:
+                user = g.get_user()
+                repo = user.create_repo(repo_name,
+                                        has_issues=True,
+                                        has_wiki=True,
+                                        has_downloads=True,
+                                        has_projects=True,
+                                        auto_init=True,
+                                        allow_squash_merge=True,
+                                        allow_merge_commit=True,
+                                        allow_rebase_merge=True)
+
+        if sourceBranch is not 'main':
+            sourceBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', sourceBranch)
+        if newBranch is not None:
+            newBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', newBranch)
 
         try:
             sb = repo.get_branch(sourceBranch)
         except github.GithubException:
-            sb = repo.get_branch('main')
+            try:
+                sourceBranch = 'main'
+                sb = repo.get_branch(sourceBranch)
+            except github.GithubException:
+                sourceBranch = 'master'
+                sb = repo.get_branch(sourceBranch)
 
         file_name = self.get_filename()
         if os.path.exists(file_name):
@@ -897,17 +959,33 @@ class Experiment(object):
                 contents = repo.get_contents(file_name, ref=sourceBranch)
                 if commitMessage is None:
                     commitMessage = 'updated ' + file_name
-                result = repo.update_file(
+                repo.update_file(
                     contents.path,
                     commitMessage,
                     file_content,
                     sha=contents.sha,
                     branch=newBranch
                 )
-                print(result)
-            except FileNotFoundError:
-                repo.create_git_ref(ref='refs/heads/' + newBranch, sha=sb.commit.sha)
+            except github.GithubException:
+                try:
+                    repo.create_git_ref(ref='refs/heads/' + newBranch, sha=sb.commit.sha)
+                except github.GithubException as e:
+                    if e.status != 422:
+                        raise e
                 if commitMessage is None:
                     commitMessage = 'added ' + file_name
-                result = repo.create_file(file_name, commitMessage, file_content, newBranch)
-                print(result)
+                try:
+                    repo.create_file(file_name, commitMessage, file_content, newBranch)
+                except github.GithubException as e:
+                    if e.status != 422:
+                        raise e
+                    contents = repo.get_contents(file_name, ref=newBranch)
+                    if commitMessage is None:
+                        commitMessage = 'updated ' + file_name
+                    repo.update_file(
+                        contents.path,
+                        commitMessage,
+                        file_content,
+                        sha=contents.sha,
+                        branch=newBranch
+                    )
