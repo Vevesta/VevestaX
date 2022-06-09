@@ -597,9 +597,11 @@ class Experiment(object):
 
         # EDA for 3D-Plots
         numericDataframe = self.__data.select_dtypes(include='number')
-        fig = plt.figure(figsize=(100, 40))
+        fig = plt.figure(figsize=(200, 80))
         k = 1
         for pair in itertools.combinations(numericDataframe.columns, 3):
+            if k >100:
+                break
             ax = fig.add_subplot(len(numericDataframe.columns), len(numericDataframe.columns), k, projection='3d')
             ax.scatter3D(numericDataframe[pair[0]], numericDataframe[pair[1]], numericDataframe[pair[2]])
             ax.set_xlabel(pair[0])
@@ -613,15 +615,13 @@ class Experiment(object):
         # Identify non-numerical features
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
         if len(nonNumericalColumns.columns) != 0:
-            # Create figure object with 3 subplots
-            fig, axes = plt.subplots(ncols=1, nrows=len(nonNumericalColumns.columns), figsize=(18, 20))
-            # Loop through features and put each subplot on a matplotlib axis object
-            for col, ax in zip(nonNumericalColumns.columns, axes.ravel()):
-                # Selects one single feature and counts number of unique value and Plots this information in a figure with normal scale.
-                nonNumericalColumns[col].value_counts().plot(logy=False, title=col, lw=0, marker="X", ax=ax,
-                                                             markersize=5)
-                # plt.tight_layout()
-                plt.savefig(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
+            fig = plt.figure(figsize=(7, 7))
+            k=1
+            for col in nonNumericalColumns.columns:               
+                ax = fig.add_subplot(len(nonNumericalColumns.columns),len(nonNumericalColumns.columns),k)
+                nonNumericalColumns[col].value_counts(sort=True)[0:10].plot(kind='bar',logy=False, title=col, lw=0, ax=ax)
+                k+=1
+            plt.savefig(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
             plt.close()
 
         # feature distribution
@@ -668,9 +668,9 @@ class Experiment(object):
             ThreeDImg.anchor = columnTextImgone
             ThreeDplotsheet.add_image(ThreeDImg)
 
-
             # adding non-numeric column
-            if os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
+            nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
+            if len(nonNumericalColumns.columns)!=0 and os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
                 workBook.create_sheet('EDA-NonNumericFeatures')
                 nonNumericPlotSheet = workBook['EDA-NonNumericFeatures']
                 nonNumericFeatureImage = openpyxl.drawing.image.Image(
