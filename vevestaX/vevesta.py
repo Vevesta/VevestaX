@@ -937,7 +937,7 @@ class Experiment(object):
                                         allow_merge_commit=True,
                                         allow_rebase_merge=True)
 
-        if sourceBranch is not 'main':
+        if sourceBranch != 'main':
             sourceBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', sourceBranch)
         if newBranch is not None:
             newBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', newBranch)
