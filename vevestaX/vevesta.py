@@ -896,7 +896,7 @@ class Experiment(object):
         file_exists = os.path.exists(filename)
         if attachmentFlag:
             if file_exists:
-                files = {'file': self.__write_file(filename)}
+                files = {'file': self.__read_file(filename)}
                 headers_for_file = {'Authorization': 'Bearer ' + token}
                 params = {'taskId': 0}
                 response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
