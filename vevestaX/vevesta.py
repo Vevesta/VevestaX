@@ -1,5 +1,6 @@
 import datetime
 import re
+import traceback
 
 import pandas
 import numpy as np
@@ -67,21 +68,37 @@ class Experiment(object):
         directory = ".vevesta"
         parent_dir = os.path.expanduser("~")
         home_folder_path = os.path.join(parent_dir, directory)
+        home_folder_file_path = os.path.join(home_folder_path, file_name)
 
         sibling_file_path = file_name
 
         if os.path.exists(sibling_file_path):
-            token = open(sibling_file_path, 'r').read()
+            token = self.__read_file(sibling_file_path)
             try:
                 os.mkdir(home_folder_path)
             except FileExistsError:
                 pass
             shutil.copy(sibling_file_path, home_folder_path)
 
-        elif os.path.exists(os.path.join(home_folder_path, file_name)):
-            token = open(os.path.join(home_folder_path, file_name), "r").read()
+        elif os.path.exists(home_folder_file_path):
+            token = self.__read_file(home_folder_file_path)
 
         return token
+
+    def __is_git_token_valid(self, token):
+        try:
+            Github(token).get_user().name
+            return True
+        except github.GithubException:
+            return False
+
+    def __read_file(self, path):
+        return open(path, 'r').read()
+
+    def __write_file(self, path, data):
+        f = open(path, "w+")
+        f.write(data)
+        f.close()
 
     def __find_git_token(self, backend_url, access_token):
         file_name = 'git_token.txt'
@@ -91,30 +108,32 @@ class Experiment(object):
         home_folder_path = os.path.join(parent_dir, directory)
 
         sibling_file_path = file_name
+        home_folder_file_path = os.path.join(home_folder_path, file_name)
 
-        if os.path.exists(sibling_file_path):
-            git_token = open(sibling_file_path, 'r').read()
+        if os.path.exists(sibling_file_path) and self.__is_git_token_valid(self.__read_file(sibling_file_path)):
+            git_token = self.__read_file(sibling_file_path)
             try:
                 os.mkdir(home_folder_path)
             except FileExistsError:
                 pass
             shutil.copy(sibling_file_path, home_folder_path)
 
-        elif os.path.exists(os.path.join(home_folder_path, file_name)):
-            git_token = open(os.path.join(home_folder_path, file_name), "r").read()
+        elif os.path.exists(home_folder_file_path) and self.__is_git_token_valid(self.__read_file(home_folder_file_path)):
+            git_token = self.__read_file(home_folder_file_path)
 
         else:
             headers_for_git_token = {'Authorization': 'Bearer ' + access_token}
             response = requests.get(url=backend_url + '/GetGitToken', headers=headers_for_git_token)
             data = response.json()
             git_token = data['gitToken']
-            if git_token != '':
+            if git_token != '' and self.__is_git_token_valid(git_token):
                 try:
-                    f = open(os.path.join(home_folder_path, file_name), "w+")
-                    f.write(git_token)
-                    f.close()
+                    self.__write_file(sibling_file_path, git_token)
+                    self.__write_file(home_folder_file_path, git_token)
                 except:
                     pass
+            else:
+                raise Exception('Invalid Git Token')
 
         return git_token
 
@@ -878,7 +897,7 @@ class Experiment(object):
         file_exists = os.path.exists(filename)
         if attachmentFlag:
             if file_exists:
-                files = {'file': open(filename, 'rb')}
+                files = {'file': self.__write_file(filename)}
                 headers_for_file = {'Authorization': 'Bearer ' + token}
                 params = {'taskId': 0}
                 response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
@@ -934,21 +953,20 @@ class Experiment(object):
                                     allow_merge_commit=True,
                                     allow_rebase_merge=True)
 
-        # find the branch or create a new branch (if not exist) from main or master
+        # check if branch exist or create a new branch (if not exist) from main or master
         try:
-            branch = repo.get_branch(branch_name)
+            repo.get_branch(branch_name)
         except github.GithubException:
             try:
                 source_branch = repo.get_branch('main')
             except github.GithubException:
                 source_branch = repo.get_branch('master')
             repo.create_git_ref(ref='refs/heads/' + branch_name, sha=source_branch.commit.sha)
-            branch = repo.get_branch(branch_name)
 
         # push file to git
         file_name = self.get_filename()
         if os.path.exists(file_name):
-            file_content = open(file_name, 'r').read()
+            file_content = self.__read_file(file_name)
 
             # update if file exists, else create a new file
             try:
@@ -965,7 +983,7 @@ class Experiment(object):
             except github.GithubException:
                 if commitMessage is None:
                     commitMessage = 'added ' + file_name
-                repo.create_file(file_name, commitMessage, file_content, branch=branch)
+                repo.create_file(file_name, commitMessage, file_content, branch=branch_name)
 
 
     def __find_repo(self, github_user, repo_name):
