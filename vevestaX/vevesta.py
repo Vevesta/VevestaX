@@ -849,7 +849,7 @@ class Experiment(object):
                 return modelingData
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True,
-               repoName=None, sourceBranch=None, newBranch=None):
+               repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
 
         # api-endpoint
@@ -861,15 +861,14 @@ class Experiment(object):
             git_token = self.__find_git_token(backend_url=backend_url, access_token=token)
             if repoName is None:
                 project = self.__fetch_project(backend_url=backend_url, access_token=token, projectId=projectId)
-                project_title = project['title']
-                repoName = project_title
+                if project['gitRepoName'] != '':
+                    repoName = project['gitRepoName']
+                else:
+                    repoName = project['title']
 
-            if sourceBranch is None:
-                sourceBranch = techniqueUsed
-            if newBranch is None:
-                newBranch = sourceBranch
-            self.__git_commit(git_token=git_token, repoFullName=repoName, sourceBranch=sourceBranch,
-                              newBranch=newBranch, commitMessage=message)
+            if branch is None:
+                branch = techniqueUsed
+            self.__git_commit(git_token=git_token, repo_name=repoName, branch_name=branch, commitMessage=message)
             print('File pushed to git')
         except Exception as e:
             print('File not pushed to git')
@@ -914,49 +913,46 @@ class Experiment(object):
         else:
             print("Failed to write experiment to tool, Vevesta")
 
-    def __git_commit(self, git_token, repoFullName, sourceBranch='main', newBranch=None, commitMessage=None):
+    def __git_commit(self, git_token, repo_name, branch_name='main', commitMessage=None):
         g = Github(git_token)
 
-        repo_name = repoFullName[repoFullName.find('/') + 1:]
+        # format repository name and branch name according to GitHub naming conventions
+        repo_name = re.sub(r'[^A-Za-z0-9_.-]', '-', repo_name)
+        branch_name = re.sub(r'[^A-Za-z0-9_.\-/]', '_', branch_name)
+
+        # find the repo or create a new repo if not exist
+        user = g.get_user()
+        repo = self.__find_repo(user, repo_name)
+        if repo is None:
+            repo = user.create_repo(repo_name,
+                                    has_issues=True,
+                                    has_wiki=True,
+                                    has_downloads=True,
+                                    has_projects=True,
+                                    auto_init=True,
+                                    allow_squash_merge=True,
+                                    allow_merge_commit=True,
+                                    allow_rebase_merge=True)
+
+        # find the branch or create a new branch (if not exist) from main or master
         try:
-            repo = g.get_repo(repoFullName)
+            branch = repo.get_branch(branch_name)
         except github.GithubException:
             try:
-                repoFullName = re.sub(r'[^A-Za-z0-9_.-]', '-', repoFullName)
-                repoFullName = g.get_user().login + '/' + repoFullName
-                repo = g.get_repo(repoFullName)
+                source_branch = repo.get_branch('main')
             except github.GithubException:
-                user = g.get_user()
-                repo = user.create_repo(repo_name,
-                                        has_issues=True,
-                                        has_wiki=True,
-                                        has_downloads=True,
-                                        has_projects=True,
-                                        auto_init=True,
-                                        allow_squash_merge=True,
-                                        allow_merge_commit=True,
-                                        allow_rebase_merge=True)
+                source_branch = repo.get_branch('master')
+            repo.create_git_ref(ref='refs/heads/' + branch_name, sha=source_branch.commit.sha)
+            branch = repo.get_branch(branch_name)
 
-        if sourceBranch != 'main':
-            sourceBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', sourceBranch)
-        if newBranch is not None:
-            newBranch = re.sub(r'[^A-Za-z0-9_.\-/]', '_', newBranch)
-
-        try:
-            sb = repo.get_branch(sourceBranch)
-        except github.GithubException:
-            try:
-                sourceBranch = 'main'
-                sb = repo.get_branch(sourceBranch)
-            except github.GithubException:
-                sourceBranch = 'master'
-                sb = repo.get_branch(sourceBranch)
-
+        # push file to git
         file_name = self.get_filename()
         if os.path.exists(file_name):
             file_content = open(file_name, 'r').read()
+
+            # update if file exists, else create a new file
             try:
-                contents = repo.get_contents(file_name, ref=sourceBranch)
+                contents = repo.get_contents(file_name, ref=branch_name)
                 if commitMessage is None:
                     commitMessage = 'updated ' + file_name
                 repo.update_file(
@@ -964,28 +960,15 @@ class Experiment(object):
                     commitMessage,
                     file_content,
                     sha=contents.sha,
-                    branch=newBranch
+                    branch=branch_name
                 )
             except github.GithubException:
-                try:
-                    repo.create_git_ref(ref='refs/heads/' + newBranch, sha=sb.commit.sha)
-                except github.GithubException as e:
-                    if e.status != 422:
-                        raise e
                 if commitMessage is None:
                     commitMessage = 'added ' + file_name
-                try:
-                    repo.create_file(file_name, commitMessage, file_content, newBranch)
-                except github.GithubException as e:
-                    if e.status != 422:
-                        raise e
-                    contents = repo.get_contents(file_name, ref=newBranch)
-                    if commitMessage is None:
-                        commitMessage = 'updated ' + file_name
-                    repo.update_file(
-                        contents.path,
-                        commitMessage,
-                        file_content,
-                        sha=contents.sha,
-                        branch=newBranch
-                    )
+                repo.create_file(file_name, commitMessage, file_content, branch=branch)
+
+
+    def __find_repo(self, github_user, repo_name):
+        all_repos = github_user.get_repos()
+        repos = list(filter(lambda r: r.name.casefold() == repo_name.casefold(), all_repos))
+        return repos[0] if len(repos) > 0 else None
