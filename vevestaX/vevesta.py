@@ -788,16 +788,21 @@ class Experiment(object):
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
 
         # upload attachment
-        filename = self.get_filename()
-        file_exists = os.path.exists(filename)
+        ipynbfile = self.get_filename()
+        xlsxfile=filename
+        file_exists = os.path.exists(ipynbfile)
         if attachmentFlag:
             if file_exists:
-                files = {'file': open(filename, 'rb')}
+                files = {'file': open(ipynbfile, 'rb')}
                 headers_for_file = {'Authorization': 'Bearer ' + token}
                 params = {'taskId': 0}
                 response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
                 attachments = list()
+                attachments.append(response.json())
+                files = {'file': open(xlsxfile, 'rb')}
+                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+                                         files=files)
                 attachments.append(response.json())
 
         # upload note
