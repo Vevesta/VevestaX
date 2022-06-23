@@ -99,8 +99,9 @@ class Experiment(object):
         f.write(data)
         f.close()
 
-    def __find_git_token(self, backend_url, access_token):
+    def __find_git_token(self, is_v_commit, backend_url=None, access_token=None):
         file_name = 'git_token.txt'
+        git_token = ''
 
         directory = ".vevesta"
         parent_dir = os.path.expanduser("~")
@@ -109,18 +110,30 @@ class Experiment(object):
         sibling_file_path = file_name
         home_folder_file_path = os.path.join(home_folder_path, file_name)
 
-        if os.path.exists(sibling_file_path) and self.__is_git_token_valid(self.__read_file(sibling_file_path)):
+        if os.path.exists(sibling_file_path) and self.__is_git_token_valid(
+                self.__read_file(sibling_file_path)):
             git_token = self.__read_file(sibling_file_path)
             try:
                 os.mkdir(home_folder_path)
             except FileExistsError:
                 pass
             shutil.copy(sibling_file_path, home_folder_path)
+            headers_for_set_token = {
+                'Authorization': 'Bearer ' + access_token,
+                'Access-Control-Allow-Origin': '*',
+                'Accept': '*/*',
+                'Content-Type': 'application/json'
+            }
+            payload = {
+                'gitToken': git_token
+            }
+            try:
+                requests.post(url=backend_url + '/SetGitToken', headers=headers_for_set_token, data=json.dumps(payload))
+            except:
+                pass
 
-        elif os.path.exists(home_folder_file_path) and self.__is_git_token_valid(self.__read_file(home_folder_file_path)):
-            git_token = self.__read_file(home_folder_file_path)
-
-        else:
+        # it will be directly searched in the backend, if it’s called from within the V.commit function.
+        elif is_v_commit:
             headers_for_git_token = {'Authorization': 'Bearer ' + access_token}
             response = requests.get(url=backend_url + '/GetGitToken', headers=headers_for_git_token)
             data = response.json()
@@ -133,6 +146,11 @@ class Experiment(object):
                     pass
             else:
                 raise Exception('Invalid Git Token')
+
+        # The git token will be searched in .vevesta folder if commitToGit is called from the V.dump function
+        elif not is_v_commit and os.path.exists(home_folder_file_path) and self.__is_git_token_valid(
+                self.__read_file(home_folder_file_path)):
+            git_token = self.__read_file(home_folder_file_path)
 
         return git_token
 
@@ -246,7 +264,10 @@ class Experiment(object):
         temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
         self.temp = inspect.getmembers(inspect.stack()[1])
 
-        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if i not in self.__startlocals and i[0] != '_' and (type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
+        self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
+                                                   i not in self.__startlocals and i[0] != '_' and (
+                                                           type(temp[i]) in self.__primitiveDataTypes or isinstance(
+                                                       temp[i], (str, int, float, bool)))}}
 
         return self.__variables
 
@@ -272,7 +293,9 @@ class Experiment(object):
                     if (key in functionParameters) and (type[value] in self.__primitiveDataTypes):
                         functionParameters[value] = functionParameters.pop(key)
 
-                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if type(value) in [int, float, bool,str] and key not in self.__variables}}
+                self.__variables = {**self.__variables, **{key: value for key, value in functionParameters.items() if
+                                                           type(value) in [int, float, bool,
+                                                                           str] and key not in self.__variables}}
 
             return wrapper
 
@@ -467,7 +490,7 @@ class Experiment(object):
                 profilingDataframe.to_excel(writer, sheet_name="Profiling Report", index=False)
                 profileOfVariableDataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
 
-    def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True):
+    def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True, repoName=None):
 
         existingData = None
         modelingData = None
@@ -597,7 +620,6 @@ class Experiment(object):
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-
         self.__profilingReport(filename)
 
         if self.speedUp == False:
@@ -605,12 +627,25 @@ class Experiment(object):
 
         self.__plot(filename)
 
-
         print("Dumped the experiment in the file " + filename)
 
         if showMessage:
             message = self.__getMessage()
             print(message)
+
+        # push to git
+        if repoName is not None:
+            token = self.__find_access_token()
+            backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
+            try:
+                git_token = self.__find_git_token(is_v_commit=False, backend_url=backend_url, access_token=token)
+                if repoName is None:
+                    raise Exception
+                self.__git_commit(git_token=git_token, repo_name=repoName, branch_name=techniqueUsed,
+                                  commitMessage=message)
+                print('File pushed to git')
+            except Exception as e:
+                print('File not pushed to git')
 
     def __EDA(self, fileName):
         if isinstance(self.__data, pandas.DataFrame):
@@ -672,7 +707,7 @@ class Experiment(object):
         # EDA for outliers
         numericColumns = self.__data.select_dtypes(include=["number"])
         red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
-        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40,8))
+        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40, 8))
         for i, ax in enumerate(axs.flat):
             ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
             ax.set_title(self.__data.columns[i], fontsize=15)
@@ -686,7 +721,7 @@ class Experiment(object):
         fig = plt.figure(figsize=(200, 80))
         k = 1
         for pair in itertools.combinations(numericDataframe.columns, 3):
-            if k >100:
+            if k > 100:
                 break
             ax = fig.add_subplot(len(numericDataframe.columns), len(numericDataframe.columns), k, projection='3d')
             ax.scatter3D(numericDataframe[pair[0]], numericDataframe[pair[1]], numericDataframe[pair[2]])
@@ -702,11 +737,12 @@ class Experiment(object):
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
         if len(nonNumericalColumns.columns) != 0:
             fig = plt.figure(figsize=(7, 7))
-            k=1
+            k = 1
             for col in nonNumericalColumns.columns:
-                ax = fig.add_subplot(len(nonNumericalColumns.columns),len(nonNumericalColumns.columns),k)
-                nonNumericalColumns[col].value_counts(sort=True)[0:10].plot(kind='bar',logy=False, title=col, lw=0, ax=ax)
-                k+=1
+                ax = fig.add_subplot(len(nonNumericalColumns.columns), len(nonNumericalColumns.columns), k)
+                nonNumericalColumns[col].value_counts(sort=True)[0:10].plot(kind='bar', logy=False, title=col, lw=0,
+                                                                            ax=ax)
+                k += 1
             plt.savefig(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
             plt.close()
 
@@ -756,7 +792,8 @@ class Experiment(object):
 
             # adding non-numeric column
             nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
-            if len(nonNumericalColumns.columns)!=0 and os.path.exists(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
+            if len(nonNumericalColumns.columns) != 0 and os.path.exists(
+                    os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
                 workBook.create_sheet('EDA-NonNumericFeatures')
                 nonNumericPlotSheet = workBook['EDA-NonNumericFeatures']
                 nonNumericFeatureImage = openpyxl.drawing.image.Image(
@@ -868,7 +905,7 @@ class Experiment(object):
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True,
                repoName=None, branch=None):
-        self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False)
+        self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
 
         # api-endpoint
         token = self.__find_access_token()
@@ -876,7 +913,7 @@ class Experiment(object):
 
         # push to git
         try:
-            git_token = self.__find_git_token(backend_url=backend_url, access_token=token)
+            git_token = self.__find_git_token(is_v_commit=True, backend_url=backend_url, access_token=token)
             if repoName is None:
                 project = self.__fetch_project(backend_url=backend_url, access_token=token, projectId=projectId)
                 if project['gitRepoName'] != '':
@@ -983,7 +1020,6 @@ class Experiment(object):
                 if commitMessage is None:
                     commitMessage = 'added ' + file_name
                 repo.create_file(file_name, commitMessage, file_content, branch=branch_name)
-
 
     def __find_repo(self, github_user, repo_name):
         all_repos = github_user.get_repos()
