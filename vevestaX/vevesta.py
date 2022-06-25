@@ -633,12 +633,17 @@ class Experiment(object):
             message = self.__getMessage()
             print(message)
 
+        # log to tool
+        backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
+        access_token = self.__find_access_token()
+        if access_token is not None:
+            headers_for_log = {'Authorization': 'Bearer ' + access_token}
+            requests.post(url=backend_url + '/DumpLog', headers=headers_for_log)
+
         # push to git
         if repoName is not None:
-            token = self.__find_access_token()
-            backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
             try:
-                git_token = self.__find_git_token(is_v_commit=False, backend_url=backend_url, access_token=token)
+                git_token = self.__find_git_token(is_v_commit=False, backend_url=backend_url, access_token=access_token)
                 if repoName is None:
                     raise Exception
                 self.__git_commit(git_token=git_token, repo_name=repoName, branch_name=techniqueUsed,
