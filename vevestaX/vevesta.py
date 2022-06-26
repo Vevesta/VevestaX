@@ -118,16 +118,16 @@ class Experiment(object):
             except FileExistsError:
                 pass
             shutil.copy(sibling_file_path, home_folder_path)
-            headers_for_set_token = {
-                'Authorization': 'Bearer ' + access_token,
-                'Access-Control-Allow-Origin': '*',
-                'Accept': '*/*',
-                'Content-Type': 'application/json'
-            }
-            payload = {
-                'gitToken': git_token
-            }
             try:
+                headers_for_set_token = {
+                    'Authorization': 'Bearer ' + access_token,
+                    'Access-Control-Allow-Origin': '*',
+                    'Accept': '*/*',
+                    'Content-Type': 'application/json'
+                }
+                payload = {
+                    'gitToken': git_token
+                }
                 requests.post(url=backend_url + '/SetGitToken', headers=headers_for_set_token, data=json.dumps(payload))
             except:
                 pass
@@ -630,8 +630,8 @@ class Experiment(object):
         print("Dumped the experiment in the file " + filename)
 
         if showMessage:
-            message = self.__getMessage()
-            print(message)
+            console_message = self.__getMessage()
+            print(console_message)
 
         # log to tool
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
@@ -643,9 +643,7 @@ class Experiment(object):
         # push to git
         if repoName is not None:
             try:
-                git_token = self.__find_git_token(is_v_commit=False, backend_url=backend_url, access_token=access_token)
-                if repoName is None:
-                    raise Exception
+                git_token = self.__find_git_token(is_v_commit=False)
                 self.__git_commit(git_token=git_token, repo_name=repoName, branch_name=techniqueUsed,
                                   commitMessage=message)
                 print('File pushed to git')
