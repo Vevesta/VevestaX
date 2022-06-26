@@ -92,7 +92,10 @@ class Experiment(object):
             return False
 
     def __read_file(self, path):
-        return open(path, 'r').read()
+        f = open(path, 'r')
+        data = f.read()
+        f.close()
+        return data
 
     def __write_file(self, path, data):
         f = open(path, "w+")
@@ -929,7 +932,7 @@ class Experiment(object):
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
-        edafile="EDA.pdf"
+
         # push to git
         try:
             git_token = self.__find_git_token(is_v_commit=True, backend_url=backend_url, access_token=token)
@@ -952,20 +955,17 @@ class Experiment(object):
         file_exists = os.path.exists(filename)
         if attachmentFlag:
             if file_exists:
-                files = {'file': self.__read_file(filename)}
+                files = {'file': open(filename, 'rb')}
                 headers_for_file = {'Authorization': 'Bearer ' + token}
                 params = {'taskId': 0}
                 response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
                 attachments = list()
                 attachments.append(response.json())
-                files = {'file': open(edafile,'rb')}
+                files = {'file': open('EDA.pdf', 'rb')}
                 response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
                 attachments.append(response.json())
-                
-
-                
 
         # upload note
         headers_for_note = {
