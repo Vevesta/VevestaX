@@ -25,7 +25,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType
 from scipy.stats import kurtosis
 from scipy.stats import skew
-
+from fpdf import FPDF
 
 def test():
     return 'Test Executed Successfully'
@@ -693,7 +693,7 @@ class Experiment(object):
         RatioData = self.__data.isna().mean().sort_values()
         xAxis = list(RatioData.index)
         yAxis = list(RatioData)
-        plt.figure(figsize=(13, 11))
+        plt.figure(figsize=(7, 7))
         plt.bar(xAxis, yAxis)
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
@@ -703,8 +703,9 @@ class Experiment(object):
         plt.close()
 
         # eda non numeric feature distribution
-        self.__data.plot(lw=0, marker="x", subplots=True, layout=(-1, 4), figsize=(20, 25), markersize=5,
-                         title="Numeric feature Distribution").flatten()
+        self.__data.plot(lw=0, marker="x", subplots=True, layout=(-1, 4), figsize=(10, 10), markersize=5,
+                         title="Numeric feature Distribution(with X-axis representing the position in the file)").flatten()
+        plt.tight_layout()
         plt.savefig(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
                     dpi=100)
         plt.close()
@@ -712,12 +713,13 @@ class Experiment(object):
         # EDA for outliers
         numericColumns = self.__data.select_dtypes(include=["number"])
         red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
-        fig, axs = plt.subplots(1, len(numericColumns.columns), figsize=(40, 8))
+        fig, axs = plt.subplots(2, len(numericColumns.columns)//2, figsize=(10, 10))
+        fig.suptitle('Outliers',fontsize=20)
         for i, ax in enumerate(axs.flat):
             ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
             ax.set_title(self.__data.columns[i], fontsize=15)
-            ax.tick_params(axis='both', labelrotation=45)
-            plt.subplots_adjust(wspace=1)
+            #ax.tick_params(axis='both', labelrotation=45)
+            plt.subplots_adjust(wspace=2)
             plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
@@ -757,8 +759,12 @@ class Experiment(object):
         [x.title.set_size(15) for x in fig.ravel()]
         [x.tick_params(axis='x', labelrotation=90) for x in fig.ravel()]
         plt.plot()
+        plt.suptitle('Feature Histogram',fontsize=20)
         plt.savefig(os.path.join(directoryToDumpData, FeatureHistogramImageFile), bbox_inches='tight', dpi=100)
         plt.close()
+
+        #creating an empty PDF
+        pdf=FPDF()
 
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
@@ -767,10 +773,13 @@ class Experiment(object):
             img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueImageFile))
             img.anchor = columnTextImgone
             plotSheet.add_image(img)
+            pdf.add_page()
+            pdf.image(os.path.join(directoryToDumpData, ValueImageFile),50,20,w=100,h=100)
+
             image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
-
+            pdf.image(os.path.join(directoryToDumpData, ValueRatioImageFile),50,140,w=100,h=100) 
             # adding the plot for the Numeric Fetaure Distribution
             workBook.create_sheet('EDA-NumericfeatureDistribution')
             fetaureplotsheet = workBook['EDA-NumericfeatureDistribution']
@@ -778,6 +787,9 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
+            pdf.add_page()
+            pdf.image(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile),20,20,w=175,h=200) 
+
 
             # adding boxplot for Numeric features
             workBook.create_sheet('EDA-Boxplot')
@@ -786,6 +798,8 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, OutliersImageFile))
             OutlierImg.anchor = columnTextImgone
             outlierplotsheet.add_image(OutlierImg)
+            pdf.add_page()
+            pdf.image(os.path.join(directoryToDumpData, OutliersImageFile),30,10,w=150,h=200)
 
             # adding 3D plots for numeric features
             workBook.create_sheet('EDA-3Dplot')
@@ -814,7 +828,9 @@ class Experiment(object):
                     os.path.join(directoryToDumpData, FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
                 featureDistribution.add_image(featureDistributionImage)
-
+                pdf.add_page()
+                pdf.image(os.path.join(directoryToDumpData, FeatureHistogramImageFile),20,20,w=175,h=200)
+            pdf.output("EDA.pdf")
             workBook.save(fileName)
         workBook.close()
 
@@ -915,7 +931,7 @@ class Experiment(object):
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
-
+        edafile="EDA.pdf"
         # push to git
         try:
             git_token = self.__find_git_token(is_v_commit=True, backend_url=backend_url, access_token=token)
@@ -945,6 +961,13 @@ class Experiment(object):
                                          files=files)
                 attachments = list()
                 attachments.append(response.json())
+                files = {'file': open(edafile,'rb')}
+                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+                                         files=files)
+                attachments.append(response.json())
+                
+
+                
 
         # upload note
         headers_for_note = {
