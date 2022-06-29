@@ -61,7 +61,7 @@ class Experiment(object):
         return filename
 
     def __find_access_token(self):
-        token = None
+        token = ""
         file_name = 'access_token.txt'
 
         directory = ".vevesta"
@@ -636,9 +636,15 @@ class Experiment(object):
         # log to tool
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
         access_token = self.__find_access_token()
-        if access_token is not None:
-            headers_for_log = {'Authorization': 'Bearer ' + access_token}
-            requests.post(url=backend_url + '/DumpLog', headers=headers_for_log)
+        payload = {
+            'username': os.getlogin(),
+            'accessToken': access_token
+        }
+        headers_for_log = {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        }
+        requests.post(url=backend_url + '/DumpLog', headers=headers_for_log, data=json.dumps(payload))
 
         # push to git
         if repoName is not None:
