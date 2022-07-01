@@ -706,7 +706,7 @@ class Experiment(object):
         NonNumericFeaturesImgFile = "NonNumericFeatures.png"
         FeatureHistogramImageFile = "FeatureHistogram.png"
         OutliersImageFile = "Outliers.png"
-        NumericFeatures3Dplots = "NumericFeatures3Dplots.png"
+        #NumericFeatures3Dplots = "NumericFeatures3Dplots.png"
 
         # EDA missing values
         plt.figure(figsize=(13, 8))
@@ -752,6 +752,7 @@ class Experiment(object):
         plt.close()
 
         # EDA for 3D-Plots
+        """
         numericDataframe = self.__data.select_dtypes(include='number')
         fig = plt.figure(figsize=(200, 80))
         k = 1
@@ -766,7 +767,7 @@ class Experiment(object):
             plt.subplots_adjust(wspace=1)
             k += 1
         plt.savefig(os.path.join(directoryToDumpData, NumericFeatures3Dplots), bbox_inches='tight', dpi=100)
-        plt.close()
+        plt.close()"""
 
         # Identify non-numerical features
         nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
@@ -830,12 +831,13 @@ class Experiment(object):
             pdf.image(os.path.join(directoryToDumpData, OutliersImageFile),30,10,w=150,h=200)
 
             # adding 3D plots for numeric features
+            """
             workBook.create_sheet('EDA-3Dplot')
             ThreeDplotsheet = workBook['EDA-3Dplot']
             ThreeDImg = openpyxl.drawing.image.Image(
                 os.path.join(directoryToDumpData, NumericFeatures3Dplots))
             ThreeDImg.anchor = columnTextImgone
-            ThreeDplotsheet.add_image(ThreeDImg)
+            ThreeDplotsheet.add_image(ThreeDImg)"""
 
             # adding non-numeric column
             nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
