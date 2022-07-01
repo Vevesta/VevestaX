@@ -3,11 +3,13 @@ import inspect
 import itertools
 import json
 import os
+import platform
 import random
 import re
 import shutil
 import statistics
 import sys
+import uuid
 from pathlib import Path
 
 import github
@@ -26,6 +28,7 @@ from pyspark.sql.types import DoubleType
 from scipy.stats import kurtosis
 from scipy.stats import skew
 from fpdf import FPDF
+from vevestaX import __version__
 
 def test():
     return 'Test Executed Successfully'
@@ -640,8 +643,26 @@ class Experiment(object):
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
         access_token = self.__find_access_token()
         payload = {
-            'username': os.getlogin(),
-            'accessToken': access_token
+            'macAddress': str(uuid.getnode()),
+            'accessToken': access_token,
+            'vevestaXVersion': __version__,
+            'platform': {
+                'bits': platform.architecture()[0],
+                'linkage': platform.architecture()[1],
+                'machine': platform.machine(),
+                'system_platform': platform.platform(),
+                'processor': platform.processor(),
+                'python_build_no': platform.python_build()[0],
+                'python_build_date': platform.python_build()[1],
+                'python_compiler': platform.python_compiler(),
+                'python_branch': platform.python_branch(),
+                'python_implementation': platform.python_implementation(),
+                'python_revision': platform.python_revision(),
+                'python_version': platform.python_version(),
+                'system_release': platform.release(),
+                'os_name': platform.system(),
+                'system_release_version': platform.version(),
+            }
         }
         headers_for_log = {
             'Content-Type': 'application/json',
