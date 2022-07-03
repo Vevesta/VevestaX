@@ -700,13 +700,13 @@ class Experiment(object):
         directoryToDumpData = 'vevestaXDump'
         # creating a new folder in current directory
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
-        ValueImageFile = "Value.png"
-        ValueRatioImageFile = "ValuePerFeature.png"
-        NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.png"
-        NonNumericFeaturesImgFile = "NonNumericFeatures.png"
-        FeatureHistogramImageFile = "FeatureHistogram.png"
-        OutliersImageFile = "Outliers.png"
-        #NumericFeatures3Dplots = "NumericFeatures3Dplots.png"
+        ValueImageFile = "Value.jpeg"
+        ValueRatioImageFile = "ValuePerFeature.jpeg"
+        NumericalFeatureDistributionImageFile = "NumericalFeatureDistribution.jpeg"
+        NonNumericFeaturesImgFile = "NonNumericFeatures.jpeg"
+        FeatureHistogramImageFile = "FeatureHistogram.jpeg"
+        OutliersImageFile = "Outliers.jpeg"
+        #NumericFeatures3Dplots = "NumericFeatures3Dplots.jpeg"
 
         # EDA missing values
         plt.figure(figsize=(13, 8))
@@ -903,7 +903,7 @@ class Experiment(object):
             for column in modelingData.columns:
                 yAxis = list(modelingData[column])
 
-                imageName = str(column) + '.png'
+                imageName = str(column) + '.jpeg'
                 columnText = 'B'
                 columnText += str(columnValue)
 
