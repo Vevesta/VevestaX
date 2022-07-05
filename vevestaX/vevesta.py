@@ -11,7 +11,6 @@ import statistics
 import sys
 import uuid
 from pathlib import Path
-
 import github
 import ipynbname
 import matplotlib.pyplot as plt
@@ -27,8 +26,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType
 from scipy.stats import kurtosis
 from scipy.stats import skew
-from fpdf import FPDF
 from vevestaX import __version__
+import img2pdf
 
 def test():
     return 'Test Executed Successfully'
@@ -791,9 +790,18 @@ class Experiment(object):
         plt.suptitle('Feature Histogram',fontsize=20)
         plt.savefig(os.path.join(directoryToDumpData, FeatureHistogramImageFile), bbox_inches='tight', dpi=100)
         plt.close()
+        pdffile="EDA.pdf"
+        images=[ValueImageFile,ValueRatioImageFile,NumericalFeatureDistributionImageFile,NonNumericFeaturesImgFile,FeatureHistogramImageFile,OutliersImageFile]
+        a4inpt = (img2pdf.mm_to_pt(210),img2pdf.mm_to_pt(297))
+        layout_fun = img2pdf.get_layout_fun(a4inpt)
+        file=[]
+        for i in images:
+            if os.path.exists(os.path.join(directoryToDumpData,i)):
+                file.append(os.path.join(directoryToDumpData,i))
+        with open(pdffile,"wb") as f:          
+            f.write(img2pdf.convert(file,layout_fun=layout_fun))
 
         #creating an empty PDF
-        pdf=FPDF()
 
         if (os.path.isfile(fileName)):
             workBook = openpyxl.load_workbook(fileName)
@@ -802,13 +810,13 @@ class Experiment(object):
             img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueImageFile))
             img.anchor = columnTextImgone
             plotSheet.add_image(img)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, ValueImageFile),50,20,w=100,h=100)
+            
 
             image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
-            pdf.image(os.path.join(directoryToDumpData, ValueRatioImageFile),50,140,w=100,h=100) 
+             
+
             # adding the plot for the Numeric Fetaure Distribution
             workBook.create_sheet('EDA-NumericfeatureDistribution')
             fetaureplotsheet = workBook['EDA-NumericfeatureDistribution']
@@ -816,8 +824,7 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile),20,20,w=175,h=200) 
+            
 
 
             # adding boxplot for Numeric features
@@ -827,8 +834,7 @@ class Experiment(object):
                 os.path.join(directoryToDumpData, OutliersImageFile))
             OutlierImg.anchor = columnTextImgone
             outlierplotsheet.add_image(OutlierImg)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, OutliersImageFile),30,10,w=150,h=200)
+            
 
             # adding 3D plots for numeric features
             """
@@ -858,9 +864,7 @@ class Experiment(object):
                     os.path.join(directoryToDumpData, FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
                 featureDistribution.add_image(featureDistributionImage)
-                pdf.add_page()
-                pdf.image(os.path.join(directoryToDumpData, FeatureHistogramImageFile),20,20,w=175,h=200)
-            pdf.output("EDA.pdf")
+                
             workBook.save(fileName)
         workBook.close()
 

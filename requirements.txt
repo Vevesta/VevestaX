@@ -10,4 +10,4 @@ scipy==1.8.0
 
 setuptools~=60.2.0
 PyGithub~=1.55
-fpdf==1.7.2
+img2pdf==0.4.4
