@@ -1,6 +1,7 @@
 import json
 import requests
 import platform
+import seaborn as sns
 from datetime import datetime
 from inspect import getmembers,stack,signature
 from os.path import basename,expanduser,join,exists,isfile,isdir,islink
@@ -46,6 +47,7 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
+        self.__ycolumn=None
         self.speedUp = speedUp
 
     def get_filename(self):
@@ -280,6 +282,16 @@ class Experiment(object):
     # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
+    @property
+    def Y(self):
+        return self.__Y
+            
+    @Y.setter
+    def Y(self,value):
+        if value in self.__data.columns:
+            self.__ycolumn=value
+        else:
+            print("Column not found")
 
     # function to get arguments of a function
     def param(self, **decoratorparam):
@@ -707,6 +719,7 @@ class Experiment(object):
         FeatureHistogramImageFile = "FeatureHistogram.jpeg"
         OutliersImageFile = "Outliers.jpeg"
         #NumericFeatures3Dplots = "NumericFeatures3Dplots.jpeg"
+        ProbabilityDensityFunction="ProbabilityDensityFunction.jpeg"
 
         # EDA missing values
         plt.figure(figsize=(6, 6))
@@ -791,8 +804,27 @@ class Experiment(object):
         plt.suptitle('Feature Histogram',fontsize=20)
         plt.savefig(join(directoryToDumpData, FeatureHistogramImageFile), bbox_inches='tight', dpi=100)
         plt.close()
+        
+        #Probability Density Function
+        numericDataframe = self.__data.select_dtypes(include='number')  
+        if self.__ycolumn!=None:
+            k=1
+            fig = plt.figure(figsize=(20,15))
+            for i in numericDataframe:
+                if i!=self.__ycolumn:
+                    ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
+                    frequency=self.__data[self.__ycolumn].value_counts()
+                    frequency=dict(frequency)
+                    frequency=list(frequency.keys())[0:10]
+                    y=self.__data[self.__data[self.__ycolumn].isin(frequency)]
+                    sns.kdeplot(x=numericDataframe[i],hue=y[self.__ycolumn], ax = ax,multiple="stack",palette="pastel")
+                    k+=1
+            plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
+            plt.close()
+
+              
         pdffile="EDA.pdf"
-        images=[ValueImageFile,ValueRatioImageFile,NumericalFeatureDistributionImageFile,NonNumericFeaturesImgFile,FeatureHistogramImageFile,OutliersImageFile]
+        images=[ValueImageFile,ValueRatioImageFile,NumericalFeatureDistributionImageFile,NonNumericFeaturesImgFile,FeatureHistogramImageFile,OutliersImageFile,ProbabilityDensityFunction]
         a4inputsize = (mm_to_pt(210),mm_to_pt(297))
         layout_function = get_layout_fun(a4inputsize)
         file=[]
@@ -802,7 +834,7 @@ class Experiment(object):
         with open(pdffile,"wb") as f:          
             f.write(convert(file,layout_fun=layout_function))
 
-        #creating an empty PDF
+        
 
         if (isfile(fileName)):
             workBook = load_workbook(fileName)
