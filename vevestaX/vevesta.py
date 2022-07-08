@@ -888,6 +888,8 @@ class Experiment(object):
                     join(directoryToDumpData, NonNumericFeaturesImgFile))
                 nonNumericFeatureImage.anchor = columnTextImgone
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
+            
+            
 
             if exists(join(directoryToDumpData, FeatureHistogramImageFile)):
                 workBookName = 'EDA-Feature Histogram'
@@ -898,6 +900,16 @@ class Experiment(object):
                 featureDistributionImage.anchor = columnTextImgone
                 featureDistribution.add_image(featureDistributionImage)
                 
+            if exists(join(directoryToDumpData, ProbabilityDensityFunction)):
+                workBookName = 'EDA-PDF'
+                workBook.create_sheet(workBookName)
+                pdfPlotsheet = workBook[workBookName]
+                pdfImage = Image(
+                    join(directoryToDumpData, ProbabilityDensityFunction))
+                pdfImage.anchor = columnTextImgone
+                pdfPlotsheet.add_image(pdfImage)   
+            
+                         
             workBook.save(fileName)
         workBook.close()
 
