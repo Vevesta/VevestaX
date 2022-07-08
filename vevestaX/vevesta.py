@@ -817,7 +817,7 @@ class Experiment(object):
                     frequency=dict(frequency)
                     frequency=list(frequency.keys())[0:10]
                     y=self.__data[self.__data[self.__ycolumn].isin(frequency)]
-                    sns.kdeplot(x=numericDataframe[i],hue=y[self.__ycolumn], ax = ax,multiple="stack",palette="pastel")
+                    sns.kdeplot(x=numericDataframe[i],hue=y[self.__ycolumn], ax = ax,fill=True)
                     k+=1
             plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
             plt.close()
