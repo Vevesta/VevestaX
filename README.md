@@ -231,29 +231,7 @@ This is how our folder looks when we have downloaded the above two tokens. Along
 
 ![img](https://miro.medium.com/max/1400/1*gY8u1pGRGnMHuWS21xdt8w.png)
 
-Now lets see how to use the vevstaX library in order to check-in the code.
 
-**Install the library**
-```
-pip install vevestaX
-```
-**Import vevestaX and create the experiment object**
-```
-from vevestaX import vevesta as v
-V=v.Experiment()
-```
-**Link the library with the data frame**
-```
-#read the dataset
-import pandas as pd
-df=pd.read_csv("fish.csv")
-df.head()
-#Extract the columns names for features
-V.ds=df #or we can use V.dataSourcing
-'''
-You can write the rest of your code here
-'''
-```
 ### How to dump the EDA into excel file and check in the code into GitHub?
 
 In order to perform Exploratory Data Analysis and check in the code to GitHub we have commands namely V.dump() or V.commit().
