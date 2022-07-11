@@ -21,7 +21,7 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
 9. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 10. [How to speed up the code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-speed-up-the-code)
-11. [How to check code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-gitHub)
+11. [How to check code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-github)
 
 ## How to install VevestaX
 ```
