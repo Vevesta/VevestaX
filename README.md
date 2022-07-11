@@ -21,6 +21,7 @@ VevestaX is an open source Python package for ML Engineers and Data Scientists. 
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
 9. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 10. [How to speed up the code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-speed-up-the-code)
+11. [How to check code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-check-code-into-GitHub)
 
 ## How to install VevestaX
 ```
@@ -195,6 +196,118 @@ V = v.Experiment(True)
 #V=v.Experiment(speedUp = True)
 ```
 
+## How to check code into GitHub
+In order to check-in the code to Git and Vevesta we would be requiring the two tokens mentioned below:
+
+* Git-Access Token
+* Vevesta Access Token
+### How to Download the Git-Access Token ?
+
+* Navigate to your Git account settings, then to Developer Settings. Click the Personal access tokens menu, then click Generate new token.
+
+![https://catalyst.zoho.com/help/tutorials/githubbot/generate-access-token.html](https://miro.medium.com/max/1400/0*88zJhX1W7aAUzNvy.jpg)
+
+* Select repo as the scope. The token will be applicable for all the specified actions in your repositories.
+
+![https://catalyst.zoho.com/help/tutorials/githubbot/generate-access-token.html](https://miro.medium.com/max/1400/0*FJ-NBDehGsJAT3Ik.jpg)
+
+* Click Generate Token: GitHub will display the personal access token. Make sure to copy the token and store it as a txt file by renaming it to git_token in the folder where the jupyter notebook or the python script is present.
+
+![https://catalyst.zoho.com/help/tutorials/githubbot/generate-access-token.html](https://miro.medium.com/max/1400/0*KR6X8zv0n5o8VCCR.jpg)
+
+We will use this token in the Integration function’s code, which will enable us to fetch the necessary information about the repositories from GitHub.
+
+### How to Download the Vevesta Access Token ?
+
+* Create a login on [vevesta](https://www.vevesta.com/demo).
+
+![img](https://miro.medium.com/max/1400/1*RanYUoEr5wJNd2T1GBWI3Q.png)
+
+* Then go to the Setting section, download the access token and place this token as it is without renaming in the same folder where the jupyter notebook or python script is present.
+
+![img](https://miro.medium.com/max/1400/1*3lDbhhuZ53ePGGTGYLYLew.png)
+
+This is how our folder looks when we have downloaded the above two tokens. Along with the two tokens we have with us: the jupyter notebook named ZIP.ipynb and Dataset named fish.csv.
+
+![img](https://miro.medium.com/max/1400/1*gY8u1pGRGnMHuWS21xdt8w.png)
+
+Now lets see how to use the vevstaX library in order to check-in the code.
+
+**Install the library**
+```
+pip install vevestaX
+```
+**Import vevestaX and create the experiment object**
+```
+from vevestaX import vevesta as v
+V=v.Experiment()
+```
+**Link the library with the data frame**
+```
+#read the dataset
+import pandas as pd
+df=pd.read_csv("fish.csv")
+df.head()
+#Extract the columns names for features
+V.ds=df #or we can use V.dataSourcing
+'''
+You can write the rest of your code here
+'''
+```
+### How to dump the EDA into excel file and check in the code into GitHub?
+
+In order to perform Exploratory Data Analysis and check in the code to GitHub we have commands namely V.dump() or V.commit().
+
+Both of them are almost similar with a slight difference between them. Lets have a look upon each of them.
+
+**V.dump()**
+
+V.dump() takes the following parameters as input:
+```
+V.dump(
+    techniqueUsed,
+    filename=None,
+    message=None,
+    version=None,
+    repoName=None,
+)
+```
+Here parameter repoName is optional which is required to check-in our code to GitHub. If repoName is not specified then the command will return only the excel sheet consisting of EDA and will not check-in the code to GitHub.
+```
+# Dump the datasourcing, features engineered and the variables tracked in a xlsx file
+V.dump(techniqueUsed='model_name',filename="fila_name.xlsx",message="any_remark like XGboost with data augmentation was used",version=1,repoName='My_Project')
+```
+**V.commit()**
+
+* In order to check-in the project to Vevesta via V.commit(), Login unto the site and click on the Home icon in the top-left corner of the page.
+* After that click on Add Projects and specify the details asked. Optionally we can fill the GitHub repo name in the details.
+
+![img](https://miro.medium.com/max/1400/1*wobRn5dWSS7ZRUH8B6ZmyA.png)
+
+* After filling the details, save the project and soon as the project is saved we will be getting a Project Id which will be used as a parameter in the commit function.
+
+![img](https://miro.medium.com/max/1222/1*aERKMuTIVP44Kkm9e446CQ.png)
+
+Above were the steps to check-in the code to Vevesta. Now in order to check-in the code to GitHub,
+
+* Make a GitHub Repository or use an existing one and pass it to the repoName in our commit function. That's it.
+* If in case GitHub Repository is not passed, then the commit function will attempt to read the repoName from the project details we had passed while creating the project in Vevesta.
+* Since it’s optional to pass the GitHub Repository while creating the project so if in case the user have not specified the GitHub Repository and he too did not mentioned it in the commit function then the project will not be able to pushed into the Git, however still the user will be getting an Excel File consisting of EDA performed.
+* Run the command and the code is successfully checked in to the GitHub as well as Vevesta.
+```
+V.commit(techniqueUsed = "Zip Model", message="increased accuracy", version=1, projectId=148, attachmentFlag=True,repoName='My_Project')
+```
+
+![img](https://miro.medium.com/max/1400/1*7yKCux2pPPMfoQmkMnRAxg.png)
+
+![img](https://miro.medium.com/max/1400/1*tDBC1C0DRtB-vPFx1oXliA.png)
+
+**Summarizing V.dump() and V.commit()**
+
+Both V.commit() and V.dump() perform almost similar functions, the slightest difference between them is that:
+
+* If the function is called from V.dump(), the repo name needs to be declared in the arguments whereas,
+* If the function is called from V.commit(), repo name will be passed as function argument and updated in the project GitHub name. If it is not passed then in that case, the commit function will attempt to read project GitHub repo name from Vevesta Project’s details. 
 
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
