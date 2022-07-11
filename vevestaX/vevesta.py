@@ -813,9 +813,7 @@ class Experiment(object):
             for i in numericDataframe:
                 if i!=self.__Y:
                     ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
-                    frequency=self.__data[self.__Y].value_counts()
-                    frequency=dict(frequency)
-                    frequency=list(frequency.keys())[0:10]
+                    frequency=self.__data[self.__Y].value_counts().keys().tolist()[0:10]
                     y=self.__data[self.__data[self.__Y].isin(frequency)]
                     sns.kdeplot(x=numericDataframe[i],hue=y[self.__Y], ax = ax,fill=True)
                     k+=1
@@ -1129,5 +1127,3 @@ class Experiment(object):
         all_repos = github_user.get_repos()
         repos = list(filter(lambda r: r.name.casefold() == repo_name.casefold(), all_repos))
         return repos[0] if len(repos) > 0 else None
-
-        
