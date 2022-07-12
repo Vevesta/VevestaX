@@ -6,7 +6,7 @@
 
 
 
-# Library to track ML experiments, automatic EDA as well as GitHub Checkins in 2 lines of code
+# Library to track ML experiments, automatic EDA as well as GitHub checkins in 2 lines of code
 VevestaX is an open source Python package for ML Engineers and Data Scientists.  It does the following:
 
 * Automatic EDA on the data
