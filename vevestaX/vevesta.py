@@ -1,34 +1,35 @@
-import datetime
-import inspect
-import itertools
 import json
-import os
-import platform
-import random
-import re
-import shutil
-import statistics
-import sys
-import uuid
-from pathlib import Path
-
-import github
-import ipynbname
-import matplotlib.pyplot as plt
-import numpy as np
-import openpyxl
-import pandas
-import pyspark
 import requests
-from github import Github
+import platform
+import seaborn as sns
+from datetime import datetime
+from inspect import getmembers,stack,signature
+from os.path import basename,expanduser,join,exists,isfile,isdir,islink
+from os import mkdir,listdir,unlink
+from random import randint
+from re import sub
+from shutil import copy,rmtree
+from statistics import median,mode
+from sys import argv
+from uuid import getnode
+from pathlib import Path
+from github import Github,GithubException
+from ipynbname import name
+from matplotlib import pyplot as plt
+from numpy import quantile,isinf
+from openpyxl import load_workbook
+from openpyxl.drawing.image import Image
+from pandas import DataFrame as pandasDataframe
+from pandas import ExcelWriter,read_excel,concat,Series
+from pyspark.sql.dataframe import DataFrame as pysparkDataframe
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.stat import Correlation
 from pyspark.sql import SparkSession
 from pyspark.sql.types import DoubleType
 from scipy.stats import kurtosis
 from scipy.stats import skew
-from fpdf import FPDF
 from vevestaX import __version__
+from img2pdf import mm_to_pt,get_layout_fun,convert
 
 def test():
     return 'Test Executed Successfully'
@@ -46,19 +47,20 @@ class Experiment(object):
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
+        self.__Y=None
         self.speedUp = speedUp
 
     def get_filename(self):
         try:
             try:
-                filename = ipynbname.name() + '.ipynb'
+                filename = name() + '.ipynb'
 
             except:
                 try:
-                    filePath = dict(inspect.getmembers(inspect.stack()[2][0]))['f_locals']['__file__']
+                    filePath = dict(getmembers(stack()[2][0]))['f_locals']['__file__']
                 except:
-                    filePath = sys.argv[0]
-                filename = os.path.basename(filePath)
+                    filePath = argv[0]
+                filename = basename(filePath)
         except:
             filename = None
         return filename
@@ -68,21 +70,21 @@ class Experiment(object):
         file_name = 'access_token.txt'
 
         directory = ".vevesta"
-        parent_dir = os.path.expanduser("~")
-        home_folder_path = os.path.join(parent_dir, directory)
-        home_folder_file_path = os.path.join(home_folder_path, file_name)
+        parent_dir = expanduser("~")
+        home_folder_path = join(parent_dir, directory)
+        home_folder_file_path = join(home_folder_path, file_name)
 
         sibling_file_path = file_name
 
-        if os.path.exists(sibling_file_path):
+        if exists(sibling_file_path):
             token = self.__read_file(sibling_file_path)
             try:
-                os.mkdir(home_folder_path)
+                mkdir(home_folder_path)
             except FileExistsError:
                 pass
-            shutil.copy(sibling_file_path, home_folder_path)
+            copy(sibling_file_path, home_folder_path)
 
-        elif os.path.exists(home_folder_file_path):
+        elif exists(home_folder_file_path):
             token = self.__read_file(home_folder_file_path)
 
         return token
@@ -91,7 +93,7 @@ class Experiment(object):
         try:
             Github(token).get_user().name
             return True
-        except github.GithubException:
+        except GithubException:
             return False
 
     def __read_file(self, path):
@@ -110,20 +112,20 @@ class Experiment(object):
         git_token = ''
 
         directory = ".vevesta"
-        parent_dir = os.path.expanduser("~")
-        home_folder_path = os.path.join(parent_dir, directory)
+        parent_dir = expanduser("~")
+        home_folder_path = join(parent_dir, directory)
 
         sibling_file_path = file_name
-        home_folder_file_path = os.path.join(home_folder_path, file_name)
+        home_folder_file_path = join(home_folder_path, file_name)
 
-        if os.path.exists(sibling_file_path) and self.__is_git_token_valid(
+        if exists(sibling_file_path) and self.__is_git_token_valid(
                 self.__read_file(sibling_file_path)):
             git_token = self.__read_file(sibling_file_path)
             try:
-                os.mkdir(home_folder_path)
+                mkdir(home_folder_path)
             except FileExistsError:
                 pass
-            shutil.copy(sibling_file_path, home_folder_path)
+            copy(sibling_file_path, home_folder_path)
             try:
                 headers_for_set_token = {
                     'Authorization': 'Bearer ' + access_token,
@@ -154,7 +156,7 @@ class Experiment(object):
                 raise Exception('Invalid Git Token')
 
         # The git token will be searched in .vevesta folder if commitToGit is called from the V.dump function
-        elif not is_v_commit and os.path.exists(home_folder_file_path) and self.__is_git_token_valid(
+        elif not is_v_commit and exists(home_folder_file_path) and self.__is_git_token_valid(
                 self.__read_file(home_folder_file_path)):
             git_token = self.__read_file(home_folder_file_path)
 
@@ -173,14 +175,14 @@ class Experiment(object):
 
     @dataSourcing.setter
     def dataSourcing(self, value):
-        if isinstance(value, pandas.DataFrame):
+        if isinstance(value, pandasDataframe):
             self.__dataSourcing = value.columns.tolist()
             self.__data = value
             self.__sampleSize = len(value)
             if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
-        if isinstance(value, pyspark.sql.dataframe.DataFrame):
+        if isinstance(value, pysparkDataframe):
             self.__dataSourcing = value.columns
             self.__data = value
             self.__sampleSize = value.count()
@@ -214,32 +216,32 @@ class Experiment(object):
     def featureEngineering(self, value):
         if self.__dataSourcing is None:
             print("Data Sourcing step missed.")
-            if isinstance(value, pandas.DataFrame):
+            if isinstance(value, pandasDataframe):
                 cols = value.columns
                 self.__featureEngineering = cols
 
-            if isinstance(value, pyspark.sql.dataframe.DataFrame):
+            if isinstance(value, pysparkDataframe):
                 cols = value.columns
                 self.__featureEngineering = cols
 
 
         else:
-            if isinstance(value, pandas.DataFrame):
+            if isinstance(value, pandasDataframe):
                 cols = value.columns
                 cols = [col for col in cols if col not in self.__dataSourcing]
                 # cols = cols.drop(self.dataSourcing)
                 self.__featureEngineering = cols
 
-            if isinstance(value, pyspark.sql.dataframe.DataFrame):
+            if isinstance(value, pysparkDataframe):
                 cols = value.columns
                 cols = [col for col in cols if col not in self.__dataSourcing]
                 self.__featureEngineering = cols
 
-        if isinstance(value, pandas.DataFrame):
+        if isinstance(value, pandasDataframe):
             if self.speedUp == False:
                 self.__correlation = value.corr(method='pearson')
 
-        if isinstance(value, pyspark.sql.dataframe.DataFrame):
+        if isinstance(value, pysparkDataframe):
             if self.speedUp == False:
                 spark = SparkSession.builder.appName("vevesta").getOrCreate()
                 columnNames = []
@@ -263,12 +265,12 @@ class Experiment(object):
         self.featureEngineering = value
 
     def startModelling(self):
-        self.__startlocals = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
+        self.__startlocals = dict(getmembers(stack()[1][0]))['f_locals'].copy()
 
     def endModelling(self):
 
-        temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
-        self.temp = inspect.getmembers(inspect.stack()[1])
+        temp = dict(getmembers(stack()[1][0]))['f_locals'].copy()
+        self.temp = getmembers(stack()[1])
 
         self.__variables = {**self.__variables, **{i: temp.get(i) for i in temp if
                                                    i not in self.__startlocals and i[0] != '_' and (
@@ -280,16 +282,34 @@ class Experiment(object):
     # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
+    @property
+    def Y(self):
+        return self.__Y
+            
+    @Y.setter
+    def Y(self,value):
+        if isinstance(value,Series):
+            if value.size==self.__sampleSize:
+                self.__Y=value
+                self.____YcolumnName=None
+            else:
+                print('Panda series size not matching with the dataframe size')
+        elif isinstance(value,str):
+            if value in self.__data.columns:
+                self.__Y=self.__data[value]
+                self.____YcolumnName=value
+            else:
+                print("Column not found")
 
     # function to get arguments of a function
     def param(self, **decoratorparam):
         def params(functionName):
             def wrapper(*args, **kwargs):
                 # to get parameters of function that are passed
-                functionParameters = inspect.signature(functionName).bind(*args, **kwargs).arguments
+                functionParameters = signature(functionName).bind(*args, **kwargs).arguments
                 functionParameters = dict(functionParameters)
                 # to get values that are not passed and defautlt values
-                defaultParameters = inspect.signature(functionName)
+                defaultParameters = signature(functionName)
                 for param in defaultParameters.parameters.values():
                     # checks in key exist in abouve dictionary then doesn't update it will default value, otherwise append into dictionary
                     if (param.default is not param.empty) and (param.name not in functionParameters):
@@ -325,7 +345,7 @@ class Experiment(object):
             "Love VevestaX? Give us a shoutout at vevestax@vevesta.com",
             "Get access to latest release ahead of others by subscribing to vevestax@vevesta.com"
         ]
-        return (messagesList[random.randint(0, len(messagesList) - 1)])
+        return (messagesList[randint(0, len(messagesList) - 1)])
 
     def __colorCellExcel(self, val):
         if -1 <= val <= -0.9:
@@ -403,7 +423,7 @@ class Experiment(object):
         sheetName = 'Profiling Report'
         if self.speedUp:
             return
-        if not isinstance(self.__data, pandas.DataFrame):
+        if not isinstance(self.__data, pandasDataframe):
             return
         if self.__data.empty or len(self.__data) == 0:
             return
@@ -422,9 +442,9 @@ class Experiment(object):
              'Average_record_size_in_memory(byte)': self.__data.memory_usage().sum() / len(self.__data)
              }
         ]
-        profilingDataframe = pandas.DataFrame(data)
+        profilingDataframe = pandasDataframe(data)
 
-        profileOfVariableDataframe = pandas.DataFrame(
+        profileOfVariableDataframe = pandasDataframe(
             {"Field Name": ["Distinct", "Distinct (%)", "Missing", "Missing (%)", "Infinite", "Infinite (%)", "Mean",
                             "Minimum", "Maximum", "Zeros", "Zeros (%)", "Negative", "Negative (%)", "Kurtosis",
                             "Skewness", "Median", "Mode", "Outliers", "Outliers (%)", "Q1 quantile", "Q2 quantile",
@@ -433,16 +453,16 @@ class Experiment(object):
         numericColumns = self.__data.select_dtypes(include=["number"]).columns
         for col in numericColumns:
             # finding outliers for each column
-            Q1 = np.quantile(self.__data[col], 0.25)
-            Q3 = np.quantile(self.__data[col], 0.75)
+            Q1 = quantile(self.__data[col], 0.25)
+            Q3 = quantile(self.__data[col], 0.75)
             IQR = Q3 - Q1
             outlier = ((self.__data[col] < (Q1 - 1.5 * IQR)) | (self.__data[col] > (Q3 + 1.5 * IQR))).sum()
             col_dict = {"Distinct": self.__data[col].nunique(),
                         "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
                         "Missing": self.__data[col].isna().sum(),
                         "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                        "Infinite": np.isinf(self.__data[col]).values.sum(),
-                        "Infinite (%)": np.isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
+                        "Infinite": isinf(self.__data[col]).values.sum(),
+                        "Infinite (%)": isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
                         "Mean": self.__data[col].mean(),
                         "Minimum": self.__data[col].min(),
                         "Maximum": self.__data[col].max(),
@@ -452,14 +472,14 @@ class Experiment(object):
                         "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
                         "Kurtosis": kurtosis(self.__data[col], axis=0, bias=True),
                         "Skewness": skew(self.__data[col], axis=0, bias=True),
-                        "Median": statistics.median(self.__data[col]),
-                        "Mode": statistics.mode(self.__data[col]),
+                        "Median": median(self.__data[col]),
+                        "Mode": mode(self.__data[col]),
                         "Outliers": outlier,
                         "Outliers (%)": outlier * 100 / self.__data.shape[0],
-                        "Q1 quantile": np.quantile(self.__data[col], 0.25),
-                        "Q2 quantile": np.quantile(self.__data[col], 0.5),
-                        "Q3 quantile": np.quantile(self.__data[col], 0.75),
-                        "100th quantile": np.quantile(self.__data[col], 1),
+                        "Q1 quantile": quantile(self.__data[col], 0.25),
+                        "Q2 quantile": quantile(self.__data[col], 0.5),
+                        "Q3 quantile": quantile(self.__data[col], 0.75),
+                        "100th quantile": quantile(self.__data[col], 1),
                         "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
@@ -491,8 +511,8 @@ class Experiment(object):
                         "Total Memory Size(bytes)": self.__data[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
-        if os.path.isfile(fileName):
-            with pandas.ExcelWriter(fileName, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
+        if isfile(fileName):
+            with ExcelWriter(fileName, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
                 profilingDataframe.to_excel(writer, sheet_name="Profiling Report", index=False)
                 profileOfVariableDataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
 
@@ -503,7 +523,7 @@ class Experiment(object):
         featureEngineeringData = None
         messageData = None
         experimentID = 1
-        localTimestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        localTimestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         mode = 'w'
 
         if (filename == None):
@@ -512,63 +532,63 @@ class Experiment(object):
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
         if (len(self.__variables) == 0):
-            temp = dict(inspect.getmembers(inspect.stack()[1][0]))['f_locals'].copy()
+            temp = dict(getmembers(stack()[1][0]))['f_locals'].copy()
             self.__variables = {**{i: temp.get(i) for i in temp if i[0] != '_' and (
                     type(temp[i]) in self.__primitiveDataTypes or isinstance(temp[i], (str, int, float, bool)))}}
 
         # check if file already exists
-        if (os.path.isfile(filename)):
+        if (isfile(filename)):
             # mode = 'a'
-            existingData = pandas.read_excel(filename, sheet_name='dataSourcing', index_col=[])
+            existingData = read_excel(filename, sheet_name='dataSourcing', index_col=[])
 
-            featureEngineeringData = pandas.read_excel(filename, sheet_name='featureEngineering', index_col=[])
+            featureEngineeringData = read_excel(filename, sheet_name='featureEngineering', index_col=[])
 
-            modelingData = pandas.read_excel(filename, sheet_name='modelling', index_col=[])
+            modelingData = read_excel(filename, sheet_name='modelling', index_col=[])
 
-            messageData = pandas.read_excel(filename, sheet_name='messages', index_col=[])
+            messageData = read_excel(filename, sheet_name='messages', index_col=[])
 
             experimentID = max(modelingData["experimentID"]) + 1
 
         if self.__dataSourcing is None:
-            df_dataSourcing = pandas.DataFrame(index=[1])
+            df_dataSourcing = pandasDataframe(index=[1])
 
         else:
-            df_dataSourcing = pandas.DataFrame(1, index=[1], columns=self.__dataSourcing)
+            df_dataSourcing = pandasDataframe(1, index=[1], columns=self.__dataSourcing)
 
         df_dataSourcing.insert(0, 'experimentID', experimentID)
-        df_dataSourcing = pandas.concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
+        df_dataSourcing = concat([existingData, df_dataSourcing], ignore_index=True).fillna(0)
 
         if self.featureEngineering is None:
-            df_featureEngineering = pandas.DataFrame(index=[1])
+            df_featureEngineering = pandasDataframe(index=[1])
 
         else:
-            df_featureEngineering = pandas.DataFrame(1, index=[1], columns=self.featureEngineering)
+            df_featureEngineering = pandasDataframe(1, index=[1], columns=self.featureEngineering)
 
         df_featureEngineering.insert(0, 'experimentID', experimentID)
-        df_featureEngineering = pandas.concat([featureEngineeringData, df_featureEngineering],
+        df_featureEngineering = concat([featureEngineeringData, df_featureEngineering],
                                               ignore_index=True).fillna(0)
 
         if self.__dataSourcing is None and self.__featureEngineering is None:
-            modeling = pandas.DataFrame(
+            modeling = pandasDataframe(
                 data={**{'experimentID': experimentID, 'timestamp': localTimestamp},
                       **{k: [v] for k, v in self.__variables.items()}}, index=[0])
         elif self.__dataSourcing is None:
-            modeling = pandas.DataFrame(data={
+            modeling = pandasDataframe(data={
                 **{'experimentID': experimentID, 'features': ','.join(self.featureEngineering),
                    'timestamp': localTimestamp}, **{k: [v] for k, v in self.__variables.items()}},
                 index=[0])
         elif self.__featureEngineering is None:
-            modeling = pandas.DataFrame(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
+            modeling = pandasDataframe(data={**{'experimentID': experimentID, 'features': ','.join(self.dataSourcing),
                                                  'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.__variables.items()}}, index=[0])
         else:
-            modeling = pandas.DataFrame(data={**{'experimentID': experimentID,
+            modeling = pandasDataframe(data={**{'experimentID': experimentID,
                                                  'features': ','.join(self.dataSourcing) + ',' + ','.join(
                                                      self.featureEngineering),
                                                  'timestamp': localTimestamp},
                                               **{k: [v] for k, v in self.__variables.items()}}, index=[0])
 
-        modeling = pandas.concat([modelingData, modeling], ignore_index=True)
+        modeling = concat([modelingData, modeling], ignore_index=True)
 
         # message table
         data = {
@@ -580,22 +600,22 @@ class Experiment(object):
             'timestamp': localTimestamp
         }
 
-        df_messages = pandas.DataFrame(index=[1], data=data)
-        df_messages = pandas.concat([messageData, df_messages], ignore_index=True)
+        df_messages = pandasDataframe(index=[1], data=data)
+        df_messages = concat([messageData, df_messages], ignore_index=True)
 
         self.__sampleSize = 100 if self.__sampleSize >= 100 else self.__sampleSize
 
-        if isinstance(self.__data, pandas.DataFrame):
+        if isinstance(self.__data, pandasDataframe):
             sampledData = self.__data.sample(self.__sampleSize)
 
-        if isinstance(self.__data, pyspark.sql.dataframe.DataFrame):
+        if isinstance(self.__data, pysparkDataframe):
             if self.__data.count() >= 100:
                 sampledData = self.__data.sample(100 / self.__data.count())
 
             if self.__data.count() < 100:
                 sampledData = self.__data.sample(1.0)
 
-        with pandas.ExcelWriter(filename, engine='openpyxl') as writer:
+        with ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
 
@@ -604,24 +624,24 @@ class Experiment(object):
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
 
-            if isinstance(self.__data, pandas.DataFrame):
-                pandas.DataFrame(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
+            if isinstance(self.__data, pandasDataframe):
+                pandasDataframe(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
 
-            if isinstance(self.__data, pyspark.sql.dataframe.DataFrame):
+            if isinstance(self.__data, pysparkDataframe):
                 sampledData.toPandas().to_excel(writer, sheet_name='sampledata', index=False)
 
             if self.speedUp == False:
                 if self.__correlation is not None:
-                    if isinstance(sampledData, pandas.DataFrame):
-                        pandas.DataFrame(self.__correlation).style. \
+                    if isinstance(sampledData, pandasDataframe):
+                        pandasDataframe(self.__correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-                    if isinstance(sampledData, pyspark.sql.dataframe.DataFrame):
+                    if isinstance(sampledData, pysparkDataframe):
                         correlation = self.__correlation.toPandas()
                         correlation.set_index(correlation.columns, inplace=True)
-                        pandas.DataFrame(correlation).style. \
+                        pandasDataframe(correlation).style. \
                             applymap(self.__colorCellExcel). \
                             applymap(self.__textColor). \
                             to_excel(writer, sheet_name='EDA-correlation', index=True)
@@ -643,7 +663,7 @@ class Experiment(object):
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
         access_token = self.__find_access_token()
         payload = {
-            'macAddress': str(uuid.getnode()),
+            'macAddress': str(getnode()),
             'accessToken': access_token,
             'vevestaXVersion': __version__,
             'platform': {
@@ -681,7 +701,7 @@ class Experiment(object):
                 print('File not pushed to git')
 
     def __EDA(self, fileName):
-        if isinstance(self.__data, pandas.DataFrame):
+        if isinstance(self.__data, pandasDataframe):
             self.__EDAForPandas(fileName)
 
     def __EDAForPandas(self, fileName):
@@ -689,7 +709,7 @@ class Experiment(object):
         if self.__data.empty or len(self.__data) == 0:
             return
 
-        if not isinstance(self.__data, pandas.DataFrame):
+        if not isinstance(self.__data, pandasDataframe):
             return
 
         if (fileName == None):
@@ -707,34 +727,35 @@ class Experiment(object):
         FeatureHistogramImageFile = "FeatureHistogram.jpeg"
         OutliersImageFile = "Outliers.jpeg"
         #NumericFeatures3Dplots = "NumericFeatures3Dplots.jpeg"
+        ProbabilityDensityFunction="ProbabilityDensityFunction.jpeg"
 
         # EDA missing values
-        plt.figure(figsize=(13, 8))
+        plt.figure(figsize=(6, 6))
         plt.imshow(self.__data.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0, 7, 0, 7])
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
-        plt.savefig(os.path.join(directoryToDumpData, ValueImageFile), bbox_inches='tight', dpi=100)
+        plt.savefig(join(directoryToDumpData, ValueImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # eda numeric feature distribution
         RatioData = self.__data.isna().mean().sort_values()
         xAxis = list(RatioData.index)
         yAxis = list(RatioData)
-        plt.figure(figsize=(7, 7))
+        plt.figure(figsize=(6, 6))
         plt.bar(xAxis, yAxis)
         plt.title("Percentage of missing values per feature")
         plt.xlabel("Feature Names")
         plt.ylabel("Ratio of missing values per feature")
         plt.xticks(rotation=90)
-        plt.savefig(os.path.join(directoryToDumpData, ValueRatioImageFile), bbox_inches='tight', dpi=100)
+        plt.savefig(join(directoryToDumpData, ValueRatioImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # eda non numeric feature distribution
         self.__data.plot(lw=0, marker="x", subplots=True, layout=(-1, 4), figsize=(10, 10), markersize=5,
                          title="Numeric feature Distribution(with X-axis representing the position in the file)").flatten()
         plt.tight_layout()
-        plt.savefig(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
+        plt.savefig(join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
                     dpi=100)
         plt.close()
 
@@ -748,7 +769,7 @@ class Experiment(object):
             ax.set_title(self.__data.columns[i], fontsize=15)
             #ax.tick_params(axis='both', labelrotation=45)
             plt.subplots_adjust(wspace=2)
-            plt.savefig(os.path.join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
+            plt.savefig(join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
         plt.close()
 
         # EDA for 3D-Plots
@@ -779,7 +800,7 @@ class Experiment(object):
                 nonNumericalColumns[col].value_counts(sort=True)[0:10].plot(kind='bar', logy=False, title=col, lw=0,
                                                                             ax=ax)
                 k += 1
-            plt.savefig(os.path.join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
+            plt.savefig(join(directoryToDumpData, NonNumericFeaturesImgFile), bbox_inches='tight', dpi=100)
             plt.close()
 
         # feature distribution
@@ -789,46 +810,72 @@ class Experiment(object):
         [x.tick_params(axis='x', labelrotation=90) for x in fig.ravel()]
         plt.plot()
         plt.suptitle('Feature Histogram',fontsize=20)
-        plt.savefig(os.path.join(directoryToDumpData, FeatureHistogramImageFile), bbox_inches='tight', dpi=100)
+        plt.savefig(join(directoryToDumpData, FeatureHistogramImageFile), bbox_inches='tight', dpi=100)
         plt.close()
+        
+        #Probability Density Function
+        numericDataframe = self.__data.select_dtypes(include='number')  
+        if self.__Y is not None and (self.__Y.dtype=='int64' or self.__Y.dtype=='object') and self.__Y.dtype!='float64':
+            k=1
+            fig = plt.figure(figsize=(20,15))
+            for i in numericDataframe:
+                if i!=self.____YcolumnName:
+                    ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
+                    frequency=self.__Y.value_counts().keys().tolist()[0:10]
+                    y=self.__Y[self.__Y.isin(frequency)]
+                    sns.kdeplot(x=numericDataframe[i],hue=y, ax = ax,fill=True)
+                    k+=1
+            plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
+            plt.close()
+        
+            
 
-        #creating an empty PDF
-        pdf=FPDF()
+              
+        pdffile="EDA.pdf"
+        images=[ValueImageFile,ValueRatioImageFile,NumericalFeatureDistributionImageFile,NonNumericFeaturesImgFile,FeatureHistogramImageFile,OutliersImageFile,ProbabilityDensityFunction]
+        a4inputsize = (mm_to_pt(210),mm_to_pt(297))
+        layout_function = get_layout_fun(a4inputsize)
+        file=[]
+        for i in images:
+            if exists(join(directoryToDumpData,i)):
+                file.append(join(directoryToDumpData,i))
+        with open(pdffile,"wb") as f:          
+            f.write(convert(file,layout_fun=layout_function))
 
-        if (os.path.isfile(fileName)):
-            workBook = openpyxl.load_workbook(fileName)
+        
+
+        if (isfile(fileName)):
+            workBook = load_workbook(fileName)
             workBook.create_sheet('EDA-missingValues')
             plotSheet = workBook['EDA-missingValues']
-            img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueImageFile))
+            img = Image(join(directoryToDumpData, ValueImageFile))
             img.anchor = columnTextImgone
             plotSheet.add_image(img)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, ValueImageFile),50,20,w=100,h=100)
+            
 
-            image = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, ValueRatioImageFile))
+            image = Image(join(directoryToDumpData, ValueRatioImageFile))
             image.anchor = columnTextImgtwo
             plotSheet.add_image(image)
-            pdf.image(os.path.join(directoryToDumpData, ValueRatioImageFile),50,140,w=100,h=100) 
+             
+
             # adding the plot for the Numeric Fetaure Distribution
             workBook.create_sheet('EDA-NumericfeatureDistribution')
             fetaureplotsheet = workBook['EDA-NumericfeatureDistribution']
-            featureImg = openpyxl.drawing.image.Image(
-                os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile))
+            featureImg = Image(
+                join(directoryToDumpData, NumericalFeatureDistributionImageFile))
             featureImg.anchor = columnTextImgone
             fetaureplotsheet.add_image(featureImg)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, NumericalFeatureDistributionImageFile),20,20,w=175,h=200) 
+            
 
 
             # adding boxplot for Numeric features
             workBook.create_sheet('EDA-Boxplot')
             outlierplotsheet = workBook['EDA-Boxplot']
-            OutlierImg = openpyxl.drawing.image.Image(
-                os.path.join(directoryToDumpData, OutliersImageFile))
+            OutlierImg = Image(
+                join(directoryToDumpData, OutliersImageFile))
             OutlierImg.anchor = columnTextImgone
             outlierplotsheet.add_image(OutlierImg)
-            pdf.add_page()
-            pdf.image(os.path.join(directoryToDumpData, OutliersImageFile),30,10,w=150,h=200)
+            
 
             # adding 3D plots for numeric features
             """
@@ -841,26 +888,36 @@ class Experiment(object):
 
             # adding non-numeric column
             nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
-            if len(nonNumericalColumns.columns) != 0 and os.path.exists(
-                    os.path.join(directoryToDumpData, NonNumericFeaturesImgFile)):
+            if len(nonNumericalColumns.columns) != 0 and exists(
+                    join(directoryToDumpData, NonNumericFeaturesImgFile)):
                 workBook.create_sheet('EDA-NonNumericFeatures')
                 nonNumericPlotSheet = workBook['EDA-NonNumericFeatures']
-                nonNumericFeatureImage = openpyxl.drawing.image.Image(
-                    os.path.join(directoryToDumpData, NonNumericFeaturesImgFile))
+                nonNumericFeatureImage = Image(
+                    join(directoryToDumpData, NonNumericFeaturesImgFile))
                 nonNumericFeatureImage.anchor = columnTextImgone
                 nonNumericPlotSheet.add_image(nonNumericFeatureImage)
+            
+            
 
-            if os.path.exists(os.path.join(directoryToDumpData, FeatureHistogramImageFile)):
+            if exists(join(directoryToDumpData, FeatureHistogramImageFile)):
                 workBookName = 'EDA-Feature Histogram'
                 workBook.create_sheet(workBookName)
                 featureDistribution = workBook[workBookName]
-                featureDistributionImage = openpyxl.drawing.image.Image(
-                    os.path.join(directoryToDumpData, FeatureHistogramImageFile))
+                featureDistributionImage = Image(
+                    join(directoryToDumpData, FeatureHistogramImageFile))
                 featureDistributionImage.anchor = columnTextImgone
                 featureDistribution.add_image(featureDistributionImage)
-                pdf.add_page()
-                pdf.image(os.path.join(directoryToDumpData, FeatureHistogramImageFile),20,20,w=175,h=200)
-            pdf.output("EDA.pdf")
+                
+            if exists(join(directoryToDumpData, ProbabilityDensityFunction)):
+                workBookName = 'EDA-PDF'
+                workBook.create_sheet(workBookName)
+                pdfPlotsheet = workBook[workBookName]
+                pdfImage = Image(
+                    join(directoryToDumpData, ProbabilityDensityFunction))
+                pdfImage.anchor = columnTextImgone
+                pdfPlotsheet.add_image(pdfImage)   
+            
+                         
             workBook.save(fileName)
         workBook.close()
 
@@ -893,8 +950,8 @@ class Experiment(object):
         Path(directoryToDumpData).mkdir(parents=True, exist_ok=True)
 
         # checks if file exist then only loads it and create a new sheet for plots
-        if (os.path.isfile(fileName)):
-            workBook = openpyxl.load_workbook(fileName)
+        if (isfile(fileName)):
+            workBook = load_workbook(fileName)
             workBook.create_sheet('performancePlots')
             plotSheet = workBook['performancePlots']
             xAxis = list(nonNumericColumns['timestamp'])
@@ -919,10 +976,10 @@ class Experiment(object):
                 plt.xlabel('Timestamp')
                 plt.ylabel(str(column))
 
-                plt.savefig(os.path.join(directoryToDumpData, imageName), bbox_inches='tight', dpi=100)
+                plt.savefig(join(directoryToDumpData, imageName), bbox_inches='tight', dpi=100)
                 plt.close()
 
-                img = openpyxl.drawing.image.Image(os.path.join(directoryToDumpData, imageName))
+                img = Image(join(directoryToDumpData, imageName))
                 img.anchor = columnText
                 plotSheet.add_image(img)
 
@@ -933,28 +990,28 @@ class Experiment(object):
 
     # to truncate the content inside the vevestaXDump folder if it exist
     def __truncateFolder(self, folderName):
-        if os.path.isdir(folderName):
-            for filename in os.listdir(folderName):
-                file_path = os.path.join(folderName, filename)
+        if isdir(folderName):
+            for filename in listdir(folderName):
+                file_path = join(folderName, filename)
                 try:
-                    if os.path.isfile(file_path) or os.path.islink(file_path):
-                        os.unlink(file_path)
-                    elif os.path.isdir(file_path):
-                        shutil.rmtree(file_path)
+                    if isfile(file_path) or islink(file_path):
+                        unlink(file_path)
+                    elif isdir(file_path):
+                        rmtree(file_path)
                 except Exception as e:
                     print('Failed to delete %s. Reason: %s' % (file_path, e))
 
     # generic function to get modelling sheet data from any excel file with sheetName modelling
     def __getExcelSheetData(self, fileName, sheetName):
         # checks if file exist then only if fetches modelling data
-        if (os.path.isfile(fileName)):
-            excelFile = openpyxl.load_workbook(fileName, read_only=True)
+        if (isfile(fileName)):
+            excelFile = load_workbook(fileName, read_only=True)
             # check if modelling sheet exist in excel file
             if sheetName in excelFile.sheetnames:
-                modelingData = pandas.read_excel(fileName, sheet_name=sheetName, index_col=[])
+                modelingData = read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True,
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
 
@@ -981,20 +1038,19 @@ class Experiment(object):
 
         # upload attachment
         filename = self.get_filename()
-        file_exists = os.path.exists(filename)
-        if attachmentFlag:
-            if file_exists:
-                files = {'file': open(filename, 'rb')}
-                headers_for_file = {'Authorization': 'Bearer ' + token}
-                params = {'taskId': 0}
-                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+        file_exists = exists(filename)
+        if file_exists:
+            files = {'file': open(filename, 'rb')}
+            headers_for_file = {'Authorization': 'Bearer ' + token}
+            params = {'taskId': 0}
+            response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
-                attachments = list()
-                attachments.append(response.json())
-                files = {'file': open('EDA.pdf', 'rb')}
-                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+            attachments = list()
+            attachments.append(response.json())
+            files = {'file': open('EDA.pdf', 'rb')}
+            response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
-                attachments.append(response.json())
+            attachments.append(response.json())
 
         # upload note
         headers_for_note = {
@@ -1011,12 +1067,12 @@ class Experiment(object):
             "dataSourced": self.__dataSourcing,
             "featureEngineered": self.__featureEngineering
         }
-        if attachmentFlag:
-            if file_exists:
-                payload['attachments'] = attachments
-            else:
-                payload['errorMessage'] = 'File not pushed to Vevesta'
-                print('File not pushed to Vevesta')
+        
+        if file_exists:
+            payload['attachments'] = attachments
+        else:
+            payload['errorMessage'] = 'File not pushed to Vevesta'
+            print('File not pushed to Vevesta')
         response = requests.post(url=backend_url + '/VevestaX', headers=headers_for_note, data=json.dumps(payload))
         if response.status_code == 200:
             print("Wrote experiment to tool, Vevesta")
@@ -1027,8 +1083,8 @@ class Experiment(object):
         g = Github(git_token)
 
         # format repository name and branch name according to GitHub naming conventions
-        repo_name = re.sub(r'[^A-Za-z0-9_.-]', '-', repo_name)
-        branch_name = re.sub(r'[^A-Za-z0-9_.\-/]', '_', branch_name)
+        repo_name = sub(r'[^A-Za-z0-9_.-]', '-', repo_name)
+        branch_name = sub(r'[^A-Za-z0-9_.\-/]', '_', branch_name)
 
         # find the repo or create a new repo if not exist
         user = g.get_user()
@@ -1047,16 +1103,16 @@ class Experiment(object):
         # check if branch exist or create a new branch (if not exist) from main or master
         try:
             repo.get_branch(branch_name)
-        except github.GithubException:
+        except GithubException:
             try:
                 source_branch = repo.get_branch('main')
-            except github.GithubException:
+            except GithubException:
                 source_branch = repo.get_branch('master')
             repo.create_git_ref(ref='refs/heads/' + branch_name, sha=source_branch.commit.sha)
 
         # push file to git
         file_name = self.get_filename()
-        if os.path.exists(file_name):
+        if exists(file_name):
             file_content = self.__read_file(file_name)
 
             # update if file exists, else create a new file
@@ -1071,7 +1127,7 @@ class Experiment(object):
                     sha=contents.sha,
                     branch=branch_name
                 )
-            except github.GithubException:
+            except GithubException:
                 if commitMessage is None:
                     commitMessage = 'added ' + file_name
                 repo.create_file(file_name, commitMessage, file_content, branch=branch_name)
