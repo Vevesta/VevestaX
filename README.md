@@ -278,7 +278,7 @@ Above were the steps to check-in the code to Vevesta. Now in order to check-in t
 * Since it’s optional to pass the GitHub Repository while creating the project so if in case the user have not specified the GitHub Repository and he too did not mentioned it in the commit function then the project will not be able to pushed into the Git, however still the user will be getting an Excel File consisting of EDA performed.
 * Run the command and the code is successfully checked in to the GitHub as well as Vevesta.
 ```
-V.commit(techniqueUsed = "Zip Model", message="increased accuracy", version=1, projectId=148, attachmentFlag=True,repoName='My_Project')
+V.commit(techniqueUsed = "Zip Model", message="increased accuracy", version=1, projectId=141, repoName='My_Project')
 ```
 
 ![img](https://miro.medium.com/max/1400/1*7yKCux2pPPMfoQmkMnRAxg.png)
