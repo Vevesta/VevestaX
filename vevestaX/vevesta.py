@@ -20,7 +20,7 @@ from numpy import quantile,isinf
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
 from pandas import DataFrame as pandasDataframe
-from pandas import ExcelWriter,read_excel,concat
+from pandas import ExcelWriter,read_excel,concat,Series
 from pyspark.sql.dataframe import DataFrame as pysparkDataframe
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.stat import Correlation
@@ -288,10 +288,18 @@ class Experiment(object):
             
     @Y.setter
     def Y(self,value):
-        if value in self.__data.columns:
-            self.__Y=value
-        else:
-            print("Column not found")
+        if isinstance(value,Series):
+            if value.size==self.__sampleSize:
+                self.__Y=value
+                self.__v=None
+            else:
+                print('Panda series size not matching with the dataframe size')
+        elif isinstance(value,str):
+            if value in self.__data.columns:
+                self.__Y=self.__data[value]
+                self.__v=value
+            else:
+                print("Column not found")
 
     # function to get arguments of a function
     def param(self, **decoratorparam):
@@ -807,18 +815,20 @@ class Experiment(object):
         
         #Probability Density Function
         numericDataframe = self.__data.select_dtypes(include='number')  
-        if self.__Y!=None and (self.__data[self.__Y].dtypes=='int64' or self.__data[self.__Y].dtypes=='object') and self.__data[self.__Y].dtypes!='float64':
+        if self.__Y is not None and (self.__Y.dtype=='int64' or self.__Y.dtype=='object') and self.__Y.dtype!='float64':
             k=1
             fig = plt.figure(figsize=(20,15))
             for i in numericDataframe:
-                if i!=self.__Y:
+                if i!=self.__v:
                     ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
-                    frequency=self.__data[self.__Y].value_counts().keys().tolist()[0:10]
-                    y=self.__data[self.__data[self.__Y].isin(frequency)]
-                    sns.kdeplot(x=numericDataframe[i],hue=y[self.__Y], ax = ax,fill=True)
+                    frequency=self.__Y.value_counts().keys().tolist()[0:10]
+                    y=self.__Y[self.__Y.isin(frequency)]
+                    sns.kdeplot(x=numericDataframe[i],hue=y, ax = ax,fill=True)
                     k+=1
             plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
             plt.close()
+        
+            
 
               
         pdffile="EDA.pdf"
@@ -1001,7 +1011,7 @@ class Experiment(object):
                 modelingData = read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
-    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None, attachmentFlag=True,
+    def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
 
@@ -1029,19 +1039,18 @@ class Experiment(object):
         # upload attachment
         filename = self.get_filename()
         file_exists = exists(filename)
-        if attachmentFlag:
-            if file_exists:
-                files = {'file': open(filename, 'rb')}
-                headers_for_file = {'Authorization': 'Bearer ' + token}
-                params = {'taskId': 0}
-                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+        if file_exists:
+            files = {'file': open(filename, 'rb')}
+            headers_for_file = {'Authorization': 'Bearer ' + token}
+            params = {'taskId': 0}
+            response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
-                attachments = list()
-                attachments.append(response.json())
-                files = {'file': open('EDA.pdf', 'rb')}
-                response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
+            attachments = list()
+            attachments.append(response.json())
+            files = {'file': open('EDA.pdf', 'rb')}
+            response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
-                attachments.append(response.json())
+            attachments.append(response.json())
 
         # upload note
         headers_for_note = {
@@ -1058,12 +1067,12 @@ class Experiment(object):
             "dataSourced": self.__dataSourcing,
             "featureEngineered": self.__featureEngineering
         }
-        if attachmentFlag:
-            if file_exists:
-                payload['attachments'] = attachments
-            else:
-                payload['errorMessage'] = 'File not pushed to Vevesta'
-                print('File not pushed to Vevesta')
+        
+        if file_exists:
+            payload['attachments'] = attachments
+        else:
+            payload['errorMessage'] = 'File not pushed to Vevesta'
+            print('File not pushed to Vevesta')
         response = requests.post(url=backend_url + '/VevestaX', headers=headers_for_note, data=json.dumps(payload))
         if response.status_code == 200:
             print("Wrote experiment to tool, Vevesta")
