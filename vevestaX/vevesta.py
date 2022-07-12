@@ -291,13 +291,13 @@ class Experiment(object):
         if isinstance(value,Series):
             if value.size==self.__sampleSize:
                 self.__Y=value
-                self.__v=None
+                self.____YcolumnName=None
             else:
                 print('Panda series size not matching with the dataframe size')
         elif isinstance(value,str):
             if value in self.__data.columns:
                 self.__Y=self.__data[value]
-                self.__v=value
+                self.____YcolumnName=value
             else:
                 print("Column not found")
 
@@ -819,7 +819,7 @@ class Experiment(object):
             k=1
             fig = plt.figure(figsize=(20,15))
             for i in numericDataframe:
-                if i!=self.__v:
+                if i!=self.____YcolumnName:
                     ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
                     frequency=self.__Y.value_counts().keys().tolist()[0:10]
                     y=self.__Y[self.__Y.isin(frequency)]
