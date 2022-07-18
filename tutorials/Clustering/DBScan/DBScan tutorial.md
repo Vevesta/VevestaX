@@ -95,6 +95,9 @@ The clusters in this sample dataset do not have arbitrary shapes but here we see
 
 * [MyGreatLearning](https://www.mygreatlearning.com/blog/dbscan-algorithm/)
 * [Soner Yıldırım](https://towardsdatascience.com/dbscan-clustering-explained-97556a2ad556)
-* [DBscan Original article](https://www.vevesta.com/blog/11_DBSCAN_Clustering?utm_source=GitHub_VevestaX)
+* [DBscan Original article](https://www.vevesta.com/blog/11_DBSCAN_Clustering?utm_source=GitHub_VevestaX_DBScan)
+
+## Credits
+[Vevesta](https://www.vevesta.com?utm_source=GitHub_VevestaX_DBScan) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=GitHub_VevestaX_DBScan) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 **Author:** Sarthak Kedia
