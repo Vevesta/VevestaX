@@ -260,7 +260,7 @@ Click [here](https://gist.github.com/sarthakkedia123/13c215fc769a52ff03a786014bd
 * [Towards DataScience](https://towardsdatascience.com/mitigating-bias-in-ai-with-aif360-b4305d1f88a9)
 * [Trust Science](https://www.trustscience.com/blog/the-role-of-protected-attributes-in-ai-fairness)
 * [MIT Open Course Ware](https://ocw.mit.edu/courses/res-ec-001-exploring-fairness-in-machine-learning-for-international-development-spring-2020/pages/module-three-framework/protected-attributes/)
-* [Article](https://www.vevesta.com/blog/3)
+* [Article](https://www.vevesta.com/blog/3_AI_Fairness_Bias_Handling)
 * [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 
 Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [Vevesta](https://www.vevesta.com/?utm_source=AIF360) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
