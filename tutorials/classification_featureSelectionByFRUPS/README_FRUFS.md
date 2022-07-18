@@ -90,9 +90,8 @@ EDA-performance plot plots the values of variables used in the code with the exp
 
 
 ## Credits
-Vevesta is the next generation GitHub for Machine Learning Project. Explore [vevesta](www.vevesta.com) for free. For more such stories, follow us on twitter at @vevesta1
 
-[Vevesta](www.vevesta.com) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+[Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_FRUFS) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_FRUFS) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 
 ## References
