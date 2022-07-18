@@ -18,7 +18,7 @@ Feature stores are useful since they enable data scientists to compute features 
 In short, feature stores are clearly suited for the narrow use case of creation of features from time series data that are extensively computationally expensive features. Most organizations don’t have this use case in place.
 
 ## Credits:
-The above article is sponsored by [***Vevesta.***](http://www.vevesta.com/?utm_source=FeatureStore)
+The above article is sponsored by [***Vevesta.***](http://www.vevesta.com/?utm_source=Github_VevestaX)
 
 ***Vevesta:*** Your Machine Learning Team’s Collective Wiki: Save and Share your features and techniques.
 
