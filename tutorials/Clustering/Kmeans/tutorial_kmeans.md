@@ -113,7 +113,7 @@ Finally we have dumped the data into Excel File using VevestaX.
 2.  [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 3.  [Article](https://www.vevesta.com/blog/4_Classification_with_K-Means_and_Vevestax_library?utm_source=Github_VevestaX)
 
-Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=vevestax_github_kmeans) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
+Vevesta is the Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=vevestax_github_kmeans) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
 
 **Author**
 
