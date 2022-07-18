@@ -181,12 +181,11 @@ This completes our look at the Zero-Inflated Poisson regression model.
 2. [alvindayu.com](https://alvindayu.com/yu-the-zero-inflated-poisson-regression-model-time-series-&url=https://alvindayu.com/al-the-zero-inflated-poisson-regression-model-time-series)
 3. [usu.edu](https://www.usu.edu/math/jrstevens/biostat/projects2013/rep_ZIP.pdf)
 4. [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
-5. [Article](https://www.vevesta.com/blog/6)
+5. [Original Article](https://www.vevesta.com/blog/6_The_Zero_Inflated_Poisson_Regression_Model_How_to_model_data_with_lot_of_zeroes?utm_source=Github_vevestaX_ZIP)
 
 ## Credits
-[Vevesta](www.vevesta.com?utm_source=Github_vevestaX_ZIP) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com?utm_source=Github_vevestaX_ZIP) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+[Vevesta](https://www.vevesta.com?utm_source=Github_vevestaX_ZIP) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_vevestaX_ZIP) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 ## Author
-
 Sarthak Kedia
 
