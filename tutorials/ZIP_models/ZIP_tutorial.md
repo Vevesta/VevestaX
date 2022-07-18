@@ -183,9 +183,10 @@ This completes our look at the Zero-Inflated Poisson regression model.
 4. [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 5. [Article](https://www.vevesta.com/blog/6)
 
-Vevesta is the next generation Portfolio for Machine Learning Project : Save and share machine learning projects. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=ZIP_github) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
+## Credits
+[Vevesta](www.vevesta.com?utm_source=Github_vevestaX_ZIP) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com?utm_source=Github_vevestaX_ZIP) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
-**Author**
+## Author
 
 Sarthak Kedia
 
