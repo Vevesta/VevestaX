@@ -66,5 +66,8 @@ Thus Scheduling the learning rate helps us in order to overcome the plateau prob
 * [Find best learning rate on Plateau](https://medium.com/r/?url=https%3A%2F%2Fgithub.com%2FJonnoFTW%2Fkeras_find_lr_on_plateau)
 * [Original Article on Plateau](https://www.vevesta.com/blog/13_Why_early_stopping_of_the_neural_network_might_not_always_be_the_optimal_decision?utm_source=GitHub_VevestaX_plateauProblem)
 
+## Credits:
+Vevesta is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore Vevesta for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+
 ## Author
 Sarthak Kedia
