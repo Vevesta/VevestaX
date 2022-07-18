@@ -263,6 +263,9 @@ Click [here](https://gist.github.com/sarthakkedia123/13c215fc769a52ff03a786014bd
 * [Article](https://www.vevesta.com/blog/3_AI_Fairness_Bias_Handling?utm_source=Github_vevestaX)
 * [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 
+## Credits
+
 Vevesta is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com/?utm_source=AIF360) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
-**Author: Sarthak Kedia**
+## Author: 
+Sarthak Kedia
