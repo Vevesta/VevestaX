@@ -140,10 +140,10 @@ For Source Code [Click Here](https://gist.github.com/sarthakkedia123/a52759ab3be
 * [Medium article by Fabio Chiusano](https://medium.com/nlplanet/two-minutes-nlp-explain-predictions-with-lime-aec46c7c25a2)
 * [Use LIME to understand your Machine Learning Models](https://medium.com/@sarthak_72854/lime-4b2b9b48be3a)
 * [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
-* [Original Article](https://www.vevesta.com/blog/8_Using_LIME_to_understand_NLP_Models)
+* [Original Article](https://www.vevesta.com/blog/8_Using_LIME_to_understand_NLP_Models?utm_source=Github_VevestaX_LIME_NLP)
 
 ## Credits
-[Vevesta](www.vevesta.com?utm_source=Github_VevestaX_LIME_NLP) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com?utm_source=Github_VevestaX_LIME_NLP) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+[Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_LIME_NLP) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_LIME_NLP) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 ## Author
 Sarthak Kedia
