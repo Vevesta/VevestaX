@@ -119,7 +119,7 @@ plt.scatter(X[:,0], X[:,1], c=clustering.labels_, cmap='rainbow', alpha=0.7, edg
 Affinity Propagation is an unsupervised machine learning technique that is particularly used where we don’t know the optimal number of clusters.
 
 ## Credits
-[Vevesta](www.vevesta.com?utm_source=Github_VevestaX_AffinityPropogation) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com?utm_source=Github_VevestaX_AffinityPropogation) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+[Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_AffinityPropogation) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_AffinityPropogation) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 ## References
 
