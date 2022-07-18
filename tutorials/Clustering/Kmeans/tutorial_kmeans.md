@@ -111,10 +111,10 @@ Finally we have dumped the data into Excel File using VevestaX.
 
 1.  [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
 2.  [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
-3.  [Article](https://www.vevesta.com/blog/4_Classification_with_K-Means_and_Vevestax_library?utm_source=Github_VevestaX)
+3.  [Article](https://www.vevesta.com/blog/4_Classification_with_K-Means_and_Vevestax_library?utm_source=Github_VevestaX_Kmeans)
 
-Vevesta is the Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [*Vevesta*](https://www.vevesta.com/?utm_source=vevestax_github_kmeans) for free. For more such stories, follow us on twitter at [*@vevesta1*](http://twitter.com/vevesta1).
+## Credits
+[Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_Kmeans) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_Kmeans) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
-**Author**
-
+## Author
 Sarthak Kedia
