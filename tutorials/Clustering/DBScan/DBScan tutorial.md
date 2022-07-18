@@ -95,5 +95,6 @@ The clusters in this sample dataset do not have arbitrary shapes but here we see
 
 * [MyGreatLearning](https://www.mygreatlearning.com/blog/dbscan-algorithm/)
 * [Soner Yıldırım](https://towardsdatascience.com/dbscan-clustering-explained-97556a2ad556)
+* [DBscan Original article](https://www.vevesta.com/blog/11_DBSCAN_Clustering)
 
 **Author:** Sarthak Kedia
