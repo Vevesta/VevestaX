@@ -95,7 +95,7 @@ Vevesta is the next generation GitHub for Machine Learning Project. Explore [vev
 
 1. [FRUFS’s Github](https://github.com/atif-hassan/FRUFS)
 2. [FRUFS Author’s article](https://www.deepwizai.com/projects/how-to-perform-unsupervised-feature-selection-using-supervised-algorithms)
-3. [FRUFS article](https://www.vevesta.com/blog/1)
+3. [FRUFS article](https://www.vevesta.com/blog/1_Feature_selection_using_FRUFS?utm_source=Github_VevestaX)
 4. [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
 5. [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 6. [MachineLearningPlus Article](https://www.machinelearningplus.com/deployment/feature-selection-using-frufs-and-vevestax/)
