@@ -149,10 +149,10 @@ For Source Code [Click Here](https://gist.github.com/sarthakkedia123/7f305ade747
 * [Towards DataScience](https://towardsdatascience.com/decrypting-your-machine-learning-model-using-lime-5adc035109b5)
 * [Papers with Code](https://paperswithcode.com/method/lime)
 * [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
-* [Original LIME Tabular Tutorial](https://www.vevesta.com/blog/8_Using_LIME_to_understand_NLP_Models)
+* [Original LIME Tabular Tutorial](https://www.vevesta.com/blog/8_Using_LIME_to_understand_NLP_Models?utm_source=Github_VevestaX_LIME_Tabular)
 
 ## Credits
-[Vevesta](www.vevesta.com?utm_source=Github_VevestaX_LIME_Tabular) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com?utm_source=Github_VevestaX_LIME_Tabular) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+[Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_LIME_Tabular) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](https://www.vevesta.com?utm_source=Github_VevestaX_LIME_Tabular) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
 
 ## Author 
 Sarthak Kedia
