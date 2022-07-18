@@ -89,13 +89,17 @@ EDA-performance plot plots the values of variables used in the code with the exp
 ![EDA-performance plot](https://miro.medium.com/max/1400/1*D7LLQtwv5tDt2-iTA87PUA.png)
 
 
+## Credits
 Vevesta is the next generation GitHub for Machine Learning Project. Explore [vevesta](www.vevesta.com) for free. For more such stories, follow us on twitter at @vevesta1
 
-## References:
+[Vevesta](www.vevesta.com) is Your Machine Learning Team's Collective Wiki: Save and Share your features and techniques. Explore [Vevesta](www.vevesta.com) for free. For more such stories, follow us on twitter at [@vevesta1](http://twitter.com/vevesta1).
+
+
+## References
 
 1. [FRUFS’s Github](https://github.com/atif-hassan/FRUFS)
 2. [FRUFS Author’s article](https://www.deepwizai.com/projects/how-to-perform-unsupervised-feature-selection-using-supervised-algorithms)
-3. [FRUFS article](https://www.vevesta.com/blog/1_Feature_selection_using_FRUFS?utm_source=Github_VevestaX)
+3. [FRUFS article](https://www.vevesta.com/blog/1_Feature_selection_using_FRUFS?utm_source=Github_VevestaX_FRUFS)
 4. [VevestaX article](https://medium.com/@priyanka_60446/vevestax-open-source-library-to-track-failed-and-successful-machine-learning-experiments-and-data-8deb76254b9c)
 5. [VevestaX GitHub Link](https://github.com/Vevesta/VevestaX)
 6. [MachineLearningPlus Article](https://www.machinelearningplus.com/deployment/feature-selection-using-frufs-and-vevestax/)
