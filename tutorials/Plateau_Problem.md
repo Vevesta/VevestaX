@@ -6,12 +6,12 @@ We've all noticed that after a certain number of training steps, the loss starts
 
 The loss falls rapidly for the first ten epochs, but thereafter tends to remain constant for a long time, as seen in Figure (a). Following that, the loss tends to reduce substantially, as illustrated in figure (b), before becoming practically constant.
 
-Many of us might make our decision on this model by observing the curve shown in fig (a), but the thing is that if we train our network for more epochs then there is a chance of convergence of the model at a better point.
+Many of us may base our decision on the curve depicted in fig (a), however the fact is that if we train our network for additional epochs, there is a probability that the model will converge at a better position.
 
-These plateaus complicates our decision on where to stop the gradient drop and also slow down the convergence as in order to traverse a plateau thinking that there might be a a possible chance of decreasing the loss more number of iterations are required.
+These plateaus complicate our judgement on when to stop the gradient drop and also slow down convergence because traversing a plateau in the expectation of minimising the loss demands more iterations.
 
 ## Cause of Plateau
-There are two main causes due to which the formation of plateau takes place and they are as follows:
+The formation of a plateau is caused by two factors, which are as follows:
 * Saddle Point
 * Local Minima
 
