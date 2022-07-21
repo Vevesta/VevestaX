@@ -30,7 +30,7 @@ The fundamental problem with saddle points is that the gradient of a function is
 ![img](https://cdn-images-1.medium.com/max/900/0*UfvC_Z1JespJIOcr.png)
 [Image Credits](https://www.researchgate.net/figure/1st-order-saddle-point-in-the-3-dimensional-surface-Surface-is-described-by-the_fig7_280804948)
 
-The point, in this case, is an extremum, which is excellent, but the gradient is zero. If our learning rate is too low, we may not be able to escape the local minimum. As noticed earlier in fig(a), the loss value in our hypothetical training situation began balancing around some constant number, a  prominent reason behind this is the formation of these kinds of local minimum
+In this scenario, the point is an extremum, which is good, but the gradient is zero. We may not be able to escape the local minimum if our learning rate is too low. The loss value in our hypothetical training environment began balancing around some constant number, as shown in fig(a); one major explanation for this is the establishment of these types of local minimums.
 
 ## Effect of Learning Rate
 The learning rate hyperparameter determines how quickly the model learns. While an increased learning rate allows the model to learn faster, it may result in a less-than-optimal final set of weights. However, a slower learning rate may allow the model to acquire a more optimal, or perhaps a globally optimal set of weights, but it will take much longer to train. The problem with a low learning rate is that it may never converge or it may get trapped on a suboptimal solution.
