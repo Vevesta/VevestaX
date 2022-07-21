@@ -1,5 +1,5 @@
 # Pitfalls of early stopping of neural network
-We all have practically encountered that while training a neural network, after a limited number of steps the loss function begins to slow down significantly. Then after resting for a long period of time, the loss may suddenly start dropping rapidly again for no explanatory cause, and this process continues till we run out of steps.
+We've all noticed that after a certain number of training steps, the loss starts to slow significantly. After a long period of steady loss, the loss may abruptly resume dropping rapidly for no apparent reason, and this process will continue until we run out of steps.
 
 ![img](https://cdn-images-1.medium.com/max/900/0*rA05n6siCddLinjn.png)
 [Image Credits](https://cdn-images-1.medium.com/max/900/0*rA05n6siCddLinjn.png).
