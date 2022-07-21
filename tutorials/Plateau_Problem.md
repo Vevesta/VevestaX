@@ -33,9 +33,9 @@ The fundamental problem with saddle points is that the gradient of a function is
 In this scenario, the point is an extremum, which is good, but the gradient is zero. We may not be able to escape the local minimum if our learning rate is too low. The loss value in our hypothetical training environment began balancing around some constant number, as shown in fig(a); one major explanation for this is the establishment of these types of local minimums.
 
 ## Effect of Learning Rate
-The learning rate hyperparameter determines how quickly the model learns. While an increased learning rate allows the model to learn faster, it may result in a less-than-optimal final set of weights. However, a slower learning rate may allow the model to acquire a more optimal, or perhaps a globally optimal set of weights, but it will take much longer to train. The problem with a low learning rate is that it may never converge or it may get trapped on a suboptimal solution.
+The learning rate hyperparameter determines how quickly the model learns. A higher learning rate allows the model to learn faster, but it may result in a less-than-ideal final set of weights. A slower learning rate, on the other hand, may allow the model to acquire a more optimal, or possibly a globally ideal, set of weights, but training will be much more time consuming. A sluggish learning rate has the disadvantage of never convergent or becoming stuck on a suboptimal solution.
 
-Thus, learning rate plays a crucial role in order to overcome the plateau phenomenon, techniques like scheduling the learning rate or cyclical learning rate are used for the same.
+Thus, learning rate is important in overcoming the plateau problem; strategies such as scheduling the learning rate or cyclical learning rate are employed for this.
 
 ## Methods to Overcome a Plateau Problem
 Following are the approaches which might be used to tweak the learning rates in order to overcome the plateau problem:
