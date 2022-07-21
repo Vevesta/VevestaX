@@ -11,7 +11,7 @@ Many of us may base our decision on the curve depicted in fig (a), however the f
 These plateaus complicate our judgement on when to stop the gradient drop and also slow down convergence because traversing a plateau in the expectation of minimising the loss demands more iterations.
 
 ## Cause of Plateau
-The formation of a plateau is caused by two factors, which are as follows:
+The formation of a plateau is caused primarily by two factors, which are as follows:
 * Saddle Point
 * Local Minima
 
@@ -23,7 +23,7 @@ The formation of a plateau is caused by two factors, which are as follows:
 ![img](https://cdn-images-1.medium.com/max/900/0*OQE_bSxccQ6R45P5.png)
 [Image Credits](https://medium.com/r/?url=https%3A%2F%2Fen.wikipedia.org%2Fwiki%2FSaddle_point)
 
-The major problem with the saddle points is that at the saddle point of a particular function the gradient is zero and that does not represent the maximum and minimum value. The machine learning algorithm and optimization algorithm in a neural network is being optimized by the status of the gradient and if the gradient is zero the model gets stuck.
+The fundamental problem with saddle points is that the gradient of a function is zero at the saddle point, which does not reflect the greatest and minimum value. The gradient value optimises the machine learning and optimization algorithms in a neural network, and if the gradient is zero, the model becomes stalled.
 
 ## Local Minima
 
