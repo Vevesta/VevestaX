@@ -1,4 +1,4 @@
-# Why early stopping of the neural network might not always be the optimal decision?
+# Pitfalls of early stopping of neural network
 We all have practically encountered that while training a neural network, after a limited number of steps the loss function begins to slow down significantly. Then after resting for a long period of time, the loss may suddenly start dropping rapidly again for no explanatory cause, and this process continues till we run out of steps.
 
 ![img](https://cdn-images-1.medium.com/max/900/0*rA05n6siCddLinjn.png)
