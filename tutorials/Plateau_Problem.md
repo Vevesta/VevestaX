@@ -4,7 +4,7 @@ We've all noticed that after a certain number of training steps, the loss starts
 ![img](https://cdn-images-1.medium.com/max/900/0*rA05n6siCddLinjn.png)
 [Image Credits](https://cdn-images-1.medium.com/max/900/0*rA05n6siCddLinjn.png).
 
-As we can notice from figure (a), for the first 10 epochs, the loss decreases drastically but thereafter, it tends to remain constant for a long period of time. After having such a long computation, the loss again tends to fall drastically as shown in figure (b), and then again becomes almost constant.
+The loss falls rapidly for the first ten epochs, but thereafter tends to remain constant for a long time, as seen in Figure (a). Following that, the loss tends to reduce substantially, as illustrated in figure (b), before becoming practically constant.
 
 Many of us might make our decision on this model by observing the curve shown in fig (a), but the thing is that if we train our network for more epochs then there is a chance of convergence of the model at a better point.
 
