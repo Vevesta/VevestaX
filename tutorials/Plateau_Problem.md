@@ -57,8 +57,7 @@ Cyclical learning scheme displays a sublime balance between passing over local m
 
 [Image Credits](https://medium.com/r/?url=https%3A%2F%2Farxiv.org%2Fpdf%2F1506.01186.pdf)
 
-Thus Scheduling the learning rate helps us in order to overcome the plateau problems faced during optimizing the neural networks.
-
+Thus, scheduling the learning rate aids us in overcoming the plateau issues encountered while optimising neural networks
 ## References
 * [Analytics Vidhya](https://medium.com/r/?url=https%3A%2F%2Fanalyticsindiamag.com%2Fwhat-is-the-plateau-problem-in-neural-networks-and-how-to-fix-it%2F)
 * [Plateau Phenomenon by Mark Ainsworth](https://medium.com/r/?url=https%3A%2F%2Farxiv.org%2Fpdf%2F2007.07213.pdf)
