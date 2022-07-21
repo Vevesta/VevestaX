@@ -41,7 +41,7 @@ Thus, learning rate is important in overcoming the plateau problem; strategies s
 Following are the approaches which might be used to tweak the learning rates in order to overcome the plateau problem:
 
 ## Scheduling the Learning Rate
-Scheduling the learning rate is the most common approach, which proposes starting with a reasonably high learning rate and gradually reducing it during training. The whole idea behind this is that we want to get from the initial parameters to a range of excellent parameters values quickly, but we also want a learning rate low enough to explore the deeper, but narrower regions of the loss function.
+The most frequent method is to plan the learning rate, which suggests beginning with a reasonably high learning rate and gradually decreasing it over training. The concept is that we want to get from the initial parameters to a range of excellent parameter values as rapidly as possible, but we also want a low enough learning rate to explore the deeper, but narrower, regions of the loss function.
 
 ![img](https://cdn-images-1.medium.com/max/900/0*lv38Hvzb6PwX0ZNt.png)
 [Image Credits](https://medium.com/r/?url=https%3A%2F%2Fwww.researchgate.net%2Ffigure%2FStep-Decay-Learning-Rate_fig3_337159046)
