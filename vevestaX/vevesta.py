@@ -530,7 +530,7 @@ class Experiment(object):
             filename = "vevesta.xlsx"
             pdfFilename = "vevesta.pdf"
         else:
-            pdfFilename=pdfFilename.split('.')
+            pdfFilename=filename.split('.')
             pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
