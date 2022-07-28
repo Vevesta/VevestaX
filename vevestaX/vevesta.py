@@ -36,7 +36,7 @@ def test():
 
 
 class Experiment(object):
-    def __init__(self, speedUp=False):
+    def __init__(self, speedUp=True):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data = None
@@ -528,6 +528,10 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
+            pdfFilename = "vevesta.pdf"
+        else:
+            pdfFilename=filename.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
@@ -714,6 +718,12 @@ class Experiment(object):
 
         if (fileName == None):
             return print("Error: Provide the Excel File to plot the models")
+        
+        if fileName is None:
+            pdfFilename="vevesta.pdf"
+        else:
+            pdfFilename=fileName.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
 
         columnTextImgone = 'B2'
         columnTextImgtwo = 'B44'
@@ -831,7 +841,7 @@ class Experiment(object):
             
 
               
-        pdffile="EDA.pdf"
+        
         images=[ValueImageFile,ValueRatioImageFile,NumericalFeatureDistributionImageFile,NonNumericFeaturesImgFile,FeatureHistogramImageFile,OutliersImageFile,ProbabilityDensityFunction]
         a4inputsize = (mm_to_pt(210),mm_to_pt(297))
         layout_function = get_layout_fun(a4inputsize)
@@ -839,7 +849,7 @@ class Experiment(object):
         for i in images:
             if exists(join(directoryToDumpData,i)):
                 file.append(join(directoryToDumpData,i))
-        with open(pdffile,"wb") as f:          
+        with open(pdfFilename,"wb") as f:          
             f.write(convert(file,layout_fun=layout_function))
 
         
@@ -1014,7 +1024,11 @@ class Experiment(object):
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
-
+        if filename is None:
+            pdfFilename="vevesta.pdf"
+        else:
+            pdfFilename=filename.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
@@ -1037,8 +1051,10 @@ class Experiment(object):
             print('File not pushed to git')
 
         # upload attachment
+        
         filename = self.get_filename()
         file_exists = exists(filename)
+        file1_exists=exists(pdfFilename)
         if file_exists:
             files = {'file': open(filename, 'rb')}
             headers_for_file = {'Authorization': 'Bearer ' + token}
@@ -1047,7 +1063,8 @@ class Experiment(object):
                                          files=files)
             attachments = list()
             attachments.append(response.json())
-            files = {'file': open('EDA.pdf', 'rb')}
+        if file1_exists:
+            files = {'file': open(pdfFilename, 'rb')}
             response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
             attachments.append(response.json())
@@ -1065,7 +1082,8 @@ class Experiment(object):
             "message": message,
             "modeling": self.__variables,
             "dataSourced": self.__dataSourcing,
-            "featureEngineered": self.__featureEngineering
+            "featureEngineered": self.__featureEngineering,
+            "speedUp": self.speedUp
         }
         
         if file_exists:
