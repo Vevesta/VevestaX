@@ -528,10 +528,10 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
-            filename1 = "vevesta.pdf"
+            pdfFilename = "vevesta.pdf"
         else:
-            filename1=filename.split('.')
-            filename1=filename1[0]+'.pdf'
+            pdfFilename=pdfFilename.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
@@ -720,10 +720,10 @@ class Experiment(object):
             return print("Error: Provide the Excel File to plot the models")
         
         if fileName is None:
-            filename1="vevesta.pdf"
+            pdfFilename="vevesta.pdf"
         else:
-            filename1=fileName.split('.')
-            filename1=filename1[0]+'.pdf'
+            pdfFilename=fileName.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
 
         columnTextImgone = 'B2'
         columnTextImgtwo = 'B44'
@@ -849,7 +849,7 @@ class Experiment(object):
         for i in images:
             if exists(join(directoryToDumpData,i)):
                 file.append(join(directoryToDumpData,i))
-        with open(filename1,"wb") as f:          
+        with open(pdfFilename,"wb") as f:          
             f.write(convert(file,layout_fun=layout_function))
 
         
@@ -1025,10 +1025,10 @@ class Experiment(object):
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
         if filename is None:
-            filename1="vevesta.pdf"
+            pdfFilename="vevesta.pdf"
         else:
-            filename1=filename.split('.')
-            filename1=filename1[0]+'.pdf'
+            pdfFilename=filename.split('.')
+            pdfFilename=pdfFilename[0]+'.pdf'
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
@@ -1054,7 +1054,7 @@ class Experiment(object):
         
         filename = self.get_filename()
         file_exists = exists(filename)
-        file1_exists=exists(filename1)
+        file1_exists=exists(pdfFilename)
         if file_exists:
             files = {'file': open(filename, 'rb')}
             headers_for_file = {'Authorization': 'Bearer ' + token}
@@ -1064,7 +1064,7 @@ class Experiment(object):
             attachments = list()
             attachments.append(response.json())
         if file1_exists:
-            files = {'file': open(filename1, 'rb')}
+            files = {'file': open(pdfFilename, 'rb')}
             response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
             attachments.append(response.json())
