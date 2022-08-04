@@ -24,9 +24,9 @@ The output is an excel file. The library can be used with Jupyter notebook, IDEs
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
 7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
-9. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
-10. [How to speed up the code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-speed-up-the-code)
-11. [How to check code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-github)
+9. [How to speed up the code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-speed-up-the-code)
+10. [How to check code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-github)
+11. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 
 ## How to install VevestaX
 ```
@@ -117,78 +117,6 @@ Code Snippet:
 V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, attachmentFlag=True)
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/11dzgjSumlEYyknQ2HZowVh0R1xvotJTqJR6WSqY7v3k/edit?usp=sharing)
-
-## Snapshots of output excel file
-After running calling the dump or commit function for each run of the code. The features used, features engineered and the variables used in the experiments get logged into the excel file. In the below experiment, the commit/dump function is called 6 times and each time an experiment/code run is written into the excel sheet.
- 
-For example, code snippet used to track code runs/experiments are as below:
-
-```
-#import the vevesta Library
-from vevestaX import vevesta as v
-V=v.Experiment()
-df = pd.read_csv("wine.csv") 
-V.ds = df
-df["salary_Ratio1"] = df["alchol_content"]/5
-V.fe = df
-epoch = 1000
-accuracy = 90 #this will be a computed variable, may be an output of XGBoost algorithm
-recall = 89  #this will be a computed variable, may be an output of XGBoost algorithm
-
-```
-
-For the above code snippet, each row in the excel sheet corresponds to an experiment/code run. The excel sheet will have the following:
-1. Data Sourcing tab: Marks which Features (or columns) in wine.csv were read from the input file. Presence of the feature is marked as 1 and absence as 0.
-2. Feature Engineering tab: Features engineered such as salary_Ratio1 exist as columns in the excel. Value 1 means that feature was engineered in that particular experiment and 0 means it was absent.
-3. Modelling tab: This tab tracks all the variables used in the code. Say variable precision was computed in the experiment, then for the experiment ID i, precision will be a column whose value is computed precision variable. Note: V.start() and V.end() are code blocks that you might define. In that case, the code can have multiple code blocks. The variables in all these code blocks are tracked together. Let us define 3 code blocks in the code, first one with precision, 2nd one with recall and accuracy and 3rd one with epoch, seed and no of trees. Then for experiment Id <n>, all the variables, namely precision, recall, accuracy, epoch, seed and no. of trees will be tracked as one experiment and dumped in a single row with experiment id <n>. Note, if code blocks are not defined then it that case all the variables are logged in the excel file.
-4. Messages tab: Data Scientists like to create new files when they change technique or approach to the problem. So everytime you run the code, it tracks the experiment ID with the name of the file which had the variables, features and features engineered.
-5. EDA-correlation: correlation is calculated on the input data automatically. 
-6. EDA-box Plot tab: Box plots for numeric features
-7. EDA-Numeric Feature Distribution: Scatter plot with x axis as index in the data and y axis as the value of the data point.
-8. EDA-Feature Histogram: Histogram of numeric features
- 
-Please note, EDA computation can be skipped by passing true during the creation of the object v.Experiment(True). The following is the code snippet:
-```
-#import the vevesta Library
-from vevestaX import vevesta as v
-V=v.Experiment(true)
-```
-### Sourced Data tab
-![image](https://user-images.githubusercontent.com/81908188/169261190-f94c42d3-2ed7-4f33-b427-b1f4f8f9e4d2.png)
-
-### Feature Engineering tab
-![image](https://user-images.githubusercontent.com/81908188/169261608-b664936b-560f-421a-9b40-421d0a2e0400.png)
-
-### Modelling tab
-![image](https://user-images.githubusercontent.com/81908188/169261864-99528269-a816-4783-8354-18675bb21aff.png)
- 
-### Messages tab
-![image](https://user-images.githubusercontent.com/81908188/169262663-d60edda6-1c6a-4236-a9d4-8ed665ec00e0.png)
-
-### Sample data tab
-![image](https://user-images.githubusercontent.com/81908188/169262921-7e6d7a4b-77c6-4702-94ad-f61de8275a10.png)
-
-### EDA-correlation tab
-![image](https://user-images.githubusercontent.com/81908188/169263062-76106842-dfad-4158-b95e-72efa609c578.png)
-
-### Overall data profile report tab
-![image](https://user-images.githubusercontent.com/81908188/169263357-9b1d9d9f-da79-463b-b177-4e39686694fe.png)
-
-### Variables data profile report tab
-![image](https://user-images.githubusercontent.com/81908188/169263941-52680a59-5bde-4464-9f07-dfac8f1eb59c.png)
-
-### Scatterplot for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169266828-4e423a52-ee2b-423a-87d6-f39e4dedb36c.png)
-
-### Histogram for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169267398-6b2115aa-fb96-4c7a-aba0-4df88f637c14.png)
-
-### Box plot for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169293880-d6c75abf-4987-4c2c-8181-b813d79ab520.png)
-  
-### Experiments performance plots
-![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
-![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
 
 ## How to speed up the code 
 The library does EDA automatically on the data. In order to accelerate compute and skip EDA, set the flag speedUp=True as shown in the code snippet.
@@ -291,6 +219,79 @@ Both V.commit() and V.dump() perform almost similar functions, the slightest dif
 
 * If the function is called from V.dump(), the repo name needs to be declared in the arguments whereas,
 * If the function is called from V.commit(), repo name will be passed as function argument and updated in the project GitHub name. If it is not passed then in that case, the commit function will attempt to read project GitHub repo name from Vevesta Project’s details. 
+
+## Snapshots of output excel file
+After running calling the dump or commit function for each run of the code. The features used, features engineered and the variables used in the experiments get logged into the excel file. In the below experiment, the commit/dump function is called 6 times and each time an experiment/code run is written into the excel sheet.
+ 
+For example, code snippet used to track code runs/experiments are as below:
+
+```
+#import the vevesta Library
+from vevestaX import vevesta as v
+V=v.Experiment()
+df = pd.read_csv("wine.csv") 
+V.ds = df
+df["salary_Ratio1"] = df["alchol_content"]/5
+V.fe = df
+epoch = 1000
+accuracy = 90 #this will be a computed variable, may be an output of XGBoost algorithm
+recall = 89  #this will be a computed variable, may be an output of XGBoost algorithm
+
+```
+
+For the above code snippet, each row in the excel sheet corresponds to an experiment/code run. The excel sheet will have the following:
+1. Data Sourcing tab: Marks which Features (or columns) in wine.csv were read from the input file. Presence of the feature is marked as 1 and absence as 0.
+2. Feature Engineering tab: Features engineered such as salary_Ratio1 exist as columns in the excel. Value 1 means that feature was engineered in that particular experiment and 0 means it was absent.
+3. Modelling tab: This tab tracks all the variables used in the code. Say variable precision was computed in the experiment, then for the experiment ID i, precision will be a column whose value is computed precision variable. Note: V.start() and V.end() are code blocks that you might define. In that case, the code can have multiple code blocks. The variables in all these code blocks are tracked together. Let us define 3 code blocks in the code, first one with precision, 2nd one with recall and accuracy and 3rd one with epoch, seed and no of trees. Then for experiment Id <n>, all the variables, namely precision, recall, accuracy, epoch, seed and no. of trees will be tracked as one experiment and dumped in a single row with experiment id <n>. Note, if code blocks are not defined then it that case all the variables are logged in the excel file.
+4. Messages tab: Data Scientists like to create new files when they change technique or approach to the problem. So everytime you run the code, it tracks the experiment ID with the name of the file which had the variables, features and features engineered.
+5. EDA-correlation: correlation is calculated on the input data automatically. 
+6. EDA-box Plot tab: Box plots for numeric features
+7. EDA-Numeric Feature Distribution: Scatter plot with x axis as index in the data and y axis as the value of the data point.
+8. EDA-Feature Histogram: Histogram of numeric features
+ 
+Please note, EDA computation can be skipped by passing true during the creation of the object v.Experiment(True). The following is the code snippet:
+```
+#import the vevesta Library
+from vevestaX import vevesta as v
+V=v.Experiment(true)
+```
+### Sourced Data tab
+![image](https://user-images.githubusercontent.com/81908188/169261190-f94c42d3-2ed7-4f33-b427-b1f4f8f9e4d2.png)
+
+### Feature Engineering tab
+![image](https://user-images.githubusercontent.com/81908188/169261608-b664936b-560f-421a-9b40-421d0a2e0400.png)
+
+### Modelling tab
+![image](https://user-images.githubusercontent.com/81908188/169261864-99528269-a816-4783-8354-18675bb21aff.png)
+ 
+### Messages tab
+![image](https://user-images.githubusercontent.com/81908188/169262663-d60edda6-1c6a-4236-a9d4-8ed665ec00e0.png)
+
+### Sample data tab
+![image](https://user-images.githubusercontent.com/81908188/169262921-7e6d7a4b-77c6-4702-94ad-f61de8275a10.png)
+
+### EDA-correlation tab
+![image](https://user-images.githubusercontent.com/81908188/169263062-76106842-dfad-4158-b95e-72efa609c578.png)
+
+### Overall data profile report tab
+![image](https://user-images.githubusercontent.com/81908188/169263357-9b1d9d9f-da79-463b-b177-4e39686694fe.png)
+
+### Variables data profile report tab
+![image](https://user-images.githubusercontent.com/81908188/169263941-52680a59-5bde-4464-9f07-dfac8f1eb59c.png)
+
+### Scatterplot for numeric features
+![image](https://user-images.githubusercontent.com/81908188/169266828-4e423a52-ee2b-423a-87d6-f39e4dedb36c.png)
+
+### Histogram for numeric features
+![image](https://user-images.githubusercontent.com/81908188/169267398-6b2115aa-fb96-4c7a-aba0-4df88f637c14.png)
+
+### Box plot for numeric features
+![image](https://user-images.githubusercontent.com/81908188/169293880-d6c75abf-4987-4c2c-8181-b813d79ab520.png)
+  
+### Experiments performance plots
+![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
+![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
+
 
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
