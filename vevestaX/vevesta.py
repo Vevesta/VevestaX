@@ -36,7 +36,7 @@ def test():
 
 
 class Experiment(object):
-    def __init__(self, speedUp=True):
+    def __init__(self, speedUp=False):
         self.__dataSourcing = None
         self.__featureEngineering = None
         self.__data = None
@@ -48,7 +48,7 @@ class Experiment(object):
         self.__filename = self.get_filename()
         self.__sampleSize = 0
         self.__Y=None
-        self.speedUp = speedUp
+        # self.speedUp = speedUp
 
     def get_filename(self):
         try:
@@ -179,26 +179,26 @@ class Experiment(object):
             self.__dataSourcing = value.columns.tolist()
             self.__data = value
             self.__sampleSize = len(value)
-            if self.speedUp == False:
-                self.__correlation = value.corr(method='pearson')
+            # if self.speedUp == False:
+            self.__correlation = value.corr(method='pearson')
 
         if isinstance(value, pysparkDataframe):
             self.__dataSourcing = value.columns
             self.__data = value
             self.__sampleSize = value.count()
-            if self.speedUp == False:
-                spark = SparkSession.builder.appName("vevesta").getOrCreate()
-                columnNames = []
-                columnNames = value.columns
-                for i in range(len(value.columns)):
-                    value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vectorCol = "corrfeatures"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
-                df_vector = assembler.transform(value).select(vectorCol)
-                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
-                corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
-                self.__correlation = dfCorr
+            # if self.speedUp == False:
+            spark = SparkSession.builder.appName("vevesta").getOrCreate()
+            columnNames = []
+            columnNames = value.columns
+            for i in range(len(value.columns)):
+                value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
+            vectorCol = "corrfeatures"
+            assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+            df_vector = assembler.transform(value).select(vectorCol)
+            matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+            corrMatrix = matrix.toArray().tolist()
+            dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+            self.__correlation = dfCorr
 
     @property
     def ds(self):  # its doing the same work as dataSourcing do
@@ -238,23 +238,23 @@ class Experiment(object):
                 self.__featureEngineering = cols
 
         if isinstance(value, pandasDataframe):
-            if self.speedUp == False:
-                self.__correlation = value.corr(method='pearson')
+            # if self.speedUp == False:
+            self.__correlation = value.corr(method='pearson')
 
         if isinstance(value, pysparkDataframe):
-            if self.speedUp == False:
-                spark = SparkSession.builder.appName("vevesta").getOrCreate()
-                columnNames = []
-                columnNames = value.columns
-                for i in range(len(value.columns)):
-                    value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vectorCol = "corrfeatures"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
-                df_vector = assembler.transform(value).select(vectorCol)
-                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
-                corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
-                self.__correlation = dfCorr
+            # if self.speedUp == False:
+            spark = SparkSession.builder.appName("vevesta").getOrCreate()
+            columnNames = []
+            columnNames = value.columns
+            for i in range(len(value.columns)):
+                value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
+            vectorCol = "corrfeatures"
+            assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+            df_vector = assembler.transform(value).select(vectorCol)
+            matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+            corrMatrix = matrix.toArray().tolist()
+            dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+            self.__correlation = dfCorr
 
     @property
     def fe(self):
@@ -421,8 +421,8 @@ class Experiment(object):
 
     def __profilingReport(self, fileName):
         sheetName = 'Profiling Report'
-        if self.speedUp:
-            return
+        # if self.speedUp:
+            # return
         if not isinstance(self.__data, pandasDataframe):
             return
         if self.__data.empty or len(self.__data) == 0:
@@ -528,10 +528,10 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
-            pdfFilename = "vevesta.pdf"
-        else:
-            pdfFilename=filename.split('.')
-            pdfFilename=pdfFilename[0]+'.pdf'
+            # pdfFilename = "vevesta.pdf"
+        # else:
+        #     pdfFilename=filename.split('.')
+        #     pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
@@ -634,26 +634,24 @@ class Experiment(object):
             if isinstance(self.__data, pysparkDataframe):
                 sampledData.toPandas().to_excel(writer, sheet_name='sampledata', index=False)
 
-            if self.speedUp == False:
-                if self.__correlation is not None:
-                    if isinstance(sampledData, pandasDataframe):
-                        pandasDataframe(self.__correlation).style. \
-                            applymap(self.__colorCellExcel). \
-                            applymap(self.__textColor). \
-                            to_excel(writer, sheet_name='EDA-correlation', index=True)
+            # if self.speedUp == False:
+            if self.__correlation is not None:
+                if isinstance(sampledData, pandasDataframe):
+                    pandasDataframe(self.__correlation).style. \
+                        applymap(self.__colorCellExcel). \
+                        applymap(self.__textColor). \
+                        to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-                    if isinstance(sampledData, pysparkDataframe):
-                        correlation = self.__correlation.toPandas()
-                        correlation.set_index(correlation.columns, inplace=True)
-                        pandasDataframe(correlation).style. \
-                            applymap(self.__colorCellExcel). \
-                            applymap(self.__textColor). \
-                            to_excel(writer, sheet_name='EDA-correlation', index=True)
+                if isinstance(sampledData, pysparkDataframe):
+                    correlation = self.__correlation.toPandas()
+                    correlation.set_index(correlation.columns, inplace=True)
+                    pandasDataframe(correlation).style. \
+                        applymap(self.__colorCellExcel). \
+                        applymap(self.__textColor). \
+                        to_excel(writer, sheet_name='EDA-correlation', index=True)
 
         self.__profilingReport(filename)
 
-        if self.speedUp == False:
-            self.__EDA(filename)
 
         self.__plot(filename)
 
@@ -704,25 +702,27 @@ class Experiment(object):
             except Exception as e:
                 print('File not pushed to git')
 
-    def __EDA(self, fileName):
-        if isinstance(self.__data, pandasDataframe):
-            self.__EDAForPandas(fileName)
+    def EDA(self, df, fileName):
+        if isinstance(df, pandasDataframe):
+            self.__EDAForPandas(df, fileName)
 
-    def __EDAForPandas(self, fileName):
+    def __EDAForPandas(self, df, xlsxFilename):
 
-        if self.__data.empty or len(self.__data) == 0:
+        if df.empty or len(df) == 0:
             return
 
-        if not isinstance(self.__data, pandasDataframe):
+        if not isinstance(df, pandasDataframe):
             return
 
-        if (fileName == None):
-            return print("Error: Provide the Excel File to plot the models")
+        # if (xlsxFileName == None):
+            # return print("Error: Provide the Excel File to plot the models")
         
-        if fileName is None:
-            pdfFilename="vevesta.pdf"
+        if xlsxFilename is None:
+            xlsxFilename="EDA_Vevesta.xlsx"
+            pdfFilename="EDA_Vevesta.pdf"
         else:
-            pdfFilename=fileName.split('.')
+            # xlsxFilename = filename
+            pdfFilename=filename.split('.')
             pdfFilename=pdfFilename[0]+'.pdf'
 
         columnTextImgone = 'B2'
@@ -852,10 +852,14 @@ class Experiment(object):
         with open(pdfFilename,"wb") as f:          
             f.write(convert(file,layout_fun=layout_function))
 
-        
+        self.__writeEDADetailsToExcel(xlsxFilename, columnTextImgone, columnTextImgtwo, directoryToDumpData, ValueImageFile, ValueRatioImageFile, NumericalFeatureDistributionImageFile, NonNumericFeaturesImgFile, FeatureHistogramImageFile, OutliersImageFile, ProbabilityDensityFunction)
 
-        if (isfile(fileName)):
-            workBook = load_workbook(fileName)
+    
+    def __writeEDADetailsToExcel(self, xlsxFilename, columnTextImgone, columnTextImgtwo, directoryToDumpData, ValueImageFile, ValueRatioImageFile, NumericalFeatureDistributionImageFile, NonNumericFeaturesImgFile, FeatureHistogramImageFile, OutliersImageFile, ProbabilityDensityFunction):
+        # if ((xlsxFileName)):
+            
+            writer = ExcelWriter(xlsxFilename, engine='openpyxl')
+            workBook = writer.book
             workBook.create_sheet('EDA-missingValues')
             plotSheet = workBook['EDA-missingValues']
             img = Image(join(directoryToDumpData, ValueImageFile))
@@ -927,9 +931,7 @@ class Experiment(object):
                 pdfImage.anchor = columnTextImgone
                 pdfPlotsheet.add_image(pdfImage)   
             
-                         
-            workBook.save(fileName)
-        workBook.close()
+            writer.save()
 
     def __plot(self, fileName):
 
@@ -1021,11 +1023,12 @@ class Experiment(object):
                 modelingData = read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
+
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
         if filename is None:
-            pdfFilename="vevesta.pdf"
+            pdfFilename="EDA_Vevesta.pdf"
         else:
             pdfFilename=filename.split('.')
             pdfFilename=pdfFilename[0]+'.pdf'
@@ -1054,7 +1057,7 @@ class Experiment(object):
         
         filename = self.get_filename()
         file_exists = exists(filename)
-        file1_exists=exists(pdfFilename)
+        eda_file_exists=exists(pdfFilename)
         if file_exists:
             files = {'file': open(filename, 'rb')}
             headers_for_file = {'Authorization': 'Bearer ' + token}
@@ -1063,7 +1066,7 @@ class Experiment(object):
                                          files=files)
             attachments = list()
             attachments.append(response.json())
-        if file1_exists:
+        if eda_file_exists:
             files = {'file': open(pdfFilename, 'rb')}
             response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
@@ -1082,8 +1085,7 @@ class Experiment(object):
             "message": message,
             "modeling": self.__variables,
             "dataSourced": self.__dataSourcing,
-            "featureEngineered": self.__featureEngineering,
-            "speedUp": self.speedUp
+            "featureEngineered": self.__featureEngineering
         }
         
         if file_exists:
