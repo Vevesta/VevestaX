@@ -260,24 +260,24 @@ class Experiment(object):
     # create alias of method modellingStart and modellingEnd
     start = startModelling
     end = endModelling
-    # @property
-    # def Y(self):
-    #     return self.__Y
+    @property
+    def Y(self):
+        return self.__Y
             
-    # @Y.setter
-    # def Y(self,value):
-    #     if isinstance(value,Series):
-    #         if value.size==self.__sampleSize:
-    #             self.__Y=value
-    #             self.____YcolumnName=None
-    #         else:
-    #             print('Panda series size not matching with the dataframe size')
-    #     elif isinstance(value,str):
-    #         if value in self.__data.columns:
-    #             self.__Y=self.__data[value]
-    #             self.____YcolumnName=value
-    #         else:
-    #             print("Column not found")
+    @Y.setter
+    def Y(self,value):
+        if isinstance(value,Series):
+            if value.size==self.__sampleSize:
+                self.__Y=value
+                self.____YcolumnName=None
+            else:
+                print('Panda series size not matching with the dataframe size')
+        elif isinstance(value,str):
+            if value in self.__data.columns:
+                self.__Y=self.__data[value]
+                self.____YcolumnName=value
+            else:
+                print("Column not found")
 
     # function to get arguments of a function
     def param(self, **decoratorparam):
@@ -503,6 +503,10 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
+            # pdfFilename = "vevesta.pdf"
+        # else:
+        #     pdfFilename=filename.split('.')
+        #     pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
@@ -820,16 +824,17 @@ class Experiment(object):
         
         #Probability Density Function
         numericDataframe = df.select_dtypes(include='number')
-        if Y is not None and (Y.dtype=='int64' or Y.dtype=='object') and Y.dtype!='float64':
+        if Y is not None and (Y.dtype=='int32' or Y.dtype=='int64' or Y.dtype=='object') and Y.dtype!='float64':
             if len(Y) == numericDataframe.shape[0]:
                 k=1
                 fig = plt.figure(figsize=(20,15))
                 for i in numericDataframe:
                     ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
                     frequency=Y.value_counts().keys().tolist()[0:10]
-                    y=Y[self.__Y.isin(frequency)]
+                    y=Y[Y.isin(frequency)]
                     sns.kdeplot(x=numericDataframe[i],hue=y, ax = ax,fill=True)
                     k+=1
+                plt.suptitle('Probability Density Function',fontsize=20)
                 plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
                 plt.close()
         
@@ -918,7 +923,7 @@ class Experiment(object):
                 featureDistribution.add_image(featureDistributionImage)
                 
             if exists(join(directoryToDumpData, ProbabilityDensityFunction)):
-                workBookName = 'EDA-PDF'
+                workBookName = 'EDA-ProbabilityDensityFunction'
                 workBook.create_sheet(workBookName)
                 pdfPlotsheet = workBook[workBookName]
                 pdfImage = Image(
