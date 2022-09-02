@@ -701,9 +701,9 @@ class Experiment(object):
 
         return sampledData
     
-    def EDA(self, data, Y, fileName):
+    def EDA(self, data, Y):
         if isinstance(data, pandasDataframe):
-            self.__EDAForPandas(data, Y, fileName)
+            self.__EDAForPandas(data, Y, "EDA_Vevesta.xlsx")
 
     def __EDAForPandas(self, df, Y, xlsxFilename):
 
@@ -721,7 +721,7 @@ class Experiment(object):
             pdfFilename="EDA_Vevesta.pdf"
         else:
             # xlsxFilename = filename
-            pdfFilename=filename.split('.')
+            pdfFilename=xlsxFilename.split('.')
             pdfFilename=pdfFilename[0]+'.pdf'
 
         columnTextImgone = 'B2'
@@ -1030,11 +1030,11 @@ class Experiment(object):
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
-        if filename is None:
-            pdfFilename="EDA_Vevesta.pdf"
-        else:
-            pdfFilename=filename.split('.')
-            pdfFilename=pdfFilename[0]+'.pdf'
+        # if filename is None:
+        pdfFilename="EDA_Vevesta.pdf"
+        # else:
+        #     pdfFilename=filename.split('.')
+        #     pdfFilename=pdfFilename[0]+'.pdf'
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
