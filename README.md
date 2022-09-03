@@ -47,7 +47,7 @@ V=v.Experiment()
 
 
 ## How to track variables used
-V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block. All computed variables will be tracked between V.start() and V.end(). If V.start() and V.end() is not used, all the variables used in the code will be tracked.
+V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block. All computed variables will be tracked between V.start() and V.end(). When using jupyter notebook or python script, if V.start() and V.end() is not used, all the variables used in the code will be tracked.
 
 Code snippet:
 ```
@@ -70,19 +70,16 @@ V.end()
 ```
 
 ## How to write the features and modelling variables in an given excel file
-![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
-Code snippet:
 ```
 # Dump the datasourcing, features engineered and the variables tracked in a xlsx file
 V.dump(techniqueUsed='XGBoost',filename="vevestaDump1.xlsx",message="XGboost with data augmentation was used",version=1, repoName='My_Project')
 ```
 
 Alternatively, write the experiment into the default file, vevesta.xlsx
-![image](https://user-images.githubusercontent.com/81908188/140653897-6654e94b-a332-49a2-a7b7-416cb5bded5c.png)
-Code snippet:
 ```
 V.dump(techniqueUsed='XGBoost')
 ```
+
 ## How to commit file, features and parameters to Vevesta
 Vevesta is Feature and Technique Dictionary. The tool is free to use. Please create a login on [vevesta](https://www.vevesta.com/demo) . Then go to Setting section, download the access token. Place this token in the same folder as the jupyter notebook or python script. If by chance you face difficulties, please do mail vevestaX@vevesta.com.
 
