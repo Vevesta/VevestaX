@@ -96,7 +96,7 @@ You can absolutely eliminate using V.start() and V.end() function calls. All the
 Code snippet:
 ```
 # Dump the datasourcing, features engineered and the variables tracked in a xlsx file
-V.dump(techniqueUsed='XGBoost',filename="vevestaDump1.xlsx",message="XGboost with data augmentation was used",version=1)
+V.dump(techniqueUsed='XGBoost',filename="vevestaDump1.xlsx",message="XGboost with data augmentation was used",version=1, repoName='My_Project')
 ```
 
 Alternatively, write the experiment into the default file, vevesta.xlsx
@@ -106,7 +106,7 @@ Code snippet:
 V.dump(techniqueUsed='XGBoost')
 ```
 ## How to commit file, features and parameters to Vevesta
-Vevesta is next generation knowledge repository/GitHub for data science project. The tool is free to use. Please create a login on [vevesta](https://www.vevesta.com/demo) . Then go to Setting section, download the access token. Place this token in the same folder as the jupyter notebook or python script. If by chance you face difficulties, please do mail vevestaX@vevesta.com.
+Vevesta is Feature and Technique Dictionary. The tool is free to use. Please create a login on [vevesta](https://www.vevesta.com/demo) . Then go to Setting section, download the access token. Place this token in the same folder as the jupyter notebook or python script. If by chance you face difficulties, please do mail vevestaX@vevesta.com.
 
 You can commit the file(code),features and parameters to Vevesta by using the following command. You will find the project id for your project on the home page.
 
@@ -114,19 +114,15 @@ You can commit the file(code),features and parameters to Vevesta by using the fo
 
 Code Snippet:
 ```
-V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, attachmentFlag=True)
+V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, repoName='My_Project')
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/11dzgjSumlEYyknQ2HZowVh0R1xvotJTqJR6WSqY7v3k/edit?usp=sharing)
 
-## How to speed up the code 
-The library does EDA automatically on the data. In order to accelerate compute and skip EDA, set the flag speedUp=True as shown in the code snippet.
-
+## How to do EDA 
+The library does EDA automatically on the data. 
 ```
-#import the vevesta Library
-from vevestaX import vevesta as v
-V = v.Experiment(True)
-#or u can also use
-#V=v.Experiment(speedUp = True)
+V.EDA(df,Y=df["target"])
+
 ```
 
 ## How to check code into GitHub
