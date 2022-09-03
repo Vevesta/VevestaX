@@ -110,9 +110,6 @@ Vevesta is Feature and Technique Dictionary. The tool is free to use. Please cre
 
 You can commit the file(code),features and parameters to Vevesta by using the following command. You will find the project id for your project on the home page.
 
-![image](https://user-images.githubusercontent.com/81908188/162436558-f25a3b8b-bd94-45e6-9219-6e01716afdac.png)
-
-Code Snippet:
 ```
 V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, repoName='My_Project')
 ```
@@ -148,7 +145,7 @@ We will use this token in the Integration function’s code, which will enable u
 
 ### How to Download the Vevesta Access Token ?
 
-* Create a login on [vevesta](https://www.vevesta.com/demo).
+* Create a login on [vevesta](https://www.vevesta.com/signin).
 
 ![img](https://miro.medium.com/max/1400/1*RanYUoEr5wJNd2T1GBWI3Q.png)
 
@@ -160,61 +157,6 @@ This is how our folder looks when we have downloaded the above two tokens. Along
 
 ![img](https://miro.medium.com/max/1400/1*gY8u1pGRGnMHuWS21xdt8w.png)
 
-
-### How to dump the EDA into excel file and check in the code into GitHub?
-
-In order to perform Exploratory Data Analysis and check in the code to GitHub we have commands namely V.dump() or V.commit().
-
-Both of them are almost similar with a slight difference between them. Lets have a look upon each of them.
-
-**V.dump()**
-
-V.dump() takes the following parameters as input:
-```
-V.dump(
-    techniqueUsed,
-    filename=None,
-    message=None,
-    version=None,
-    repoName=None,
-)
-```
-Here parameter repoName is optional which is required to check-in our code to GitHub. If repoName is not specified then the command will return only the excel sheet consisting of EDA and will not check-in the code to GitHub.
-```
-# Dump the datasourcing, features engineered and the variables tracked in a xlsx file
-V.dump(techniqueUsed='model_name',filename="fila_name.xlsx",message="any_remark like XGboost with data augmentation was used",version=1,repoName='My_Project')
-```
-**V.commit()**
-
-* In order to check-in the project to Vevesta via V.commit(), Login unto the site and click on the Home icon in the top-left corner of the page.
-* After that click on Add Projects and specify the details asked. Optionally we can fill the GitHub repo name in the details.
-
-![img](https://miro.medium.com/max/1400/1*wobRn5dWSS7ZRUH8B6ZmyA.png)
-
-* After filling the details, save the project and soon as the project is saved we will be getting a Project Id which will be used as a parameter in the commit function.
-
-![img](https://miro.medium.com/max/1222/1*aERKMuTIVP44Kkm9e446CQ.png)
-
-Above were the steps to check-in the code to Vevesta. Now in order to check-in the code to GitHub,
-
-* Make a GitHub Repository or use an existing one and pass it to the repoName in our commit function. That's it.
-* If in case GitHub Repository is not passed, then the commit function will attempt to read the repoName from the project details we had passed while creating the project in Vevesta.
-* Since it’s optional to pass the GitHub Repository while creating the project so if in case the user have not specified the GitHub Repository and he too did not mentioned it in the commit function then the project will not be able to pushed into the Git, however still the user will be getting an Excel File consisting of EDA performed.
-* Run the command and the code is successfully checked in to the GitHub as well as Vevesta.
-```
-V.commit(techniqueUsed = "Zip Model", message="increased accuracy", version=1, projectId=141, repoName='My_Project')
-```
-
-![img](https://miro.medium.com/max/1400/1*7yKCux2pPPMfoQmkMnRAxg.png)
-
-![img](https://miro.medium.com/max/1400/1*tDBC1C0DRtB-vPFx1oXliA.png)
-
-**Summarizing V.dump() and V.commit()**
-
-Both V.commit() and V.dump() perform almost similar functions, the slightest difference between them is that:
-
-* If the function is called from V.dump(), the repo name needs to be declared in the arguments whereas,
-* If the function is called from V.commit(), repo name will be passed as function argument and updated in the project GitHub name. If it is not passed then in that case, the commit function will attempt to read project GitHub repo name from Vevesta Project’s details. 
 
 ## Snapshots of output excel file
 After running calling the dump or commit function for each run of the code. The features used, features engineered and the variables used in the experiments get logged into the excel file. In the below experiment, the commit/dump function is called 6 times and each time an experiment/code run is written into the excel sheet.
@@ -263,37 +205,13 @@ V=v.Experiment(true)
 ### Messages tab
 ![image](https://user-images.githubusercontent.com/81908188/169262663-d60edda6-1c6a-4236-a9d4-8ed665ec00e0.png)
 
-### Sample data tab
-![image](https://user-images.githubusercontent.com/81908188/169262921-7e6d7a4b-77c6-4702-94ad-f61de8275a10.png)
-
-### EDA-correlation tab
-![image](https://user-images.githubusercontent.com/81908188/169263062-76106842-dfad-4158-b95e-72efa609c578.png)
-
-### Overall data profile report tab
-![image](https://user-images.githubusercontent.com/81908188/169263357-9b1d9d9f-da79-463b-b177-4e39686694fe.png)
-
-### Variables data profile report tab
-![image](https://user-images.githubusercontent.com/81908188/169263941-52680a59-5bde-4464-9f07-dfac8f1eb59c.png)
-
-### Scatterplot for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169266828-4e423a52-ee2b-423a-87d6-f39e4dedb36c.png)
-
-### Histogram for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169267398-6b2115aa-fb96-4c7a-aba0-4df88f637c14.png)
-
-### Box plot for numeric features
-![image](https://user-images.githubusercontent.com/81908188/169293880-d6c75abf-4987-4c2c-8181-b813d79ab520.png)
-  
 ### Experiments performance plots
 ![image](https://user-images.githubusercontent.com/81908188/160065501-c3b8a1c3-e75b-41fa-abea-cad3bb4b5add.png)
 ![image](https://user-images.githubusercontent.com/81908188/160065687-17821d15-2b12-4fc2-9978-f55d26c37ed0.png)
-
 
 
 If you liked the library, please give us a github star and [retweet](https://twitter.com/vevesta1/status/1503747980188594178?s=20&t=3zXxSDS8WCddWcQHDxUrtg) .
 
 For additional features, explore our tool at [Vevesta](https://vevesta.com) . For comments, suggestions and early access to the tool, reach out at vevestax@vevesta.com
 
-Looking for beta users for the library. Register [here](https://forms.gle/wM1GKyYS7fDTxmS56)
-
-We at Vevesta Labs are maintaining this library and we welcome feature requests. Find detailed blog on the vevestaX on [here](https://www.vevesta.com/blog/2)
+We at Vevesta Labs are maintaining this library and we welcome feature requests. 
