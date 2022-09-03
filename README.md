@@ -115,7 +115,7 @@ In order to check-in the code to Git and Vevesta we would be requiring the two t
 
 ![https://catalyst.zoho.com/help/tutorials/githubbot/generate-access-token.html](https://miro.medium.com/max/1400/0*FJ-NBDehGsJAT3Ik.jpg)
 
-* Click Generate Token: GitHub will display the personal access token. Make sure to copy the token and store it as a txt file by renaming it to git_token in the folder where the jupyter notebook or the python script is present.
+* Click Generate Token: GitHub will display the personal access token. Make sure to copy the token and store it as a txt file by renaming it to git_token.txt in the folder where the jupyter notebook or the python script is present.
 
 ![https://catalyst.zoho.com/help/tutorials/githubbot/generate-access-token.html](https://miro.medium.com/max/1400/0*KR6X8zv0n5o8VCCR.jpg)
 
