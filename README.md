@@ -21,11 +21,10 @@ The output is an excel file. The library can be used with Jupyter notebook, IDEs
 3. [How to extract features present in input pandas/pyspark dataframe](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-features-present-in-input-pandas-or-pyspark-dataframe)
 4. [How to extract engineered features](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-extract-engineered-features)
 5. [How to track variables used](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-track-variables-used)
-6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
-7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
-8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
-9. [How to configure Github and Vevesta token](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-configure-github-and-vevesta-token)
-10. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
+6. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
+7. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
+8. [How to configure Github and Vevesta token](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-configure-github-and-vevesta-token)
+9. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 
 ## How to install VevestaX
 ```
@@ -41,29 +40,12 @@ V=v.Experiment()
 
 ## How to extract features present in input pandas or pyspark dataframe
 ![image](https://user-images.githubusercontent.com/81908188/141691820-511ebba1-bc5a-4ce4-acd0-cd23ae3cd782.png)
-Code snippet:
-```
-#read the dataset
-import pandas as pd
-df=pd.read_csv("salaries.csv")
-df.head(2)
 
-#Extract the columns names for features
-V.ds=df
-# you can also use:
-#   V.dataSourcing = df
-```
 
 ## How to extract engineered features
 ![image](https://user-images.githubusercontent.com/81908188/140041279-7ecd6444-a9ba-4e87-a0e5-46435c759d18.png)
 
-Code snippet
-```
-#Extract features engineered
-V.fe=df  
-# you can also use:
-V.featureEngineering = df
-```
+
 ## How to track variables used
 V.start() and V.end() form a code block and can be called multiple times in the code to track variables used within the code block. Any technique such as XGBoost, decision tree, etc can be used within this code block. All computed variables will be tracked between V.start() and V.end(). If V.start() and V.end() is not used, all the variables used in the code will be tracked.
 
@@ -86,9 +68,6 @@ loss='rmse'
 V.end()
 # or, you can also use : V.endModelling()
 ```
-
-## How to track all variables in the code while writing less code
-You can absolutely eliminate using V.start() and V.end() function calls. All the primitive data type variables used in the code are tracked and written to the excel file by default. Note: while on colab or kaggle, V.start() and V.end() feature hasn't been rolled out. Instead all the variables used in the code are tracked by default.
 
 ## How to write the features and modelling variables in an given excel file
 ![image](https://user-images.githubusercontent.com/81908188/140653881-1698d7ba-1c0f-4879-8a96-a90123108165.png)
