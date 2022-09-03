@@ -24,7 +24,7 @@ The output is an excel file. The library can be used with Jupyter notebook, IDEs
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
 7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
-9. [How to configure Github and Vevesta token](https://github.com/Vevesta/VevestaX/edit/main/README.md#how-to-configure-github-and-vevesta-token)
+9. [How to configure Github and Vevesta token](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-configure-github-and-vevesta-token)
 10. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 
 ## How to install VevestaX
