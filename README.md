@@ -110,7 +110,11 @@ Vevesta is Feature and Technique Dictionary. The tool is free to use. Please cre
 You can commit the file(code),features and parameters to Vevesta by using the following command. You will find the project id for your project on the home page.
 
 ```
-V.commit(techniqueUsed = "XGBoost", message="increased accuracy", version=1, projectId=1, repoName='My_Project')
+V.commit(techniqueUsed = "XGBoost", message="increased accuracy", filename="experimentDump.xlsx", version=1, projectId=1, repoName='My_Project')
+
+#or you can just run the following function 
+V.commit(techniqueUsed = "XGBoost", projectId=1)
+
 ```
 A sample output excel file has been uploaded on google sheets. Its url is [here](https://docs.google.com/spreadsheets/d/11dzgjSumlEYyknQ2HZowVh0R1xvotJTqJR6WSqY7v3k/edit?usp=sharing)
 
@@ -145,8 +149,6 @@ We will use this token in the Integration function’s code, which will enable u
 
 * Create a login on [vevesta](https://www.vevesta.com/signin).
 
-![img](https://miro.medium.com/max/1400/1*RanYUoEr5wJNd2T1GBWI3Q.png)
-
 * Then go to the Setting section, download the access token and place this token as it is without renaming in the same folder where the jupyter notebook or python script is present.
 
 ![img](https://miro.medium.com/max/1400/1*3lDbhhuZ53ePGGTGYLYLew.png)
@@ -158,22 +160,6 @@ This is how our folder looks when we have downloaded the above two tokens. Along
 
 ## Snapshots of output excel file
 After running calling the dump or commit function for each run of the code. The features used, features engineered and the variables used in the experiments get logged into the excel file. In the below experiment, the commit/dump function is called 6 times and each time an experiment/code run is written into the excel sheet.
- 
-For example, code snippet used to track code runs/experiments are as below:
-
-```
-#import the vevesta Library
-from vevestaX import vevesta as v
-V=v.Experiment()
-df = pd.read_csv("wine.csv") 
-V.ds = df
-df["salary_Ratio1"] = df["alchol_content"]/5
-V.fe = df
-epoch = 1000
-accuracy = 90 #this will be a computed variable, may be an output of XGBoost algorithm
-recall = 89  #this will be a computed variable, may be an output of XGBoost algorithm
-
-```
 
 For the above code snippet, each row in the excel sheet corresponds to an experiment/code run. The excel sheet will have the following:
 1. Data Sourcing tab: Marks which Features (or columns) in wine.csv were read from the input file. Presence of the feature is marked as 1 and absence as 0.
@@ -185,12 +171,6 @@ For the above code snippet, each row in the excel sheet corresponds to an experi
 7. EDA-Numeric Feature Distribution: Scatter plot with x axis as index in the data and y axis as the value of the data point.
 8. EDA-Feature Histogram: Histogram of numeric features
  
-Please note, EDA computation can be skipped by passing true during the creation of the object v.Experiment(True). The following is the code snippet:
-```
-#import the vevesta Library
-from vevestaX import vevesta as v
-V=v.Experiment(true)
-```
 ### Sourced Data tab
 ![image](https://user-images.githubusercontent.com/81908188/169261190-f94c42d3-2ed7-4f33-b427-b1f4f8f9e4d2.png)
 
