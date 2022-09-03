@@ -36,19 +36,15 @@ def test():
 
 
 class Experiment(object):
-    def __init__(self, speedUp=True):
+    def __init__(self):
         self.__dataSourcing = None
         self.__featureEngineering = None
-        self.__data = None
-        self.__correlation = None
-
+        
         self.__primitiveDataTypes = [int, str, float, bool]
         self.__startlocals = None
         self.__variables = {}
         self.__filename = self.get_filename()
         self.__sampleSize = 0
-        self.__Y=None
-        self.speedUp = speedUp
 
     def get_filename(self):
         try:
@@ -177,28 +173,10 @@ class Experiment(object):
     def dataSourcing(self, value):
         if isinstance(value, pandasDataframe):
             self.__dataSourcing = value.columns.tolist()
-            self.__data = value
-            self.__sampleSize = len(value)
-            if self.speedUp == False:
-                self.__correlation = value.corr(method='pearson')
 
         if isinstance(value, pysparkDataframe):
             self.__dataSourcing = value.columns
-            self.__data = value
-            self.__sampleSize = value.count()
-            if self.speedUp == False:
-                spark = SparkSession.builder.appName("vevesta").getOrCreate()
-                columnNames = []
-                columnNames = value.columns
-                for i in range(len(value.columns)):
-                    value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vectorCol = "corrfeatures"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
-                df_vector = assembler.transform(value).select(vectorCol)
-                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
-                corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
-                self.__correlation = dfCorr
+
 
     @property
     def ds(self):  # its doing the same work as dataSourcing do
@@ -238,23 +216,23 @@ class Experiment(object):
                 self.__featureEngineering = cols
 
         if isinstance(value, pandasDataframe):
-            if self.speedUp == False:
-                self.__correlation = value.corr(method='pearson')
+            # if self.speedUp == False:
+            self.__correlation = value.corr(method='pearson')
 
         if isinstance(value, pysparkDataframe):
-            if self.speedUp == False:
-                spark = SparkSession.builder.appName("vevesta").getOrCreate()
-                columnNames = []
-                columnNames = value.columns
-                for i in range(len(value.columns)):
-                    value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
-                vectorCol = "corrfeatures"
-                assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
-                df_vector = assembler.transform(value).select(vectorCol)
-                matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
-                corrMatrix = matrix.toArray().tolist()
-                dfCorr = spark.createDataFrame(corrMatrix, columnNames)
-                self.__correlation = dfCorr
+            # if self.speedUp == False:
+            spark = SparkSession.builder.appName("vevesta").getOrCreate()
+            columnNames = []
+            columnNames = value.columns
+            for i in range(len(value.columns)):
+                value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
+            vectorCol = "corrfeatures"
+            assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+            df_vector = assembler.transform(value).select(vectorCol)
+            matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+            corrMatrix = matrix.toArray().tolist()
+            dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+            self.__correlation = dfCorr
 
     @property
     def fe(self):
@@ -419,27 +397,25 @@ class Experiment(object):
             color = 'white'
         return 'color: %s' % color
 
-    def __profilingReport(self, fileName):
+    def __profilingReport(self, df, writer):
         sheetName = 'Profiling Report'
-        if self.speedUp:
+        # if self.speedUp:
+            # return
+        if not isinstance(df, pandasDataframe):
             return
-        if not isinstance(self.__data, pandasDataframe):
+        if df.empty or len(df) == 0:
             return
-        if self.__data.empty or len(self.__data) == 0:
-            return
-        if fileName is None:
-            return print("Error: Provide the Excel File")
 
         data = [
-            {'Number_of_observation': self.__data.shape[0],
-             'Number_of_variables': self.__data.shape[1],
-             'Missing_cells': self.__data.isna().sum().sum(),
-             'Missing_cells(%)': (self.__data.isnull().sum().sum() * 100) / (
-                     self.__data.notnull().sum().sum() + self.__data.isnull().sum().sum()),
-             'Duplicate_rows': self.__data.duplicated().sum(),
-             'Duplicate_rows(%)': (self.__data.duplicated().sum() * 100) / len(self.__data),
-             'Total_size_in_memory(byte)': self.__data.memory_usage().sum(),
-             'Average_record_size_in_memory(byte)': self.__data.memory_usage().sum() / len(self.__data)
+            {'Number_of_observation': df.shape[0],
+             'Number_of_variables': df.shape[1],
+             'Missing_cells': df.isna().sum().sum(),
+             'Missing_cells(%)': (df.isnull().sum().sum() * 100) / (
+                     df.notnull().sum().sum() + df.isnull().sum().sum()),
+             'Duplicate_rows': df.duplicated().sum(),
+             'Duplicate_rows(%)': (df.duplicated().sum() * 100) / len(df),
+             'Total_size_in_memory(byte)': df.memory_usage().sum(),
+             'Average_record_size_in_memory(byte)': df.memory_usage().sum() / len(df)
              }
         ]
         profilingDataframe = pandasDataframe(data)
@@ -450,45 +426,45 @@ class Experiment(object):
                             "Skewness", "Median", "Mode", "Outliers", "Outliers (%)", "Q1 quantile", "Q2 quantile",
                             "Q3 quantile", "100th quantile", "Total Memory Size(bytes)"]})
 
-        numericColumns = self.__data.select_dtypes(include=["number"]).columns
+        numericColumns = df.select_dtypes(include=["number"]).columns
         for col in numericColumns:
             # finding outliers for each column
-            Q1 = quantile(self.__data[col], 0.25)
-            Q3 = quantile(self.__data[col], 0.75)
+            Q1 = quantile(df[col], 0.25)
+            Q3 = quantile(df[col], 0.75)
             IQR = Q3 - Q1
-            outlier = ((self.__data[col] < (Q1 - 1.5 * IQR)) | (self.__data[col] > (Q3 + 1.5 * IQR))).sum()
-            col_dict = {"Distinct": self.__data[col].nunique(),
-                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                        "Missing": self.__data[col].isna().sum(),
-                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
-                        "Infinite": isinf(self.__data[col]).values.sum(),
-                        "Infinite (%)": isinf(self.__data[col]).values.sum() * 100 / (self.__data.shape[0]),
-                        "Mean": self.__data[col].mean(),
-                        "Minimum": self.__data[col].min(),
-                        "Maximum": self.__data[col].max(),
-                        "Zeros": (self.__data[col] == 0).sum(),
-                        "Zeros (%)": (self.__data[col] == 0).sum() * 100 / self.__data.shape[0],
-                        "Negative": (self.__data[col] < 0).sum(),
-                        "Negative (%)": (self.__data[col] < 0).sum() * 100 / self.__data.shape[0],
-                        "Kurtosis": kurtosis(self.__data[col], axis=0, bias=True),
-                        "Skewness": skew(self.__data[col], axis=0, bias=True),
-                        "Median": median(self.__data[col]),
-                        "Mode": mode(self.__data[col]),
+            outlier = ((df[col] < (Q1 - 1.5 * IQR)) | (df[col] > (Q3 + 1.5 * IQR))).sum()
+            col_dict = {"Distinct": df[col].nunique(),
+                        "Distinct (%)": df[col].nunique() * 100 / df.shape[0],
+                        "Missing": df[col].isna().sum(),
+                        "Missing (%)": (df[col].isnull().sum() * 100) / (df.shape[0]),
+                        "Infinite": isinf(df[col]).values.sum(),
+                        "Infinite (%)": isinf(df[col]).values.sum() * 100 / (df.shape[0]),
+                        "Mean": df[col].mean(),
+                        "Minimum": df[col].min(),
+                        "Maximum": df[col].max(),
+                        "Zeros": (df[col] == 0).sum(),
+                        "Zeros (%)": (df[col] == 0).sum() * 100 / df.shape[0],
+                        "Negative": (df[col] < 0).sum(),
+                        "Negative (%)": (df[col] < 0).sum() * 100 / df.shape[0],
+                        "Kurtosis": kurtosis(df[col], axis=0, bias=True),
+                        "Skewness": skew(df[col], axis=0, bias=True),
+                        "Median": median(df[col]),
+                        "Mode": mode(df[col]),
                         "Outliers": outlier,
-                        "Outliers (%)": outlier * 100 / self.__data.shape[0],
-                        "Q1 quantile": quantile(self.__data[col], 0.25),
-                        "Q2 quantile": quantile(self.__data[col], 0.5),
-                        "Q3 quantile": quantile(self.__data[col], 0.75),
-                        "100th quantile": quantile(self.__data[col], 1),
-                        "Total Memory Size(bytes)": self.__data[col].memory_usage()}
+                        "Outliers (%)": outlier * 100 / df.shape[0],
+                        "Q1 quantile": quantile(df[col], 0.25),
+                        "Q2 quantile": quantile(df[col], 0.5),
+                        "Q3 quantile": quantile(df[col], 0.75),
+                        "100th quantile": quantile(df[col], 1),
+                        "Total Memory Size(bytes)": df[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
-        nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"]).columns
+        nonNumericalColumns = df.select_dtypes(exclude=["number", "datetime"]).columns
         for col in nonNumericalColumns:
-            col_dict = {"Distinct": self.__data[col].nunique(),
-                        "Distinct (%)": self.__data[col].nunique() * 100 / self.__data.shape[0],
-                        "Missing": self.__data[col].isna().sum(),
-                        "Missing (%)": (self.__data[col].isnull().sum() * 100) / (self.__data.shape[0]),
+            col_dict = {"Distinct": df[col].nunique(),
+                        "Distinct (%)": df[col].nunique() * 100 / df.shape[0],
+                        "Missing": df[col].isna().sum(),
+                        "Missing (%)": (df[col].isnull().sum() * 100) / (df.shape[0]),
                         "Infinite": "NA",
                         "Infinite (%)": "NA",
                         "Mean": "NA",
@@ -508,13 +484,12 @@ class Experiment(object):
                         "Q2 quantile": "NA",
                         "Q3 quantile": "NA",
                         "100th quantile": "NA",
-                        "Total Memory Size(bytes)": self.__data[col].memory_usage()}
+                        "Total Memory Size(bytes)": df[col].memory_usage()}
             profileOfVariableDataframe[col] = col_dict.values()
 
-        if isfile(fileName):
-            with ExcelWriter(fileName, engine='openpyxl', mode='a', if_sheet_exists='replace') as writer:
-                profilingDataframe.to_excel(writer, sheet_name="Profiling Report", index=False)
-                profileOfVariableDataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
+        
+        profilingDataframe.to_excel(writer, sheet_name="Profiling Report", index=False)
+        profileOfVariableDataframe.to_excel(writer, sheet_name="Variables Data Profile", index=False)
 
     def dump(self, techniqueUsed, filename=None, message=None, version=None, showMessage=True, repoName=None):
 
@@ -528,10 +503,10 @@ class Experiment(object):
 
         if (filename == None):
             filename = "vevesta.xlsx"
-            pdfFilename = "vevesta.pdf"
-        else:
-            pdfFilename=filename.split('.')
-            pdfFilename=pdfFilename[0]+'.pdf'
+            # pdfFilename = "vevesta.pdf"
+        # else:
+        #     pdfFilename=filename.split('.')
+        #     pdfFilename=pdfFilename[0]+'.pdf'
 
         # updating variables
         # when no V.start & v.end are not called, all variables in the code get tracked or in colab/kaggle where all variables will get tracked
@@ -607,18 +582,6 @@ class Experiment(object):
         df_messages = pandasDataframe(index=[1], data=data)
         df_messages = concat([messageData, df_messages], ignore_index=True)
 
-        self.__sampleSize = 100 if self.__sampleSize >= 100 else self.__sampleSize
-
-        if isinstance(self.__data, pandasDataframe):
-            sampledData = self.__data.sample(self.__sampleSize)
-
-        if isinstance(self.__data, pysparkDataframe):
-            if self.__data.count() >= 100:
-                sampledData = self.__data.sample(100 / self.__data.count())
-
-            if self.__data.count() < 100:
-                sampledData = self.__data.sample(1.0)
-
         with ExcelWriter(filename, engine='openpyxl') as writer:
 
             df_dataSourcing.to_excel(writer, sheet_name='dataSourcing', index=False)
@@ -627,33 +590,6 @@ class Experiment(object):
             modeling.to_excel(writer, sheet_name='modelling', index=False)
 
             df_messages.to_excel(writer, sheet_name='messages', index=False)
-
-            if isinstance(self.__data, pandasDataframe):
-                pandasDataframe(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
-
-            if isinstance(self.__data, pysparkDataframe):
-                sampledData.toPandas().to_excel(writer, sheet_name='sampledata', index=False)
-
-            if self.speedUp == False:
-                if self.__correlation is not None:
-                    if isinstance(sampledData, pandasDataframe):
-                        pandasDataframe(self.__correlation).style. \
-                            applymap(self.__colorCellExcel). \
-                            applymap(self.__textColor). \
-                            to_excel(writer, sheet_name='EDA-correlation', index=True)
-
-                    if isinstance(sampledData, pysparkDataframe):
-                        correlation = self.__correlation.toPandas()
-                        correlation.set_index(correlation.columns, inplace=True)
-                        pandasDataframe(correlation).style. \
-                            applymap(self.__colorCellExcel). \
-                            applymap(self.__textColor). \
-                            to_excel(writer, sheet_name='EDA-correlation', index=True)
-
-        self.__profilingReport(filename)
-
-        if self.speedUp == False:
-            self.__EDA(filename)
 
         self.__plot(filename)
 
@@ -704,25 +640,88 @@ class Experiment(object):
             except Exception as e:
                 print('File not pushed to git')
 
-    def __EDA(self, fileName):
-        if isinstance(self.__data, pandasDataframe):
-            self.__EDAForPandas(fileName)
+    def __writeEDACorrelationData(self, value, sampledData, writer):
+        if isinstance(value, pandasDataframe):
+            correlation = value.corr(method='pearson')
+        if isinstance(value, pysparkDataframe):
+            spark = SparkSession.builder.appName("vevesta").getOrCreate()
+            columnNames = []
+            columnNames = value.columns
+            for i in range(len(value.columns)):
+                value = value.withColumn(columnNames[i], value[columnNames[i]].cast(DoubleType()))
+            vectorCol = "corrfeatures"
+            assembler = VectorAssembler(inputCols=value.columns, outputCol=vectorCol)
+            df_vector = assembler.transform(value).select(vectorCol)
+            matrix = Correlation.corr(df_vector, vectorCol).collect()[0][0]
+            corrMatrix = matrix.toArray().tolist()
+            dfCorr = spark.createDataFrame(corrMatrix, columnNames)
+            correlation = dfCorr
 
-    def __EDAForPandas(self, fileName):
+        if correlation is not None:
+            if isinstance(sampledData, pandasDataframe):
+                pandasDataframe(correlation).style. \
+                        applymap(self.__colorCellExcel). \
+                        applymap(self.__textColor). \
+                        to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-        if self.__data.empty or len(self.__data) == 0:
-            return
+            if isinstance(sampledData, pysparkDataframe):
+                correlationPandas = correlation.toPandas()
+                correlationPandas.set_index(correlationPandas.columns, inplace=True)
+                pandasDataframe(correlationPandas).style. \
+                        applymap(self.__colorCellExcel). \
+                        applymap(self.__textColor). \
+                        to_excel(writer, sheet_name='EDA-correlation', index=True)
 
-        if not isinstance(self.__data, pandasDataframe):
-            return
+    
+    def __writeSampledData(self, df, writer):
 
-        if (fileName == None):
-            return print("Error: Provide the Excel File to plot the models")
+        if isinstance(df, pandasDataframe):
+            sampleSize = df.shape[0]
         
-        if fileName is None:
-            pdfFilename="vevesta.pdf"
+        if isinstance(df, pysparkDataframe):
+            sampleSize = df.count()
+
+        sampleSize = 100 if sampleSize >= 100 else sampleSize
+
+        if isinstance(df, pandasDataframe):
+            sampledData = df.sample(sampleSize)
+
+        if isinstance(df, pysparkDataframe):
+            if df.count() >= 100:
+                sampledData = df.sample(100 / df.count())
+
+            if df.count() < 100:
+                sampledData = df.sample(1.0)
+
+        if isinstance(df, pandasDataframe):
+            pandasDataframe(sampledData).to_excel(writer, sheet_name='sampledata', index=False)
+
+        if isinstance(df, pysparkDataframe):
+            sampledData.toPandas().to_excel(writer, sheet_name='sampledata', index=False)
+
+        return sampledData
+    
+    def EDA(self, data, Y):
+        if isinstance(data, pandasDataframe):
+            self.__EDAForPandas(data, Y, "EDA_Vevesta.xlsx")
+
+    def __EDAForPandas(self, df, Y, xlsxFilename):
+
+        if df.empty or len(df) == 0:
+            return
+
+        if not isinstance(df, pandasDataframe):
+            return
+
+        # if (xlsxFileName == None):
+            # return print("Error: Provide the Excel File to plot the models")
+        
+        if xlsxFilename is None:
+            xlsxFilename="EDA_Vevesta.xlsx"
+            pdfFilename="EDA_Vevesta.pdf"
         else:
-            pdfFilename=fileName.split('.')
+            # xlsxFilename = filename
+            pdfFilename=xlsxFilename.split('.')
             pdfFilename=pdfFilename[0]+'.pdf'
 
         columnTextImgone = 'B2'
@@ -741,7 +740,7 @@ class Experiment(object):
 
         # EDA missing values
         plt.figure(figsize=(6, 6))
-        plt.imshow(self.__data.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0, 7, 0, 7])
+        plt.imshow(df.isna(), aspect="auto", interpolation="nearest", cmap="coolwarm", extent=[0, 7, 0, 7])
         plt.title("Sample Number vs Column Number")
         plt.xlabel("Column Number")
         plt.ylabel("Sample Number")
@@ -749,7 +748,7 @@ class Experiment(object):
         plt.close()
 
         # eda numeric feature distribution
-        RatioData = self.__data.isna().mean().sort_values()
+        RatioData = df.isna().mean().sort_values()
         xAxis = list(RatioData.index)
         yAxis = list(RatioData)
         plt.figure(figsize=(6, 6))
@@ -762,7 +761,7 @@ class Experiment(object):
         plt.close()
 
         # eda non numeric feature distribution
-        self.__data.plot(lw=0, marker="x", subplots=True, layout=(-1, 4), figsize=(10, 10), markersize=5,
+        df.plot(lw=0, marker="x", subplots=True, layout=(-1, 4), figsize=(10, 10), markersize=5,
                          title="Numeric feature Distribution(with X-axis representing the position in the file)").flatten()
         plt.tight_layout()
         plt.savefig(join(directoryToDumpData, NumericalFeatureDistributionImageFile), bbox_inches='tight',
@@ -770,13 +769,13 @@ class Experiment(object):
         plt.close()
 
         # EDA for outliers
-        numericColumns = self.__data.select_dtypes(include=["number"])
+        numericColumns = df.select_dtypes(include=["number"])
         red_circle = dict(markerfacecolor='red', marker='o', markeredgecolor='white')
         fig, axs = plt.subplots(2, len(numericColumns.columns)//2, figsize=(10, 10))
         fig.suptitle('Outliers',fontsize=20)
         for i, ax in enumerate(axs.flat):
             ax.boxplot(numericColumns.iloc[:, i], flierprops=red_circle)
-            ax.set_title(self.__data.columns[i], fontsize=15)
+            ax.set_title(df.columns[i], fontsize=15)
             #ax.tick_params(axis='both', labelrotation=45)
             plt.subplots_adjust(wspace=2)
             plt.savefig(join(directoryToDumpData, OutliersImageFile), bbox_inches='tight', dpi=100)
@@ -801,7 +800,7 @@ class Experiment(object):
         plt.close()"""
 
         # Identify non-numerical features
-        nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
+        nonNumericalColumns = df.select_dtypes(exclude=["number", "datetime"])
         if len(nonNumericalColumns.columns) != 0:
             fig = plt.figure(figsize=(7, 7))
             k = 1
@@ -814,7 +813,7 @@ class Experiment(object):
             plt.close()
 
         # feature distribution
-        fig = self.__data.hist(bins=len(self.__data), figsize=(30, 25), layout=(-1, 3), edgecolor="black",
+        fig = df.hist(bins=len(df), figsize=(30, 25), layout=(-1, 3), edgecolor="black",
                                xlabelsize=15, ylabelsize=15)
         [x.title.set_size(15) for x in fig.ravel()]
         [x.tick_params(axis='x', labelrotation=90) for x in fig.ravel()]
@@ -824,19 +823,20 @@ class Experiment(object):
         plt.close()
         
         #Probability Density Function
-        numericDataframe = self.__data.select_dtypes(include='number')  
-        if self.__Y is not None and (self.__Y.dtype=='int64' or self.__Y.dtype=='object') and self.__Y.dtype!='float64':
-            k=1
-            fig = plt.figure(figsize=(20,15))
-            for i in numericDataframe:
-                if i!=self.____YcolumnName:
+        numericDataframe = df.select_dtypes(include='number')
+        if Y is not None and (Y.dtype=='int32' or Y.dtype=='int64' or Y.dtype=='object') and Y.dtype!='float64':
+            if len(Y) == numericDataframe.shape[0]:
+                k=1
+                fig = plt.figure(figsize=(20,15))
+                for i in numericDataframe:
                     ax = fig.add_subplot(4,(len(numericDataframe.columns)//4)+1, k)
-                    frequency=self.__Y.value_counts().keys().tolist()[0:10]
-                    y=self.__Y[self.__Y.isin(frequency)]
+                    frequency=Y.value_counts().keys().tolist()[0:10]
+                    y=Y[Y.isin(frequency)]
                     sns.kdeplot(x=numericDataframe[i],hue=y, ax = ax,fill=True)
                     k+=1
-            plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
-            plt.close()
+                plt.suptitle('Probability Density Function',fontsize=20)
+                plt.savefig(join(directoryToDumpData, ProbabilityDensityFunction), bbox_inches='tight', dpi=100)
+                plt.close()
         
             
 
@@ -852,10 +852,14 @@ class Experiment(object):
         with open(pdfFilename,"wb") as f:          
             f.write(convert(file,layout_fun=layout_function))
 
-        
+        self.__writeEDADetailsToExcel(df, xlsxFilename, columnTextImgone, columnTextImgtwo, directoryToDumpData, ValueImageFile, ValueRatioImageFile, NumericalFeatureDistributionImageFile, NonNumericFeaturesImgFile, FeatureHistogramImageFile, OutliersImageFile, ProbabilityDensityFunction)
 
-        if (isfile(fileName)):
-            workBook = load_workbook(fileName)
+    
+    def __writeEDADetailsToExcel(self, df, xlsxFilename, columnTextImgone, columnTextImgtwo, directoryToDumpData, ValueImageFile, ValueRatioImageFile, NumericalFeatureDistributionImageFile, NonNumericFeaturesImgFile, FeatureHistogramImageFile, OutliersImageFile, ProbabilityDensityFunction):
+        # if ((xlsxFileName)):
+            
+            writer = ExcelWriter(xlsxFilename, engine='openpyxl')
+            workBook = writer.book
             workBook.create_sheet('EDA-missingValues')
             plotSheet = workBook['EDA-missingValues']
             img = Image(join(directoryToDumpData, ValueImageFile))
@@ -897,7 +901,7 @@ class Experiment(object):
             ThreeDplotsheet.add_image(ThreeDImg)"""
 
             # adding non-numeric column
-            nonNumericalColumns = self.__data.select_dtypes(exclude=["number", "datetime"])
+            nonNumericalColumns = df.select_dtypes(exclude=["number", "datetime"])
             if len(nonNumericalColumns.columns) != 0 and exists(
                     join(directoryToDumpData, NonNumericFeaturesImgFile)):
                 workBook.create_sheet('EDA-NonNumericFeatures')
@@ -919,7 +923,7 @@ class Experiment(object):
                 featureDistribution.add_image(featureDistributionImage)
                 
             if exists(join(directoryToDumpData, ProbabilityDensityFunction)):
-                workBookName = 'EDA-PDF'
+                workBookName = 'EDA-ProbabilityDensityFunction'
                 workBook.create_sheet(workBookName)
                 pdfPlotsheet = workBook[workBookName]
                 pdfImage = Image(
@@ -927,9 +931,10 @@ class Experiment(object):
                 pdfImage.anchor = columnTextImgone
                 pdfPlotsheet.add_image(pdfImage)   
             
-                         
-            workBook.save(fileName)
-        workBook.close()
+            sampledData = self.__writeSampledData(df, writer)
+            self.__writeEDACorrelationData(df, sampledData, writer)
+            self.__profilingReport(df, writer)
+            writer.save()
 
     def __plot(self, fileName):
 
@@ -1021,14 +1026,15 @@ class Experiment(object):
                 modelingData = read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
+
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):
         self.dump(techniqueUsed, filename=filename, message=message, version=version, showMessage=False, repoName=None)
-        if filename is None:
-            pdfFilename="vevesta.pdf"
-        else:
-            pdfFilename=filename.split('.')
-            pdfFilename=pdfFilename[0]+'.pdf'
+        # if filename is None:
+        pdfFilename="EDA_Vevesta.pdf"
+        # else:
+        #     pdfFilename=filename.split('.')
+        #     pdfFilename=pdfFilename[0]+'.pdf'
         # api-endpoint
         token = self.__find_access_token()
         backend_url = 'https://api.matrixkanban.com/services-1.0-SNAPSHOT'
@@ -1054,7 +1060,7 @@ class Experiment(object):
         
         filename = self.get_filename()
         file_exists = exists(filename)
-        file1_exists=exists(pdfFilename)
+        eda_file_exists=exists(pdfFilename)
         if file_exists:
             files = {'file': open(filename, 'rb')}
             headers_for_file = {'Authorization': 'Bearer ' + token}
@@ -1063,7 +1069,7 @@ class Experiment(object):
                                          files=files)
             attachments = list()
             attachments.append(response.json())
-        if file1_exists:
+        if eda_file_exists:
             files = {'file': open(pdfFilename, 'rb')}
             response = requests.post(url=backend_url + '/Attachments', headers=headers_for_file, params=params,
                                          files=files)
@@ -1082,8 +1088,7 @@ class Experiment(object):
             "message": message,
             "modeling": self.__variables,
             "dataSourced": self.__dataSourcing,
-            "featureEngineered": self.__featureEngineering,
-            "speedUp": self.speedUp
+            "featureEngineered": self.__featureEngineering
         }
         
         if file_exists:
