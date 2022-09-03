@@ -24,9 +24,8 @@ The output is an excel file. The library can be used with Jupyter notebook, IDEs
 6. [How to track all variables in the code while writing less code](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-track-all-variables-in-the-code-while-writing-less-code)
 7. [How to write the features and modelling variables in an given excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#How-to-write-the-features-and-modelling-variables-in-an-given-excel-file)
 8. [How to commit file, features and parameters to Vevesta](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-commit-file-features-and-parameters-to-vevesta)
-9. [How to speed up the code i.e Skip EDA on every run](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-speed-up-the-code)
-10. [How to check in code into GitHub](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-github)
-11. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
+9. [How to configure Github and Vevesta token](https://github.com/Vevesta/VevestaX/blob/main/README.md#how-to-check-code-into-github)
+10. [Snapshots of output excel file](https://github.com/Vevesta/VevestaX/blob/main/README.md#Snapshots-of-output-excel-file)
 
 ## How to install VevestaX
 ```
@@ -118,11 +117,10 @@ A sample output excel file has been uploaded on google sheets. Its url is [here]
 ## How to do EDA 
 The library does EDA automatically on the data. 
 ```
-V.EDA(df,Y=df["target"])
-
+V.EDA(data = df,Y = df["target"])
 ```
 
-## How to check code into GitHub
+## How to configure GitHub and Vevesta token
 In order to check-in the code to Git and Vevesta we would be requiring the two tokens mentioned below:
 
 * Git-Access Token
