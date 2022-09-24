@@ -8,6 +8,7 @@ from os.path import basename,expanduser,join,exists,isfile,isdir,islink
 from os import mkdir,listdir,unlink
 from random import randint
 from re import sub
+from re import IGNORECASE
 from shutil import copy,rmtree
 from statistics import median,mode
 from sys import argv
@@ -30,6 +31,8 @@ from scipy.stats import kurtosis
 from scipy.stats import skew
 from vevestaX import __version__
 from img2pdf import mm_to_pt,get_layout_fun,convert
+import connectorx as cx
+from jproperties import Properties
 
 def test():
     return 'Test Executed Successfully'
@@ -102,6 +105,31 @@ class Experiment(object):
         f = open(path, "w+")
         f.write(data)
         f.close()
+
+    def __find_db_config_file(self, db_config_filename):
+        configs = Properties()
+        directory = ".vevesta"
+        parent_dir = expanduser("~")
+        home_folder_path = join(parent_dir, directory)
+        home_folder_file_path = join(home_folder_path, db_config_filename)
+
+        sibling_file_path = db_config_filename
+
+        if exists(sibling_file_path):
+            with open(sibling_file_path, 'rb') as config_file:
+                configs.load(config_file)
+            try:
+                mkdir(home_folder_path)
+            except FileExistsError:
+                pass
+            copy(sibling_file_path, home_folder_path)
+
+        elif exists(home_folder_file_path):
+            with open(home_folder_file_path, 'rb') as config_file:
+                configs.load(config_file)
+        
+        return configs
+
 
     def __find_git_token(self, is_v_commit, backend_url=None, access_token=None):
         file_name = 'git_token.txt'
@@ -1026,6 +1054,51 @@ class Experiment(object):
                 modelingData = read_excel(fileName, sheet_name=sheetName, index_col=[])
                 return modelingData
 
+    def query(self, sql, dbConfig, format, filename=None):
+        configs = self.__find_db_config_file(dbConfig)
+        try:
+            db_name = configs["db_name"]
+            db_user = configs["db_user"]
+            db_password = configs["db_password"]
+            db_host = configs["db_host"]
+            db_port = configs["db_port"]
+            db_database = configs["db_database"]
+            
+        except KeyError as ke:
+            errorMessage = ''
+            try:
+                db_name
+                db_user
+                db_password
+                db_host
+                db_port
+                db_database
+            except NameError as err:
+                print('{0}'.format(err) )
+                pass
+
+        conn = self.__createDBConnectionString(db_user, db_password, db_host, db_port, db_database, db_name)
+        dataSizeSql = 'select count(*) ' + sql[sql.index('from', IGNORECASE):]
+        try:
+            dataSize = cx.read_sql(conn, dataSizeSql)
+            data = cx.read_sql(conn, sql)
+            return self.__createDBDataInFormat(data, format, filename)
+        except Exception as e:
+            print('{0}'.format(e) )
+            pass
+
+    def __createDBConnectionString(self, db_user, db_password, db_host, db_port, db_database, db_name):
+        connectionString = ''
+        if(db_name.data == "mysql"):
+            connectionString = 'mysql://'+''.join(db_user.data)+':'+''.join(db_password.data)+'@'+''.join(db_host.data)+':'+''.join(db_port.data)+'/'+''.join(db_database.data)
+
+        return connectionString
+
+    def __createDBDataInFormat(self, data, format, filename):
+        if(format == 'dataframe'):
+            return data
+        elif(format == 'csv'):
+            data.to_csv(filename)
 
     def commit(self, techniqueUsed, filename=None, message=None, version=None, projectId=None,
                repoName=None, branch=None):

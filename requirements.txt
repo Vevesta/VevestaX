@@ -11,3 +11,5 @@ scipy==1.8.0
 setuptools~=60.2.0
 PyGithub~=1.55
 img2pdf==0.4.4
+connectorx=0.3.0
+jproperties=2.1.1
