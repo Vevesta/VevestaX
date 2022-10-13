@@ -390,4 +390,3 @@ The above article is sponsored by [Vevesta](https://www.vevesta.com/?utm-source=
 2. [Yannick's video](https://www.youtube.com/watch?v=pH2jZun8MoY&feature=youtu.be)
 3. [Involution: Inverting the Inherence of Convolution for Visual Recognition](https://arxiv.org/abs/2103.06255)
 4. [Article on Vevesta](https://www.vevesta.com/blog/16-Involutional-Neural-Networks)
-5. [Article on VesestaX Github]()
