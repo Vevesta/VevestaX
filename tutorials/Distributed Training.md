@@ -113,7 +113,7 @@ So far, we have seen how to distribute the data and train the model in multiple 
 
 [7. Article on Vevesta](https://www.vevesta.com/blog/32-Distributed-Training)
 
-[8. Article on Substack](https://vevesta.substack.com/publish?utm_source=menu)
+[8. Article on Substack](https://vevesta.substack.com/p/distributed-training-deep-learning)
 
 # Credits
 
