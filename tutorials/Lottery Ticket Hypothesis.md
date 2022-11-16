@@ -77,7 +77,7 @@ Conditions to be met: Randomly re-initializing winning tickets prior to training
 6. [Lottery Ticket Hypothesis Article on Vevesta.com](https://www.vevesta.com/blog/20-Lottery-Ticket-Hypothesis)
 7. [Lottery Ticket Hypothesis Article on Substack](https://vevesta.substack.com/p/laymans-guide-to-lottery-ticket-hypothesis)
 
-## Credits:
+##Credits:
 
 The above article is sponsored by [vevesta.](https://www.vevesta.com/)
 
