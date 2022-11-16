@@ -75,7 +75,7 @@ Conditions to be met: Randomly re-initializing winning tickets prior to training
 4. [Saga of the Lottery Ticket Hypothesis.](https://towardsdatascience.com/saga-of-the-lottery-ticket-hypothesis-af30091f5cb)
 5. [Research Gate](https://www.researchgate.net/figure/Different-types-of-pruning-algorithm-Unstructured-pruning-removes-any-unimportant_fig3_342989407)
 6. [Lottery Ticket Hypothesis Article on Vevesta.com](https://www.vevesta.com/blog/20-Lottery-Ticket-Hypothesis)
-7. [Lottery Ticket Hypothesis Article on Substack](https://vevesta.substack.com/publish?utm_source=menu)
+7. [Lottery Ticket Hypothesis Article on Substack](https://vevesta.substack.com/p/laymans-guide-to-lottery-ticket-hypothesis)
 
 ## Credits:
 
